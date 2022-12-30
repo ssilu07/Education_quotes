@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Crumblyy.iml" filepath="$PROJECT_DIR$/Crumblyy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Crumblyy.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Crumblyy.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Crumblyy.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Crumblyy.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Crumblyy.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Crumblyy.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Crumblyy.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Crumblyy.app.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/library/Crumblyy.library.iml" filepath="$PROJECT_DIR$/.idea/modules/library/Crumblyy.library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/library/Crumblyy.library.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/library/Crumblyy.library.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/library/Crumblyy.library.main.iml" filepath="$PROJECT_DIR$/.idea/modules/library/Crumblyy.library.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/library/Crumblyy.library.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/library/Crumblyy.library.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/navigationtabbar/Crumblyy.navigationtabbar.iml" filepath="$PROJECT_DIR$/.idea/modules/navigationtabbar/Crumblyy.navigationtabbar.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/navigationtabbar/Crumblyy.navigationtabbar.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/navigationtabbar/Crumblyy.navigationtabbar.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/navigationtabbar/Crumblyy.navigationtabbar.main.iml" filepath="$PROJECT_DIR$/.idea/modules/navigationtabbar/Crumblyy.navigationtabbar.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/navigationtabbar/Crumblyy.navigationtabbar.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/navigationtabbar/Crumblyy.navigationtabbar.unitTest.iml" />
+    </modules>
+  </component>
+</project>

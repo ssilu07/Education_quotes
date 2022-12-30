@@ -1,0 +1,25 @@
+-- Merging decision tree log ---
+manifest
+ADDED from D:\soft_projects\quotes-sayings-full-application-with-database-and-admob-integration\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml:18:1-64
+INJECTED from D:\soft_projects\quotes-sayings-full-application-with-database-and-admob-integration\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml:18:1-64
+INJECTED from D:\soft_projects\quotes-sayings-full-application-with-database-and-admob-integration\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml:18:1-64
+	package
+		ADDED from D:\soft_projects\quotes-sayings-full-application-with-database-and-admob-integration\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml:18:11-61
+		INJECTED from D:\soft_projects\quotes-sayings-full-application-with-database-and-admob-integration\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml
+		INJECTED from D:\soft_projects\quotes-sayings-full-application-with-database-and-admob-integration\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from D:\soft_projects\quotes-sayings-full-application-with-database-and-admob-integration\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml:18:1-64
+uses-sdk
+INJECTED from D:\soft_projects\quotes-sayings-full-application-with-database-and-admob-integration\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from D:\soft_projects\quotes-sayings-full-application-with-database-and-admob-integration\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml
+INJECTED from D:\soft_projects\quotes-sayings-full-application-with-database-and-admob-integration\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml
+INJECTED from D:\soft_projects\quotes-sayings-full-application-with-database-and-admob-integration\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml
+INJECTED from D:\soft_projects\quotes-sayings-full-application-with-database-and-admob-integration\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from D:\soft_projects\quotes-sayings-full-application-with-database-and-admob-integration\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml
+		ADDED from D:\soft_projects\quotes-sayings-full-application-with-database-and-admob-integration\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml
+		INJECTED from D:\soft_projects\quotes-sayings-full-application-with-database-and-admob-integration\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from D:\soft_projects\quotes-sayings-full-application-with-database-and-admob-integration\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml
+		ADDED from D:\soft_projects\quotes-sayings-full-application-with-database-and-admob-integration\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml
+		INJECTED from D:\soft_projects\quotes-sayings-full-application-with-database-and-admob-integration\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#4acfda</color>
+    <color name="colorPrimaryDark">#11adb9</color>
+    <color name="colorAccent">#ffffff</color>
+
+    <color name="year">#999999</color>
+    <color name="title">#222222</color>
+
+
+    <!-- Screens background color-->
+    <color name="bg_screen1">#f64c73</color>
+    <color name="bg_screen2">#20d2bb</color>
+    <color name="bg_screen3">#3395ff</color>
+    <color name="bg_screen4">#c873f4</color>
+
+    <!-- dots inactive colors -->
+    <color name="dot_dark_screen1">#1deafa</color>
+    <color name="dot_dark_screen2">#1deafa</color>
+    <color name="dot_dark_screen3">#1deafa</color>
+    <color name="dot_dark_screen4">#1deafa</color>
+
+    <!-- dots active colors -->
+    <color name="dot_light_screen1">#199da7</color>
+    <color name="dot_light_screen2">#199da7</color>
+    <color name="dot_light_screen3">#199da7</color>
+    <color name="dot_light_screen4">#199da7</color>
+
+    <array name="array_dot_active">
+        <item>@color/dot_light_screen1</item>
+        <item>@color/dot_light_screen2</item>
+        <item>@color/dot_light_screen3</item>
+        <item>@color/dot_light_screen4</item>
+    </array>
+
+    <array name="array_dot_inactive">
+        <item>@color/dot_dark_screen1</item>
+        <item>@color/dot_dark_screen2</item>
+        <item>@color/dot_dark_screen3</item>
+        <item>@color/dot_dark_screen4</item>
+    </array>
+
+
+
+<!-- Dark ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,-->
+    <!--<string-array name="firstcolor">-->
+        <!--<item>#ed7070</item>-->
+        <!--<item>#14568c</item>-->
+        <!--<item>#232323</item>-->
+        <!--<item>#AE1E1B</item>-->
+        <!--<item>#3C93A3</item>-->
+        <!--<item>#F7BA20</item>-->
+        <!--<item>#96466f</item>-->
+        <!--<item>#ff5722</item>-->
+    <!--</string-array>-->
+
+
+
+    <!-- Light ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,-->
+    <string-array name="firstcolor">
+    <item>#fc9191</item>
+    <item>#368dd4</item>
+    <item>#515151</item>
+    <item>#d2524f</item>
+    <item>#4cbace</item>
+    <item>#f1ba2f</item>
+    <item>#d4679f</item>
+    <item>#fa774e</item>
+    </string-array>
+
+
+
+
+    <!--<string-array name="firstcolor">-->
+        <!--<item>#c99372</item>-->
+        <!--<item>#e7d097</item>-->
+
+        <!--<item>#e1c0bb</item>-->
+        <!--<item>#868e98</item>-->
+
+        <!--<item>#3d3f3a</item>-->
+        <!--<item>#cfd4d1</item>-->
+
+        <!--<item>#99765a</item>-->
+        <!--<item>#282e3b</item>-->
+
+    <!--</string-array>-->
+
+
+
+
+    <string-array name="secondcolor">
+        <item>#ed7070</item>
+        <item>#232323</item>
+        <item>#14568c</item>
+
+        <item>#66caaa</item>
+        <item>#F7BA20</item>
+
+        <item>#AE1E1B</item>
+        <item>#3C93A3</item>
+        <item>#66caaa</item>
+    </string-array>
+
+
+
+
+</resources>

@@ -1,0 +1,227 @@
+<resources>
+
+    <string name="interstitial_full_screen">ca-app-pub-2293121401505613/1100644120</string>
+
+    <string name="app_name">Quote App</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="title_activity_welcome">Home Screen</string>
+    <string name="next">NEXT</string>
+    <string name="skip">SKIP</string>
+    <string name="start">GOT IT</string>
+
+    <string name="slide_1_title">Hello Reader!</string>
+    <string name="slide_1_desc">Find wide range of best Quotes from interesting categories</string>
+
+    <string name="slide_2_title">40+ Categories</string>
+    <string name="slide_2_desc">We are providing 20000+ amazing quotes from more than 40 categories</string>
+
+    <string name="slide_4_title">Share Quotes</string>
+    <string name="slide_4_desc">Share your favourite quotes with friends, family etc.</string>
+
+    <string name="slide_3_title">Bookmark Quotes</string>
+    <string name="slide_3_desc">Among these quotes you can bookmark your favourite quotes</string>
+
+    <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>
+    <string name="play_again">Play Again</string>
+
+
+    <string name="trending">Trending Quotes</string>
+    <string name="latest">Latest Quotes</string>
+    <string name="profile">My Profile</string>
+
+    <string name="bookmark">Bookmark</string>
+
+
+    <string name="dummyText">Stop using Google.com to search information for school essays. Use scholar.google.com instead. You will find information right away!</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_title_social_recommendations">Enable social recommendations</string>
+    <string name="pref_description_social_recommendations">Recommendations for people to contact
+        based on your message history
+    </string>
+
+    <string name="pref_title_display_name">Display name</string>
+    <string name="pref_default_display_name">John Smith</string>
+
+    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
+    <string-array name="pref_example_list_titles">
+        <item>Always</item>
+        <item>When possible</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_example_list_values">
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+    </string-array>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_sync">Data &amp; sync</string>
+
+    <string name="pref_title_sync_frequency">Sync frequency</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+
+    <string-array name="list_preference_entries">
+        <item>Entry 1</item>
+        <item>Entry 2</item>
+        <item>Entry 3</item>
+    </string-array>
+
+    <string-array name="list_preference_entry_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="multi_select_list_preference_default_value" />
+
+    <string name="pref_title_system_sync_settings">System sync settings</string>
+
+
+    <string name="moreapp">More\nApps</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+
+    <string name="pref_title_new_message_notifications">New message notifications</string>
+
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <string name="pref_title_vibrate">Vibrate</string>
+
+
+    <string-array name="mydata">
+        <item>adsfsafa</item>
+        <item>sdnsakmdsankj</item>
+        <item>sadkjsadhsadkj</item>
+        <item>askdjsakdlas</item>
+    </string-array>
+
+    <!-- Category for quotes .....................................................................-->
+    <string-array name="mycat">
+        <item>Inspiring Life Quotes</item>
+        <item>Inspirational Quotes</item>
+        <item>Happiness Quotes</item>
+        <item>Beautiful Quotes</item>
+        <item>Quotes about Change and Growth</item>
+        <item>Introvert Quotes</item>
+        <item>Hope Quotes</item>
+        <item>Travel Quotes</item>
+        <item>Trust Quotes</item>
+        <item>Martin Luther King Jr. Quotes</item>
+        <item>Powerful Freedom Quotes</item>
+        <item>Humanity Quotes</item>
+        <item>Simplicity Quotes</item>
+        <item>Inspiring Music Quotes</item>
+        <item>Attitude Quotes</item>
+        <item>Zen Quotes</item>
+        <item>Smile Quotes</item>
+        <item>Art Quotes</item>
+        <item>Amazing Silence Quotes</item>
+        <item>Good Morning Quotes</item>
+        <item>Rumi Quotes</item>
+        <item>Deep Quotes</item>
+        <item>Best Nature Quotes</item>
+        <item>Respect Quotes</item>
+        <item>Leadership Quotes</item>
+        <item>Family Quotes</item>
+        <item>Kindness Quotes</item>
+        <item>Tim Ferriss Quotes</item>
+        <item>Amazing Love Quotes</item>
+        <item>Marcus Aurelius Quotes</item>
+        <item>Success Quotes</item>
+        <item>Brilliant History Quotes</item>
+        <item>Albert Einstein Quotes</item>
+        <item>Maya Angelou Quotes</item>
+        <item>Friendship Quotes</item>
+        <item>Gratitude Quotes</item>
+        <item>Creativity Quotes</item>
+        <item>Benjamin Franklin Quotes</item>
+        <item>Lovely Children Quotes</item>
+        <item>Funny Quotes</item>
+        <item>Fascinating Wisdom Quotes</item>
+        <item>How to learn faster</item>
+        <item>Steve jobs Quotes</item>
+        <item>Short Quotes</item>
+        <item>Education Quotes</item>
+        <item>Buddha Quotes</item>
+    </string-array>
+
+
+    <!-- Db names ...............................................................................-->
+
+    <string-array name="mydb">
+        <item>life_quotes</item>
+        <item>inspirational_quote</item>
+        <item>happiness_quotes</item>
+        <item>beautiful_quotes</item>
+        <item>change_quote</item>
+        <item>introvert_quotes</item>
+        <item>hope_quotes</item>
+        <item>travel_quotes</item>
+        <item>trust_quotes</item>
+        <item>martin_luther_quotes</item>
+        <item>freedom_quotes</item>
+        <item>humanity_quotes</item>
+        <item>simplicity_quotes</item>
+        <item>music_quotes</item>
+        <item>attitude_quotes</item>
+        <item>zen_quotes</item>
+        <item>smile_quotes</item>
+        <item>art_quotes</item>
+        <item>silence_quotes</item>
+        <item>gm_quotes</item>
+        <item>rumi_quotes</item>
+        <item>deep_quotes</item>
+        <item>nature_quotes</item>
+        <item>respect_quotes</item>
+        <item>leadership_quotes</item>
+        <item>family_quotes</item>
+        <item>kindness_quotes</item>
+        <item>tim_ferris_quotes</item>
+        <item>love_quotes</item>
+        <item>marcus_aurelis_quotes</item>
+        <item>success_quotes</item>
+        <item>history_quotes</item>
+        <item>albert_einstein_quotes</item>
+        <item>maya_angelou_quotes</item>
+        <item>friendship_quotes</item>
+        <item>gratitude_quotes</item>
+        <item>creativity_quotes</item>
+        <item>benjamin_franklin_quotes</item>
+        <item>children_quotes</item>
+        <item>funny_quotes</item>
+        <item>word_wisdom_quotes</item>
+        <item>how_to_learn</item>
+        <item>steve_jobs_quotes</item>
+        <item>short_quotes</item>
+        <item>education_quotes</item>
+        <item>buddha_quotes</item>
+    </string-array>
+
+
+</resources>

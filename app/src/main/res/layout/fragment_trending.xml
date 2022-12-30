@@ -1,0 +1,17 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f2f2f2"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context="com.royals.edunotes._fragments.TrendingFragment">
+
+    <com.royals.edunotes.VerticalViewPager
+        android:id="@+id/vPager"
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></com.royals.edunotes.VerticalViewPager>
+
+
+</LinearLayout>

@@ -1,0 +1,51 @@
+uk/co/samuelwall/materialtaptargetprompt/extras/PromptUtils.java
+ uk.co.samuelwall.materialtaptargetprompt.extras.PromptUtils
+uk/co/samuelwall/materialtaptargetprompt/extras/focals/RectanglePromptFocal.java
+ uk.co.samuelwall.materialtaptargetprompt.extras.focals.RectanglePromptFocal
+uk/co/samuelwall/materialtaptargetprompt/extras/PromptBackground.java
+ uk.co.samuelwall.materialtaptargetprompt.extras.PromptBackground
+uk/co/samuelwall/materialtaptargetprompt/extras/focals/CirclePromptFocal.java
+ uk.co.samuelwall.materialtaptargetprompt.extras.focals.CirclePromptFocal
+uk/co/samuelwall/materialtaptargetprompt/extras/backgrounds/RectanglePromptBackground.java
+ uk.co.samuelwall.materialtaptargetprompt.extras.backgrounds.RectanglePromptBackground
+uk/co/samuelwall/materialtaptargetprompt/extras/backgrounds/FullscreenPromptBackground.java
+ uk.co.samuelwall.materialtaptargetprompt.extras.backgrounds.FullscreenPromptBackground
+uk/co/samuelwall/materialtaptargetprompt/extras/AlphaSpan.java
+ uk.co.samuelwall.materialtaptargetprompt.extras.AlphaSpan
+uk/co/samuelwall/materialtaptargetprompt/DialogResourceFinder.java
+ uk.co.samuelwall.materialtaptargetprompt.DialogResourceFinder
+uk/co/samuelwall/materialtaptargetprompt/ActivityResourceFinder.java
+ uk.co.samuelwall.materialtaptargetprompt.ActivityResourceFinder
+uk/co/samuelwall/materialtaptargetprompt/ResourceFinder.java
+ uk.co.samuelwall.materialtaptargetprompt.ResourceFinder
+uk/co/samuelwall/materialtaptargetprompt/extras/PromptOptions.java
+ uk.co.samuelwall.materialtaptargetprompt.extras.PromptOptions
+uk/co/samuelwall/materialtaptargetprompt/extras/PromptFocal.java
+ uk.co.samuelwall.materialtaptargetprompt.extras.PromptFocal
+uk/co/samuelwall/materialtaptargetprompt/BuildConfig.java
+ uk.co.samuelwall.materialtaptargetprompt.BuildConfig
+uk/co/samuelwall/materialtaptargetprompt/extras/PromptUIElement.java
+ uk.co.samuelwall.materialtaptargetprompt.extras.PromptUIElement
+uk/co/samuelwall/materialtaptargetprompt/MaterialTapTargetPrompt.java
+ uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt
+ uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt$1
+ uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt$1$1
+ uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt$10
+ uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt$11
+ uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt$2
+ uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt$3
+ uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt$4
+ uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt$5
+ uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt$6
+ uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt$7
+ uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt$8
+ uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt$9
+ uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt$AnimatorListener
+ uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt$Builder
+ uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt$PromptStateChangeListener
+ uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt$PromptView
+ uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt$PromptView$PromptTouchedListener
+uk/co/samuelwall/materialtaptargetprompt/extras/backgrounds/CirclePromptBackground.java
+ uk.co.samuelwall.materialtaptargetprompt.extras.backgrounds.CirclePromptBackground
+uk/co/samuelwall/materialtaptargetprompt/extras/PromptText.java
+ uk.co.samuelwall.materialtaptargetprompt.extras.PromptText

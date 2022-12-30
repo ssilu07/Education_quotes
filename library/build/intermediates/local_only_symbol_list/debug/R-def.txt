@@ -1,0 +1,44 @@
+R_DEF: Internal format may change without notice
+local
+attr MaterialTapTargetPromptTheme
+attr mttp_autoDismiss
+attr mttp_autoFinish
+attr mttp_backgroundColour
+attr mttp_captureTouchEventOnFocal
+attr mttp_captureTouchEventOutsidePrompt
+attr mttp_focalColour
+attr mttp_focalRadius
+attr mttp_focalToTextPadding
+attr mttp_iconColourFilter
+attr mttp_iconTint
+attr mttp_iconTintMode
+attr mttp_maxTextWidth
+attr mttp_primaryText
+attr mttp_primaryTextColour
+attr mttp_primaryTextFontFamily
+attr mttp_primaryTextSize
+attr mttp_primaryTextStyle
+attr mttp_primaryTextTypeface
+attr mttp_secondaryText
+attr mttp_secondaryTextColour
+attr mttp_secondaryTextFontFamily
+attr mttp_secondaryTextSize
+attr mttp_secondaryTextStyle
+attr mttp_secondaryTextTypeface
+attr mttp_target
+attr mttp_textPadding
+attr mttp_textSeparation
+id ADD
+id MULTIPLY
+id SCREEN
+id SRC_ATOP
+id SRC_IN
+id SRC_OVER
+id bold
+id italic
+id material_target_prompt_view
+id monospace
+id normal
+id sans
+id serif
+styleable PromptView mttp_target mttp_primaryText mttp_secondaryText mttp_primaryTextColour mttp_secondaryTextColour mttp_backgroundColour mttp_focalColour mttp_focalRadius mttp_primaryTextSize mttp_secondaryTextSize mttp_maxTextWidth mttp_textPadding mttp_focalToTextPadding mttp_textSeparation mttp_autoDismiss mttp_autoFinish mttp_captureTouchEventOutsidePrompt mttp_captureTouchEventOnFocal mttp_primaryTextFontFamily mttp_secondaryTextFontFamily mttp_primaryTextStyle mttp_secondaryTextStyle mttp_primaryTextTypeface mttp_secondaryTextTypeface mttp_iconTint mttp_iconTintMode mttp_iconColourFilter
