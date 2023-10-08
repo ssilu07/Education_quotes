@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.royals.edunotes">
+    package="com.royal.edunotes">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -8,26 +8,27 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/qwerty"
+        android:icon="@drawable/vocab_swap_logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/qwerty"
+        android:roundIcon="@drawable/vocab_swap_logo"
         android:supportsRtl="true"
+        android:logo="@drawable/vocab_swap_logo"
         android:theme="@style/AppTheme">
-        <activity android:name="com.royals.edunotes._activities.MainActivity" />
-        <activity android:name="com.royals.edunotes._activities.WelcomeActivity" android:exported="true">
+        <activity android:name="com.royal.edunotes._activities.MainActivity" />
+        <activity android:name="com.royal.edunotes._activities.WelcomeActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.royals.edunotes._activities.Setting" />
-        <activity android:name="com.royals.edunotes._activities.HackList" />
-        <activity android:name="com.royals.edunotes._activities.BookmarkHackListActivity" />
+        <activity android:name="com.royal.edunotes._activities.Setting" />
+        <activity android:name="com.royal.edunotes._activities.HackList" />
+        <activity android:name="com.royal.edunotes._activities.BookmarkHackListActivity" />
 
-        <receiver android:name="com.royals.edunotes.AlarmReceiver" />
+        <receiver android:name="com.royal.edunotes.AlarmReceiver" />
         <receiver
-            android:name="com.royals.edunotes.AlarmBootReceiver"
+            android:name="com.royal.edunotes.AlarmBootReceiver"
             android:enabled="false"
             android:exported="true">
             <intent-filter>
@@ -35,7 +36,7 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name="com.royals.edunotes._activities.SearchActivity"></activity>
+        <activity android:name="com.royal.edunotes._activities.SearchActivity"></activity>
     </application>
 
 </manifest>

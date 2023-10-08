@@ -1,4 +1,4 @@
-package com.royals.edunotes._fragments;
+package com.royal.edunotes._fragments;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -18,13 +18,13 @@ import android.widget.Toast;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
-import com.royals.edunotes.R;
-import com.royals.edunotes.VerticalViewPager;
-import com.royals.edunotes._adapters.VerticlePagerAdapter;
-import com.royals.edunotes._database.DatabaseHelper;
-import com.royals.edunotes._database.ModelDatabase;
-import com.royals.edunotes._database.MyDatabase;
-import com.royals.edunotes._models.QuoteModel;
+import com.royal.edunotes.R;
+import com.royal.edunotes.VerticalViewPager;
+import com.royal.edunotes._adapters.VerticlePagerAdapter;
+import com.royal.edunotes._database.DatabaseHelper;
+import com.royal.edunotes._database.ModelDatabase;
+import com.royal.edunotes._database.MyDatabase;
+import com.royal.edunotes._models.QuoteModel;
 
 import java.util.ArrayList;
 

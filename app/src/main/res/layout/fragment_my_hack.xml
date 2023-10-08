@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:background="#f2f2f2"
     android:gravity="center"
-    tools:context="com.royals.edunotes._fragment_profile.MyHack">
+    tools:context="com.royal.edunotes._fragment_profile.MyHack">
 
     <ImageView
         android:src="@drawable/cs"

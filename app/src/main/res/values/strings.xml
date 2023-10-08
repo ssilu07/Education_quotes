@@ -2,7 +2,7 @@
 
     <string name="interstitial_full_screen">ca-app-pub-2293121401505613/1100644120</string>
 
-    <string name="app_name">EduNotes</string>
+    <string name="app_name">Vocab Swap</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -13,23 +13,23 @@
     <string name="start">GOT IT</string>
 
     <string name="slide_1_title">Hello Reader!</string>
-    <string name="slide_1_desc">Find wide range of best Quotes from interesting categories</string>
+    <string name="slide_1_desc">Find Best Vocabs For All Government Exams</string>
 
-    <string name="slide_2_title">40+ Categories</string>
-    <string name="slide_2_desc">We are providing 20000+ amazing quotes from more than 40 categories</string>
+    <string name="slide_2_title">Many Categories</string>
+    <string name="slide_2_desc">SSC,Bank,IB,Railway,GRE,GMAT,IELTS</string>
 
-    <string name="slide_4_title">Share Quotes</string>
-    <string name="slide_4_desc">Share your favourite quotes with friends, family etc.</string>
+    <string name="slide_4_title">Share Vocab</string>
+    <string name="slide_4_desc">Share your favourite Vocabs with friends, family etc.</string>
 
-    <string name="slide_3_title">Bookmark Quotes</string>
-    <string name="slide_3_desc">Among these quotes you can bookmark your favourite quotes</string>
+    <string name="slide_3_title">Bookmark Vocab</string>
+    <string name="slide_3_desc">Among these vocabs you can bookmark your favourite vocab</string>
 
     <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>
     <string name="play_again">Play Again</string>
 
 
-    <string name="trending">Trending Quotes</string>
-    <string name="latest">Latest Quotes</string>
+    <string name="trending">Trending Vocab</string>
+    <string name="latest">Latest Vocab</string>
     <string name="profile">My Profile</string>
 
     <string name="bookmark">Bookmark</string>
@@ -123,17 +123,17 @@
 
     <!-- Category for quotes .....................................................................-->
     <string-array name="mycat">
-        <item>Inspiring Life Quotes</item>
-        <item>Inspirational Quotes</item>
-        <item>Happiness Quotes</item>
-        <item>Beautiful Quotes</item>
-        <item>Quotes about Change and Growth</item>
-        <item>Introvert Quotes</item>
-        <item>Hope Quotes</item>
-        <item>Travel Quotes</item>
-        <item>Trust Quotes</item>
-        <item>Martin Luther King Jr. Quotes</item>
-        <item>Powerful Freedom Quotes</item>
+        <item>Vocab 1</item>
+        <item>Vocab 2</item>
+        <item>Vocab 3</item>
+        <item>Vocab 4</item>
+        <item>Vocab 5</item>
+        <item>Vocab 6</item>
+        <item>Vocab 7</item>
+        <item>Vocab 8</item>
+        <item>Vocab 9</item>
+        <item>Vocab 10</item>
+       <!-- <item>Powerful Freedom Quotes</item>
         <item>Humanity Quotes</item>
         <item>Simplicity Quotes</item>
         <item>Inspiring Music Quotes</item>
@@ -168,7 +168,7 @@
         <item>Steve jobs Quotes</item>
         <item>Short Quotes</item>
         <item>Education Quotes</item>
-        <item>Buddha Quotes</item>
+        <item>Buddha Quotes</item>-->
     </string-array>
 
 
@@ -185,7 +185,7 @@
         <item>travel_quotes</item>
         <item>trust_quotes</item>
         <item>martin_luther_quotes</item>
-        <item>freedom_quotes</item>
+       <!-- <item>freedom_quotes</item>
         <item>humanity_quotes</item>
         <item>simplicity_quotes</item>
         <item>music_quotes</item>
@@ -220,7 +220,7 @@
         <item>steve_jobs_quotes</item>
         <item>short_quotes</item>
         <item>education_quotes</item>
-        <item>buddha_quotes</item>
+        <item>buddha_quotes</item>-->
     </string-array>
 
 

@@ -1,4 +1,4 @@
-package com.royals.edunotes._adapters;
+package com.royal.edunotes._adapters;
 
 import android.content.Context;
 import androidx.viewpager.widget.PagerAdapter;
@@ -9,10 +9,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.royals.edunotes.R;
-import com.royals.edunotes._database.DatabaseHelper;
-import com.royals.edunotes._database.ModelDatabase;
-import com.royals.edunotes._models.QuoteModel;
+import com.royal.edunotes.R;
+import com.royal.edunotes._database.DatabaseHelper;
+import com.royal.edunotes._database.ModelDatabase;
+import com.royal.edunotes._models.QuoteModel;
 
 import java.util.ArrayList;
 

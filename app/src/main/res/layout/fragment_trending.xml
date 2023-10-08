@@ -5,13 +5,13 @@
     android:background="#f2f2f2"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context="com.royals.edunotes._fragments.TrendingFragment">
+    tools:context="com.royal.edunotes._fragments.TrendingFragment">
 
-    <com.royals.edunotes.VerticalViewPager
+    <com.royal.edunotes.VerticalViewPager
         android:id="@+id/vPager"
 
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></com.royals.edunotes.VerticalViewPager>
+        android:layout_height="match_parent"></com.royal.edunotes.VerticalViewPager>
 
 
 </LinearLayout>

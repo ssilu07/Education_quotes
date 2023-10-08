@@ -1,4 +1,4 @@
-package com.royals.edunotes._fragment_profile;
+package com.royal.edunotes._fragment_profile;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,10 +13,10 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.baoyz.widget.PullRefreshLayout;
-import com.royals.edunotes.R;
-import com.royals.edunotes._activities.BookmarkHackListActivity;
-import com.royals.edunotes._adapters.BookMarkAdapter;
-import com.royals.edunotes._models.bookmarkModel;
+import com.royal.edunotes.R;
+import com.royal.edunotes._activities.BookmarkHackListActivity;
+import com.royal.edunotes._adapters.BookMarkAdapter;
+import com.royal.edunotes._models.bookmarkModel;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.royals.edunotes._fragments;
+package com.royal.edunotes._fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -15,9 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.royals.edunotes.R;
-import com.royals.edunotes._fragment_profile.Bookmark;
-import com.royals.edunotes._fragment_profile.MyHack;
+import com.royal.edunotes.R;
+import com.royal.edunotes._fragment_profile.Bookmark;
+import com.royal.edunotes._fragment_profile.MyHack;
 
 import java.util.ArrayList;
 import java.util.List;

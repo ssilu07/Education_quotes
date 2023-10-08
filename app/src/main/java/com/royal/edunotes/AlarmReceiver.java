@@ -1,4 +1,4 @@
-package com.royals.edunotes;
+package com.royal.edunotes;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -9,7 +9,7 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import androidx.annotation.RequiresApi;
 
-import com.royals.edunotes._activities.MainActivity;
+import com.royal.edunotes._activities.MainActivity;
 
 import java.util.Random;
 

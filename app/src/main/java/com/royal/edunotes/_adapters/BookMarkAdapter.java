@@ -1,4 +1,4 @@
-package com.royals.edunotes._adapters;
+package com.royal.edunotes._adapters;
 
 import android.content.Context;
 import androidx.recyclerview.widget.RecyclerView;
@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.royals.edunotes.R;
-import com.royals.edunotes._models.bookmarkModel;
+import com.royal.edunotes.R;
+import com.royal.edunotes._models.bookmarkModel;
 
 import java.util.List;
 

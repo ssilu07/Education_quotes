@@ -1,4 +1,4 @@
-package com.royals.edunotes._activities;
+package com.royal.edunotes._activities;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

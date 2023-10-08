@@ -1,4 +1,4 @@
-package com.royals.edunotes._database;
+package com.royal.edunotes._database;
 
 /**
  * Created by Admin on 18-06-2018.

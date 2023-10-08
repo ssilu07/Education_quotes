@@ -1,4 +1,4 @@
-package com.royals.edunotes;
+package com.royal.edunotes;
 
 import android.app.AlarmManager;
 import android.app.NotificationManager;

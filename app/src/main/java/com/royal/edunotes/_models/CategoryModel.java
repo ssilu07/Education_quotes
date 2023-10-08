@@ -1,4 +1,4 @@
-package com.royals.edunotes._models;
+package com.royal.edunotes._models;
 
 /**
  * Created by Admin on 20-03-2018.

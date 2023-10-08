@@ -1,4 +1,4 @@
-package com.royals.edunotes._adapters;
+package com.royal.edunotes._adapters;
 
 import android.content.Context;
 import androidx.viewpager.widget.PagerAdapter;
@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.royals.edunotes.R;
+import com.royal.edunotes.R;
 
 
 /**

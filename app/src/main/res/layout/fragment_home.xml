@@ -5,7 +5,7 @@
     android:layout_gravity="bottom"
     android:background="#fff"
 
-    tools:context="com.royals.edunotes._fragments.HomeFragment">
+    tools:context="com.royal.edunotes._fragments.HomeFragment">
 
     <FrameLayout
 

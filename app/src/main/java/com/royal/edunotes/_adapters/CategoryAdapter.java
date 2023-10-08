@@ -1,4 +1,4 @@
-package com.royals.edunotes._adapters;
+package com.royal.edunotes._adapters;
 
 /**
  * Created by Admin on 20-03-2018.
@@ -14,8 +14,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.royals.edunotes.R;
-import com.royals.edunotes._models.CategoryModel;
+import com.royal.edunotes.R;
+import com.royal.edunotes._models.CategoryModel;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.royals.edunotes._fragment_profile;
+package com.royal.edunotes._fragment_profile;
 
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.royals.edunotes.R;
+import com.royal.edunotes.R;
 
 
 public class MyHack extends Fragment {

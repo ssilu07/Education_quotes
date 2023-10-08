@@ -1,4 +1,4 @@
-package com.royals.edunotes._database;
+package com.royal.edunotes._database;
 
 /**
  * Created by Admin on 21-06-2018.
@@ -9,7 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 
-import com.royals.edunotes._models.QuoteModel;
+import com.royal.edunotes._models.QuoteModel;
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
 import java.util.ArrayList;

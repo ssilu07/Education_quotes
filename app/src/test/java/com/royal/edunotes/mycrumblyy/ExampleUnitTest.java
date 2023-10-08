@@ -1,4 +1,4 @@
-package com.royals.edunotes.mycrumblyy;
+package com.royal.edunotes.mycrumblyy;
 
 import org.junit.Test;
 

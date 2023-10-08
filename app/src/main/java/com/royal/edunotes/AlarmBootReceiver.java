@@ -1,4 +1,4 @@
-package com.royals.edunotes;
+package com.royal.edunotes;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

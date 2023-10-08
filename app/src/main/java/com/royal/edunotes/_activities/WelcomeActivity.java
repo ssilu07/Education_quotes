@@ -1,4 +1,4 @@
-package com.royals.edunotes._activities;
+package com.royal.edunotes._activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -21,8 +21,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import com.royals.edunotes.R;
-import com.royals.edunotes.PrefManager;
+import com.royal.edunotes.R;
+import com.royal.edunotes.PrefManager;
 
 public class WelcomeActivity extends AppCompatActivity {
 

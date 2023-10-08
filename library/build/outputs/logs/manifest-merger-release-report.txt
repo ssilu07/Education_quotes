@@ -1,35 +1,25 @@
 -- Merging decision tree log ---
 manifest
-ADDED from E:\Crumblyy\library\src\main\AndroidManifest.xml:18:1-64
-INJECTED from E:\Crumblyy\library\src\main\AndroidManifest.xml:18:1-64
-INJECTED from E:\Crumblyy\library\src\main\AndroidManifest.xml:18:1-64
-INJECTED from E:\Crumblyy\library\src\main\AndroidManifest.xml:18:1-64
-INJECTED from E:\Crumblyy\library\src\main\AndroidManifest.xml:18:1-64
-INJECTED from E:\Crumblyy\library\src\main\AndroidManifest.xml:18:1-64
-INJECTED from E:\Crumblyy\library\src\main\AndroidManifest.xml:18:1-64
+ADDED from C:\SoftProjects\VocabSwap\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml:18:1-64
+INJECTED from C:\SoftProjects\VocabSwap\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml:18:1-64
+INJECTED from C:\SoftProjects\VocabSwap\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml:18:1-64
 	package
-		ADDED from E:\Crumblyy\library\src\main\AndroidManifest.xml:18:11-61
-		INJECTED from E:\Crumblyy\library\src\main\AndroidManifest.xml
-		INJECTED from E:\Crumblyy\library\src\main\AndroidManifest.xml
-	android:versionName
-		INJECTED from E:\Crumblyy\library\src\main\AndroidManifest.xml
-		ADDED from E:\Crumblyy\library\src\main\AndroidManifest.xml:18:1-64
-		INJECTED from E:\Crumblyy\library\src\main\AndroidManifest.xml
-	android:versionCode
-		INJECTED from E:\Crumblyy\library\src\main\AndroidManifest.xml
-		ADDED from E:\Crumblyy\library\src\main\AndroidManifest.xml:18:1-64
-		INJECTED from E:\Crumblyy\library\src\main\AndroidManifest.xml
+		ADDED from C:\SoftProjects\VocabSwap\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml:18:11-61
+		INJECTED from C:\SoftProjects\VocabSwap\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml
+		INJECTED from C:\SoftProjects\VocabSwap\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from C:\SoftProjects\VocabSwap\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml:18:1-64
 uses-sdk
-INJECTED from E:\Crumblyy\library\src\main\AndroidManifest.xml reason: use-sdk injection requested
-INJECTED from E:\Crumblyy\library\src\main\AndroidManifest.xml
-INJECTED from E:\Crumblyy\library\src\main\AndroidManifest.xml
-INJECTED from E:\Crumblyy\library\src\main\AndroidManifest.xml
-INJECTED from E:\Crumblyy\library\src\main\AndroidManifest.xml
+INJECTED from C:\SoftProjects\VocabSwap\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from C:\SoftProjects\VocabSwap\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml
+INJECTED from C:\SoftProjects\VocabSwap\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml
+INJECTED from C:\SoftProjects\VocabSwap\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml
+INJECTED from C:\SoftProjects\VocabSwap\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml
 	android:targetSdkVersion
-		INJECTED from E:\Crumblyy\library\src\main\AndroidManifest.xml
-		ADDED from E:\Crumblyy\library\src\main\AndroidManifest.xml
-		INJECTED from E:\Crumblyy\library\src\main\AndroidManifest.xml
+		INJECTED from C:\SoftProjects\VocabSwap\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml
+		ADDED from C:\SoftProjects\VocabSwap\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml
+		INJECTED from C:\SoftProjects\VocabSwap\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml
 	android:minSdkVersion
-		INJECTED from E:\Crumblyy\library\src\main\AndroidManifest.xml
-		ADDED from E:\Crumblyy\library\src\main\AndroidManifest.xml
-		INJECTED from E:\Crumblyy\library\src\main\AndroidManifest.xml
+		INJECTED from C:\SoftProjects\VocabSwap\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml
+		ADDED from C:\SoftProjects\VocabSwap\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml
+		INJECTED from C:\SoftProjects\VocabSwap\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml

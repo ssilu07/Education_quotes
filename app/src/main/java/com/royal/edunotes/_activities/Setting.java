@@ -1,11 +1,11 @@
-package com.royals.edunotes._activities;
+package com.royal.edunotes._activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
 
-import com.royals.edunotes.R;
+import com.royal.edunotes.R;
 
 
 public class Setting extends AppCompatActivity {

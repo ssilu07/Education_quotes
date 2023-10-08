@@ -1,38 +1,33 @@
-package com.royals.edunotes._activities;
+package com.royal.edunotes._activities;
 
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.core.view.MenuItemCompat;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import androidx.appcompat.widget.SearchView;
+
 import androidx.appcompat.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
+
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.royals.edunotes.R;
-import com.royals.edunotes.CustomViewPager;
-import com.royals.edunotes.NotificationHelper;
-import com.royals.edunotes.Utility;
-import com.royals.edunotes._database.DatabaseHelper;
-import com.royals.edunotes._fragments.BookmarkFragment;
-import com.royals.edunotes._fragments.HomeFragment;
-import com.royals.edunotes._fragments.LatestFragment;
-import com.royals.edunotes._fragments.ProfileFragment;
-import com.royals.edunotes._fragments.TrendingFragment;
+import com.royal.edunotes.R;
+import com.royal.edunotes.CustomViewPager;
+import com.royal.edunotes.NotificationHelper;
+import com.royal.edunotes._database.DatabaseHelper;
+import com.royal.edunotes._fragments.BookmarkFragment;
+import com.royal.edunotes._fragments.HomeFragment;
+import com.royal.edunotes._fragments.LatestFragment;
+import com.royal.edunotes._fragments.ProfileFragment;
+import com.royal.edunotes._fragments.TrendingFragment;
 
 import java.util.ArrayList;
 import java.util.List;

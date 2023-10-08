@@ -1,4 +1,4 @@
-package com.royals.edunotes._fragments;
+package com.royal.edunotes._fragments;
 
 import android.content.Context;
 import android.content.Intent;
@@ -21,11 +21,11 @@ import com.baoyz.widget.PullRefreshLayout;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
-import com.royals.edunotes.Utility;
-import com.royals.edunotes._activities.HackList;
-import com.royals.edunotes._models.CategoryModel;
-import com.royals.edunotes._adapters.CategoryAdapter;
-import com.royals.edunotes.R;
+import com.royal.edunotes.Utility;
+import com.royal.edunotes._activities.HackList;
+import com.royal.edunotes._models.CategoryModel;
+import com.royal.edunotes._adapters.CategoryAdapter;
+import com.royal.edunotes.R;
 
 import java.util.ArrayList;
 import java.util.List;
