@@ -65,7 +65,7 @@ public class VerticlePagerAdapter extends PagerAdapter {
         final ImageView star = (ImageView) itemView.findViewById(R.id.star);
 
         hackTxt.setText(quoteModels.get(position).getQuote());
-        titleTxt.setText(quoteModels.get(position).getCategoryName());
+ //       titleTxt.setText(quoteModels.get(position).getCategoryName());
 
 
         for(int i =0;i<modelDatabases.size();i++){
@@ -128,7 +128,8 @@ public class VerticlePagerAdapter extends PagerAdapter {
 
         void onCopyClick(QuoteModel CategoryModel);
 
-        void onShareClick(QuoteModel CategoryModel);
+        void
+        onShareClick(QuoteModel CategoryModel);
 
         void onMoreAppsClick();
     }

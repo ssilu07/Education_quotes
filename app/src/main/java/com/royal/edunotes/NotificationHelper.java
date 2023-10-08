@@ -44,7 +44,7 @@ public class NotificationHelper {
         //Setting intent to class where Alarm broadcast message will be handled
         Intent intent = new Intent(context, AlarmReceiver.class);
         //Setting alarm pending intent
-        alarmIntentRTC = PendingIntent.getBroadcast(context, ALARM_TYPE_RTC, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmIntentRTC = PendingIntent.getBroadcast(context, ALARM_TYPE_RTC, intent, PendingIntent.FLAG_IMMUTABLE);
 
         //getting instance of AlarmManager service
         alarmManagerRTC = (AlarmManager)context.getSystemService(ALARM_SERVICE);

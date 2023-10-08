@@ -34,7 +34,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         //Pending intent to handle launch of Activity in intent above
         PendingIntent pendingIntent =
-                PendingIntent.getActivity(context, NotificationHelper.ALARM_TYPE_RTC, intentToRepeat, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.getActivity(context, NotificationHelper.ALARM_TYPE_RTC, intentToRepeat, PendingIntent.FLAG_IMMUTABLE);
 
         //Build notification
         Notification repeatedNotification = buildLocalNotification(context, pendingIntent).build();
@@ -52,7 +52,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                         .setContentText(random)
                         .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.qwerty))
                         .setSmallIcon(R.mipmap.qwerty)
-                        .setContentTitle("20000+ Best Quotes")
+                        .setContentTitle("English Vocab")
                         .setAutoCancel(true);
 
         return builder;

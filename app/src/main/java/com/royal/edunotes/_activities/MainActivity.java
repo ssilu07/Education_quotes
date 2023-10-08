@@ -41,7 +41,7 @@ import devlight.io.library.ntb.NavigationTabBar;
 
 public class MainActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener,
         TrendingFragment.OnFragmentInteractionListener, LatestFragment.OnFragmentInteractionListener,
-        ProfileFragment.OnFragmentInteractionListener, BookmarkFragment.OnFragmentInteractionListener, SearchView.OnQueryTextListener {
+        ProfileFragment.OnFragmentInteractionListener, BookmarkFragment.OnFragmentInteractionListener/*, SearchView.OnQueryTextListener */{
     private Toolbar mToolbar;
     boolean first = true;
     boolean second = true;
@@ -248,7 +248,8 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
 
     }
 
-    @Override
+    //Todo For Search Icon Commente
+  /*  @Override
     public boolean onQueryTextSubmit(String query) {
         Log.e("TAG===", "STR : " + query);
         Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
@@ -260,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
     @Override
     public boolean onQueryTextChange(String newText) {
         return false;
-    }
+    }*/
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
@@ -291,7 +292,9 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
     }
 
 
-    @Override
+    //Todo For Search Icon Comment
+
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -302,7 +305,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         searchView.setOnQueryTextListener(this);
 
         return true;
-    }
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
