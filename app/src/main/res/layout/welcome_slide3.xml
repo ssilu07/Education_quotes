@@ -12,9 +12,9 @@
         android:orientation="vertical">
 
         <ImageView
-            android:layout_width="@dimen/img_width_height"
-            android:layout_height="@dimen/img_width_height"
-            android:src="@drawable/catbookmark" />
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:src="@drawable/bookmark_ic" />
         <Space
             android:layout_width="match_parent"
             android:layout_height="20dp" />

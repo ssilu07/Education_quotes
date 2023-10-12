@@ -20,7 +20,7 @@ import android.widget.ProgressBar;
 import com.baoyz.widget.PullRefreshLayout;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.InterstitialAd;
+//import com.google.android.gms.ads.InterstitialAd;
 import com.royal.edunotes.Utility;
 import com.royal.edunotes._activities.HackList;
 import com.royal.edunotes._models.CategoryModel;
@@ -43,7 +43,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.CategoryCl
     GridLayoutManager manager;
     private OnFragmentInteractionListener mListener;
     private Menu menu = null;
-    InterstitialAd mInterstitialAd;
+  //  InterstitialAd mInterstitialAd;
     public HomeFragment() {
     }
 
@@ -172,18 +172,18 @@ public class HomeFragment extends Fragment implements CategoryAdapter.CategoryCl
         startActivity(intent);
 
 
-        mInterstitialAd = new InterstitialAd(getActivity());
+       // mInterstitialAd = new InterstitialAd(getActivity());
 
         // set the ad unit ID
-        mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen));
+      //  mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen));
 
         AdRequest adRequest = new AdRequest.Builder()
                 .build();
 
         // Load ads into Interstitial Ads
-        mInterstitialAd.loadAd(adRequest);
+     //   mInterstitialAd.loadAd(adRequest);
 
-        mInterstitialAd.setAdListener(new AdListener() {
+     /*   mInterstitialAd.setAdListener(new AdListener() {
             public void onAdLoaded() {
                 showInterstitial();
             }
@@ -193,14 +193,14 @@ public class HomeFragment extends Fragment implements CategoryAdapter.CategoryCl
                 super.onAdFailedToLoad(i);
                 Log.e("TAG===", "Error ad :" + i);
             }
-        });
+        });*/
     }
 
-    private void showInterstitial() {
+   /* private void showInterstitial() {
         if (mInterstitialAd.isLoaded()) {
             mInterstitialAd.show();
         }
-    }
+    }*/
 
 
     public interface OnFragmentInteractionListener {

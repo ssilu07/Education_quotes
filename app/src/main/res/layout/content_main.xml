@@ -67,6 +67,7 @@
                     android:gravity="center_horizontal"
                     android:padding="1dp"
                     android:textColor="@android:color/black"
+                    android:textStyle="bold"
                     android:text="Stop using Google.com to search information for school essays. Use scholar.google.com instead. You will find information right away!"
                     android:textSize="25sp" />
 
@@ -102,8 +103,6 @@
 
 
                 </LinearLayout>
-
-
                 <LinearLayout
                     android:id="@+id/starLL"
                     android:gravity="center"

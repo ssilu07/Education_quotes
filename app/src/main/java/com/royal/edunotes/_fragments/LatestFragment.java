@@ -18,7 +18,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.InterstitialAd;
+//import com.google.android.gms.ads.InterstitialAd;
 import com.royal.edunotes.R;
 import com.royal.edunotes.VerticalViewPager;
 import com.royal.edunotes._adapters.VerticlePagerAdapter;
@@ -42,7 +42,7 @@ public class LatestFragment extends Fragment implements VerticlePagerAdapter.Cli
     ArrayList<QuoteModel> mainQuoteModels;
     MyDatabase myDatabase;
     VerticlePagerAdapter verticlePagerAdapter;
-    InterstitialAd mInterstitialAd;
+    //InterstitialAd mInterstitialAd;
 
     public LatestFragment() {
     }
@@ -152,7 +152,7 @@ public class LatestFragment extends Fragment implements VerticlePagerAdapter.Cli
         Log.e("TAGGG ===", quoteModel.getCategoryName());
 
 
-        mInterstitialAd = new InterstitialAd(getActivity());
+     /*   mInterstitialAd = new InterstitialAd(getActivity());
 
         // set the ad unit ID
         mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen));
@@ -173,7 +173,7 @@ public class LatestFragment extends Fragment implements VerticlePagerAdapter.Cli
                 super.onAdFailedToLoad(i);
                 Log.e("TAG===", "Error ad :" + i);
             }
-        });
+        });*/
 
 
         if (quoteModel.isBookmared()) {
@@ -208,11 +208,11 @@ public class LatestFragment extends Fragment implements VerticlePagerAdapter.Cli
         }
     }
 
-    private void showInterstitial() {
+   /* private void showInterstitial() {
         if (mInterstitialAd.isLoaded()) {
             mInterstitialAd.show();
         }
-    }
+    }*/
 
     @Override
     public void onCopyClick(QuoteModel quoteModel) {
@@ -234,9 +234,11 @@ public class LatestFragment extends Fragment implements VerticlePagerAdapter.Cli
     @Override
     public void onMoreAppsClick() {
         try {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=Hirvasoft")));
+          //  startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=Royal%27s+Family")));
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.royals.englishtrickyvocab")));
+
         } catch (android.content.ActivityNotFoundException anfe) {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/search?q=pub:Hirvasoft")));
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.royals.englishtrickyvocab")));
         }
     }
 

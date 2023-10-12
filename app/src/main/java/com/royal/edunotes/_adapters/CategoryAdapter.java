@@ -94,7 +94,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
 //        builder.build().load(model.getImageUrl()).into(holder.icon);
 
         firstcolor = context.getResources().getStringArray(R.array.firstcolor);
-        secondcolor = context.getResources().getStringArray(R.array.firstcolor);
+        secondcolor = context.getResources().getStringArray(R.array.secondcolor);
 
 
         if (categoryList.size() > firstcolor.length) {

@@ -18,7 +18,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.InterstitialAd;
+//import com.google.android.gms.ads.InterstitialAd;
 import com.royal.edunotes.R;
 import com.royal.edunotes.VerticalViewPager;
 import com.royal.edunotes._adapters.VerticlePagerAdapter;
@@ -42,7 +42,7 @@ public class TrendingFragment extends Fragment implements VerticlePagerAdapter.C
     private OnFragmentInteractionListener mListener;
     DatabaseHelper db;
     VerticlePagerAdapter verticlePagerAdapter;
-    InterstitialAd mInterstitialAd;
+    //InterstitialAd mInterstitialAd;
     public TrendingFragment() {
     }
 
@@ -146,7 +146,7 @@ public class TrendingFragment extends Fragment implements VerticlePagerAdapter.C
 
 
 
-        mInterstitialAd = new InterstitialAd(getActivity());
+     /*   mInterstitialAd = new InterstitialAd(getActivity());
 
         // set the ad unit ID
         mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen));
@@ -167,7 +167,7 @@ public class TrendingFragment extends Fragment implements VerticlePagerAdapter.C
                 super.onAdFailedToLoad(i);
                 Log.e("TAG===", "Error ad :" + i);
             }
-        });
+        });*/
 
 
 
@@ -204,11 +204,11 @@ public class TrendingFragment extends Fragment implements VerticlePagerAdapter.C
 
         }
     }
-    private void showInterstitial() {
+   /* private void showInterstitial() {
         if (mInterstitialAd.isLoaded()) {
             mInterstitialAd.show();
         }
-    }
+    }*/
 
     @Override
     public void onCopyClick(QuoteModel quoteModel) {
@@ -230,9 +230,11 @@ public class TrendingFragment extends Fragment implements VerticlePagerAdapter.C
     @Override
     public void onMoreAppsClick() {
         try {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=Hirvasoft")));
+          //  startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=Royal%27s+Family")));
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.royals.englishtrickyvocab")));
+
         } catch (android.content.ActivityNotFoundException anfe) {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/search?q=pub:Hirvasoft")));
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.royals.englishtrickyvocab")));
         }
     }
 

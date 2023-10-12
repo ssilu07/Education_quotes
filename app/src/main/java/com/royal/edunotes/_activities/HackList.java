@@ -1,5 +1,6 @@
 package com.royal.edunotes._activities;
 
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
@@ -10,12 +11,17 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.FullScreenContentCallback;
+import com.google.android.gms.ads.OnPaidEventListener;
+import com.google.android.gms.ads.ResponseInfo;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.royal.edunotes.R;
 import com.royal.edunotes.Utility;
 import com.royal.edunotes.VerticalViewPager;
@@ -106,9 +112,53 @@ public class HackList extends AppCompatActivity implements VerticlePagerAdapter.
         Log.e("TAGGG ===",quoteModel.getCategoryName());
 
 
-        mInterstitialAd = new InterstitialAd(HackList.this);
+        mInterstitialAd = new InterstitialAd() {
+            @NonNull
+            @Override
+            public String getAdUnitId() {
+                return null;
+            }
 
-        // set the ad unit ID
+            @Override
+            public void show(@NonNull Activity activity) {
+
+            }
+
+            @Override
+            public void setFullScreenContentCallback(@Nullable FullScreenContentCallback fullScreenContentCallback) {
+
+            }
+
+            @Nullable
+            @Override
+            public FullScreenContentCallback getFullScreenContentCallback() {
+                return null;
+            }
+
+            @Override
+            public void setImmersiveMode(boolean b) {
+
+            }
+
+            @NonNull
+            @Override
+            public ResponseInfo getResponseInfo() {
+                return null;
+            }
+
+            @Override
+            public void setOnPaidEventListener(@Nullable OnPaidEventListener onPaidEventListener) {
+
+            }
+
+            @Nullable
+            @Override
+            public OnPaidEventListener getOnPaidEventListener() {
+                return null;
+            }
+        };
+
+      /*  // set the ad unit ID
         mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen));
 
         AdRequest adRequest = new AdRequest.Builder()
@@ -129,7 +179,7 @@ public class HackList extends AppCompatActivity implements VerticlePagerAdapter.
             }
         });
 
-
+*/
 
         if (quoteModel.isBookmared()) {
 //            Remove from bookmark table
@@ -166,11 +216,11 @@ public class HackList extends AppCompatActivity implements VerticlePagerAdapter.
 
         }
     }
-    private void showInterstitial() {
+    /*private void showInterstitial() {
         if (mInterstitialAd.isLoaded()) {
             mInterstitialAd.show();
         }
-    }
+    }*/
 
     @Override
     public void onCopyClick(QuoteModel quoteModel) {
@@ -192,9 +242,11 @@ public class HackList extends AppCompatActivity implements VerticlePagerAdapter.
     @Override
     public void onMoreAppsClick() {
         try {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=Hirvasoft")));
+          //  startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=Hirvasoft")));
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.royals.englishtrickyvocab")));
+
         } catch (android.content.ActivityNotFoundException anfe) {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/search?q=pub:Hirvasoft")));
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.royals.englishtrickyvocab")));
         }
     }
 }

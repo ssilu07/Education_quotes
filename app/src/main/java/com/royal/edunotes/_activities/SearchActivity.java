@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.InterstitialAd;
+//import com.google.android.gms.ads.InterstitialAd;
 import com.royal.edunotes.R;
 import com.royal.edunotes.Utility;
 import com.royal.edunotes.VerticalViewPager;
@@ -36,7 +36,7 @@ public class SearchActivity extends AppCompatActivity implements VerticlePagerAd
     DatabaseHelper db;
     VerticlePagerAdapter verticlePagerAdapter;
     TextView nodata,resultTv;
-    InterstitialAd mInterstitialAd;
+  //  InterstitialAd mInterstitialAd;
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -116,7 +116,7 @@ public class SearchActivity extends AppCompatActivity implements VerticlePagerAd
         Log.e("TAGGG ===",quoteModel.getCategoryName());
 
 
-        mInterstitialAd = new InterstitialAd(SearchActivity.this);
+      /*  mInterstitialAd = new InterstitialAd(SearchActivity.this);
 
         // set the ad unit ID
         mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen));
@@ -138,7 +138,7 @@ public class SearchActivity extends AppCompatActivity implements VerticlePagerAd
                 Log.e("TAG===", "Error ad :" + i);
             }
         });
-
+*/
 
 
         if (quoteModel.isBookmared()) {
@@ -176,11 +176,11 @@ public class SearchActivity extends AppCompatActivity implements VerticlePagerAd
 
         }
     }
-    private void showInterstitial() {
+   /* private void showInterstitial() {
         if (mInterstitialAd.isLoaded()) {
             mInterstitialAd.show();
         }
-    }
+    }*/
 
     @Override
     public void onCopyClick(QuoteModel quoteModel) {

@@ -2,7 +2,7 @@
 
     <string name="interstitial_full_screen">ca-app-pub-2293121401505613/1100644120</string>
 
-    <string name="app_name">Vocab Swap</string>
+    <string name="app_name">Vocab Tricks Reels</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -12,11 +12,12 @@
     <string name="skip">SKIP</string>
     <string name="start">GOT IT</string>
 
-    <string name="slide_1_title">Hello Reader!</string>
+    <string name="slide_1_title">Hello Learners</string>
     <string name="slide_1_desc">Find Best Vocabs For All Government Exams</string>
 
     <string name="slide_2_title">Many Categories</string>
-    <string name="slide_2_desc">SSC,Bank,IB,Railway,GRE,GMAT,IELTS</string>
+    <string name="slide_2_desc">Synonyms: Words that have similar meanings.</string>
+    <string name="slide_3_desc_cat">Antonyms: Words that have opposite meanings.</string>
 
     <string name="slide_4_title">Share Vocab</string>
     <string name="slide_4_desc">Share your favourite Vocabs with friends, family etc.</string>
