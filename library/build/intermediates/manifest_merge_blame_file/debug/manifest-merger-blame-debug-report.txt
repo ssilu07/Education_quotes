@@ -19,8 +19,8 @@
 19
 20    <uses-sdk
 21        android:minSdkVersion="15"
-21-->C:\SoftProjects\VocabSwap\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml
+21-->C:\Users\Sumit Singh\AndroidStudioProjects\Education_quotes\library\src\main\AndroidManifest.xml
 22        android:targetSdkVersion="26" />
-22-->C:\SoftProjects\VocabSwap\Buyer\project\Crumblyy\library\src\main\AndroidManifest.xml
+22-->C:\Users\Sumit Singh\AndroidStudioProjects\Education_quotes\library\src\main\AndroidManifest.xml
 23
 24</manifest>
