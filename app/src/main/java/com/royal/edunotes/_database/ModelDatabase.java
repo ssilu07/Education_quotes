@@ -11,11 +11,15 @@ public class ModelDatabase {
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_NOTE = "note";
     public static final String COLUMN_TIMESTAMP = "timestamp";
+    public static final String COLUMN_NOTE_VALUE = "notevalue";
+
     public static final String COLUMN_BOOKMARK = "bookmark";
     public static final String COLUMN_CATEGORY = "category";
 
     private int id;
     private String note;
+    private String notevalue;
+
     private String timestamp;
     private String bookmark;
     private String category;
@@ -33,9 +37,10 @@ public class ModelDatabase {
     public ModelDatabase() {
     }
 
-    public ModelDatabase(int id, String note, String timestamp, String bookmark,String category) {
+    public ModelDatabase(int id, String note,String notevalue, String timestamp, String bookmark,String category) {
         this.id = id;
         this.note = note;
+        this.notevalue = notevalue;
         this.timestamp = timestamp;
         this.bookmark = bookmark;
         this.category = category;
@@ -66,6 +71,13 @@ public class ModelDatabase {
 
     public void setNote(String note) {
         this.note = note;
+    }
+    public String getNoteValue() {
+        return notevalue;
+    }
+
+    public void setNoteValue(String notevalue) {
+        this.notevalue = notevalue;
     }
 
     public String getTimestamp() {

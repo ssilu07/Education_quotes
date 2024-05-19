@@ -5,7 +5,8 @@ package com.royal.edunotes._models;
  */
 
 public class QuoteModel {
-    public String quote,timestamp, categoryName;
+    public String quote,timestamp,value, categoryName;
+
     public int id;
 
     public String getBookmark() {
@@ -50,6 +51,13 @@ public class QuoteModel {
 
     public void setQuote(String quote) {
         this.quote = quote;
+    }
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 
     public String getTimestamp() {

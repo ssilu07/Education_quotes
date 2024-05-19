@@ -84,6 +84,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(ModelDatabase.COLUMN_ID, quoteModel.getId());
         values.put(ModelDatabase.COLUMN_NOTE, quoteModel.getQuote());
         values.put(ModelDatabase.COLUMN_TIMESTAMP, quoteModel.getTimestamp());
+        values.put(ModelDatabase.COLUMN_NOTE_VALUE, quoteModel.getValue());
         values.put(ModelDatabase.COLUMN_BOOKMARK, quoteModel.getBookmark());
         values.put(ModelDatabase.COLUMN_CATEGORY, quoteModel.getCategoryName());
 
@@ -101,7 +102,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(ModelDatabase.TABLE_NAME,
-                new String[]{ModelDatabase.COLUMN_ID, ModelDatabase.COLUMN_NOTE, ModelDatabase.COLUMN_TIMESTAMP, ModelDatabase.COLUMN_BOOKMARK, ModelDatabase.COLUMN_CATEGORY},
+                new String[]{ModelDatabase.COLUMN_ID, ModelDatabase.COLUMN_NOTE,ModelDatabase.COLUMN_NOTE_VALUE, ModelDatabase.COLUMN_TIMESTAMP, ModelDatabase.COLUMN_BOOKMARK, ModelDatabase.COLUMN_CATEGORY},
                 ModelDatabase.COLUMN_NOTE + "=?",
                 new String[]{note1}, null, null, null, null);
 
@@ -112,6 +113,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ModelDatabase note = new ModelDatabase(
                 cursor.getInt(cursor.getColumnIndex(ModelDatabase.COLUMN_ID)),
                 cursor.getString(cursor.getColumnIndex(ModelDatabase.COLUMN_NOTE)),
+                cursor.getString(cursor.getColumnIndex(ModelDatabase.COLUMN_NOTE_VALUE)),
                 cursor.getString(cursor.getColumnIndex(ModelDatabase.COLUMN_TIMESTAMP)),
                 cursor.getString(cursor.getColumnIndex(ModelDatabase.COLUMN_BOOKMARK)),
                 cursor.getString(cursor.getColumnIndex(ModelDatabase.COLUMN_CATEGORY))
@@ -148,6 +150,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ModelDatabase note = new ModelDatabase();
                 note.setId(cursor.getInt(cursor.getColumnIndex(ModelDatabase.COLUMN_ID)));
                 note.setNote(cursor.getString(cursor.getColumnIndex(ModelDatabase.COLUMN_NOTE)));
+                note.setNote(cursor.getString(cursor.getColumnIndex(ModelDatabase.COLUMN_NOTE_VALUE)));
                 note.setTimestamp(cursor.getString(cursor.getColumnIndex(ModelDatabase.COLUMN_TIMESTAMP)));
                 note.setTimestamp(cursor.getString(cursor.getColumnIndex(ModelDatabase.COLUMN_BOOKMARK)));
                 note.setTimestamp(cursor.getString(cursor.getColumnIndex(ModelDatabase.COLUMN_CATEGORY)));
@@ -182,6 +185,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ModelDatabase note = new ModelDatabase();
                 note.setId(cursor.getInt(cursor.getColumnIndex(ModelDatabase.COLUMN_ID)));
                 note.setNote(cursor.getString(cursor.getColumnIndex(ModelDatabase.COLUMN_NOTE)));
+                note.setNote(cursor.getString(cursor.getColumnIndex(ModelDatabase.COLUMN_NOTE_VALUE)));
                 note.setTimestamp(cursor.getString(cursor.getColumnIndex(ModelDatabase.COLUMN_TIMESTAMP)));
                 note.setTimestamp(cursor.getString(cursor.getColumnIndex(ModelDatabase.COLUMN_BOOKMARK)));
                 note.setTimestamp(cursor.getString(cursor.getColumnIndex(ModelDatabase.COLUMN_CATEGORY)));

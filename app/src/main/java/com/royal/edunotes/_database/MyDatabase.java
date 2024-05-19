@@ -21,6 +21,8 @@ public class MyDatabase extends SQLiteAssetHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String ID = "id";
     private static final String QUOTE = "quote";
+    private static final String VALUE = "value";
+
     private static final String TIMESTAMP = "timestamp";
     public static final String TABLE_NAME = "inspiring_life_quote";
 
@@ -32,6 +34,7 @@ public class MyDatabase extends SQLiteAssetHelper {
     public static final String CATEGORY = "category";
 
     public static final String NOTE = "note";
+    public static final String NOTEVALUE = "notevalue";
 
 
 
@@ -63,6 +66,8 @@ public class MyDatabase extends SQLiteAssetHelper {
             QuoteModel questions = new QuoteModel();
             questions.id = cursor.getInt(cursor.getColumnIndex(MyDatabase.ID));
             questions.quote = cursor.getString(cursor.getColumnIndex(MyDatabase.NOTE));
+            questions.value = cursor.getString(cursor.getColumnIndex(MyDatabase.NOTEVALUE));
+
             questions.timestamp = cursor.getString(cursor.getColumnIndex(MyDatabase.TIMESTAMP));
             questions.categoryName = cursor.getString(cursor.getColumnIndex(MyDatabase.CATEGORY));
             questions.bookmark = cursor.getString(cursor.getColumnIndex(MyDatabase.BOOKMARK));
@@ -77,7 +82,7 @@ public class MyDatabase extends SQLiteAssetHelper {
 
 
         SQLiteDatabase db = getWritableDatabase();
-        String[] columns = {MyDatabase.ID, MyDatabase.QUOTE, MyDatabase.TIMESTAMP};
+        String[] columns = {MyDatabase.ID, MyDatabase.QUOTE,MyDatabase.VALUE, MyDatabase.TIMESTAMP};
 //        String[] selectionArgs={categoryId+"",subjectId+"",yearId+""};
         Cursor cursor = db.query(MyDatabase.TABLE_NAME, columns, null, null, null, null, null);
 //        Cursor cursor=db.query(MyDatabase.TABLE_NAME, columns, null,null, null, null, null);
@@ -87,6 +92,7 @@ public class MyDatabase extends SQLiteAssetHelper {
             QuoteModel questions = new QuoteModel();
             questions.id = cursor.getInt(cursor.getColumnIndex(MyDatabase.ID));
             questions.quote = cursor.getString(cursor.getColumnIndex(MyDatabase.QUOTE));
+            questions.value = cursor.getString(cursor.getColumnIndex(MyDatabase.VALUE));
             questions.timestamp = cursor.getString(cursor.getColumnIndex(MyDatabase.TIMESTAMP));
             questions.categoryName = categoryName;
             questionsArrayList.add(questions);
@@ -107,6 +113,7 @@ public class MyDatabase extends SQLiteAssetHelper {
             QuoteModel questions = new QuoteModel();
             questions.id = cursor.getInt(cursor.getColumnIndex(MyDatabase.ID));
             questions.quote = cursor.getString(cursor.getColumnIndex(MyDatabase.NOTE));
+            questions.value = cursor.getString(cursor.getColumnIndex(MyDatabase.NOTEVALUE));
             questions.timestamp = cursor.getString(cursor.getColumnIndex(MyDatabase.TIMESTAMP));
             questions.categoryName = cursor.getString(cursor.getColumnIndex(MyDatabase.CATEGORY));
             questions.bookmark = cursor.getString(cursor.getColumnIndex(MyDatabase.BOOKMARK));

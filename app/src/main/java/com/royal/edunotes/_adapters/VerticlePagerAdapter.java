@@ -4,6 +4,7 @@ import android.content.Context;
 import androidx.viewpager.widget.PagerAdapter;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import com.royal.edunotes.R;
 import com.royal.edunotes._database.DatabaseHelper;
 import com.royal.edunotes._database.ModelDatabase;
 import com.royal.edunotes._models.QuoteModel;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -58,6 +60,7 @@ public class VerticlePagerAdapter extends PagerAdapter {
 
         TextView titleTxt = (TextView) itemView.findViewById(R.id.title);
         TextView hackTxt = (TextView) itemView.findViewById(R.id.hackText);
+        ImageView hackTxt2 = (ImageView) itemView.findViewById(R.id.hackText2);
 
 
         LinearLayout copy = (LinearLayout) itemView.findViewById(R.id.copyLL);
@@ -70,6 +73,23 @@ public class VerticlePagerAdapter extends PagerAdapter {
         hackTxt.setText(quoteModels.get(position).getQuote());
  //       titleTxt.setText(quoteModels.get(position).getCategoryName());
 
+        String url = quoteModels.get(position).getValue();
+
+        if (url != null) {
+            Picasso.get().load(url).into(hackTxt2);
+        }
+
+        int[] colors = {Color.rgb(36, 7, 80),Color.rgb(255, 0, 128), Color.rgb(50, 1, 47), Color.rgb(249, 115, 0), Color.rgb(27, 66, 66), Color.rgb(64, 165, 120), Color.rgb(100, 13, 107), Color.rgb(181, 27, 117), Color.rgb(0, 0, 0)};
+        int randomIndex = (int) (Math.random() * colors.length);
+        int randomColor = colors[randomIndex];
+
+
+        //       titleTxt.setText(quoteModels.get(position).getCategoryName());
+
+
+
+// Set the text color of the TextView to the random color
+        hackTxt.setTextColor(randomColor);
 
         for(int i =0;i<modelDatabases.size();i++){
 
@@ -85,6 +105,22 @@ public class VerticlePagerAdapter extends PagerAdapter {
             }
 
         }
+
+        for(int i =0;i<modelDatabases.size();i++){
+
+            if(quoteModels.get(position).getValue().equals(modelDatabases.get(i).getNote())){
+                quoteModels.get(position).setBookmark("1");
+                quoteModels.get(position).setBookmared(true);
+                break;
+            }else{
+
+                quoteModels.get(position).setBookmark("0");
+                quoteModels.get(position).setBookmared(false);
+
+            }
+
+        }
+
         if (quoteModels.get(position).isBookmared()) {
             star.setImageResource(R.drawable.starfilled);
         } else {
