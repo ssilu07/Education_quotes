@@ -69,10 +69,10 @@
                     android:layout_weight="0.84"
                     android:gravity="center_horizontal"
                     android:padding="1dp"
+                    android:layout_margin="14dp"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
-                    android:text=""
-                    android:textSize="17sp" />
+                    android:text=""/>
 
                 <TextView
                     android:id="@+id/hackText"
@@ -84,7 +84,7 @@
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
                     android:text="Stop using Google.com to search information for school essays. Use scholar.google.com instead. You will find information right away!"
-                    android:textSize="17sp" />
+                    android:textSize="20sp" />
 
 
 
