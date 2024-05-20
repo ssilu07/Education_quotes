@@ -124,16 +124,16 @@
 
     <!-- Category for quotes .....................................................................-->
     <string-array name="mycat">
-        <item>Vocab 1</item>
-      <!--  <item>Vocab 2</item>
-        <item>Vocab 3</item>
-        <item>Vocab 4</item>
-        <item>Vocab 5</item>
-        <item>Vocab 6</item>
-        <item>Vocab 7</item>
-        <item>Vocab 8</item>
-        <item>Vocab 9</item>
-        <item>Vocab 10</item>-->
+        <item>Chapter 1</item>
+        <item>Chapter 2</item>
+        <item>Chapter 3</item>
+        <item>Chapter 4</item>
+        <item>Chapter 5</item>
+        <item>Chapter 6</item>
+        <item>Chapter 7</item>
+        <item>Chapter 8</item>
+        <item>Chapter 9</item>
+        <item>Chapter 10</item>
        <!-- <item>Powerful Freedom Quotes</item>
         <item>Humanity Quotes</item>
         <item>Simplicity Quotes</item>
@@ -177,7 +177,7 @@
 
     <string-array name="mydb">
         <item>life_quotes</item>
-    <!--    <item>inspirational_quote</item>
+        <item>inspirational_quote</item>
         <item>happiness_quotes</item>
         <item>beautiful_quotes</item>
         <item>change_quote</item>
@@ -185,7 +185,7 @@
         <item>hope_quotes</item>
         <item>travel_quotes</item>
         <item>trust_quotes</item>
-        <item>martin_luther_quotes</item>-->
+        <item>martin_luther_quotes</item>
        <!-- <item>freedom_quotes</item>
         <item>humanity_quotes</item>
         <item>simplicity_quotes</item>

@@ -76,7 +76,11 @@ public class VerticlePagerAdapter extends PagerAdapter {
         String url = quoteModels.get(position).getValue();
 
         if (url != null) {
+            hackTxt2.setVisibility(View.VISIBLE);
             Picasso.get().load(url).into(hackTxt2);
+        } else {
+            hackTxt2.setVisibility(View.GONE);
+
         }
 
         int[] colors = {Color.rgb(36, 7, 80),Color.rgb(255, 0, 128), Color.rgb(50, 1, 47), Color.rgb(249, 115, 0), Color.rgb(27, 66, 66), Color.rgb(64, 165, 120), Color.rgb(100, 13, 107), Color.rgb(181, 27, 117), Color.rgb(0, 0, 0)};
