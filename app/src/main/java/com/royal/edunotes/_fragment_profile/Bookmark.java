@@ -7,12 +7,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
-import com.baoyz.widget.PullRefreshLayout;
 import com.royal.edunotes.R;
 import com.royal.edunotes._activities.BookmarkHackListActivity;
 import com.royal.edunotes._adapters.BookMarkAdapter;
@@ -74,22 +75,19 @@ public class Bookmark extends Fragment implements BookMarkAdapter.BookmarkClickI
         prepareMovieData();
 
 
-        final PullRefreshLayout layout = (PullRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
-        layout.setRefreshStyle(PullRefreshLayout.STYLE_SMARTISAN);
-        layout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // start refresh
+        final SwipeRefreshLayout layout = v.findViewById(R.id.swipeRefreshLayout);
+        layout.setOnRefreshListener(() -> {
+            // start refresh
 
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        layout.setRefreshing(false);
-                    }
-                }, 4000);
-            }
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    layout.setRefreshing(false);
+                }
+            }, 4000); // Refresh for 4 seconds
         });
+
 
 
         return v;

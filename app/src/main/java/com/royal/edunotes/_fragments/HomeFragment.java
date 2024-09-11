@@ -10,6 +10,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,8 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
-import com.baoyz.widget.PullRefreshLayout;
-import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 //import com.google.android.gms.ads.InterstitialAd;
 import com.royal.edunotes.Utility;
@@ -98,22 +98,19 @@ public class HomeFragment extends Fragment implements CategoryAdapter.CategoryCl
         prepareMovieData();
 
 
-        final PullRefreshLayout layout = (PullRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
-        layout.setRefreshStyle(PullRefreshLayout.STYLE_SMARTISAN);
-        layout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // start refresh
+        final SwipeRefreshLayout layout = v.findViewById(R.id.swipeRefreshLayout);
+        layout.setOnRefreshListener(() -> {
+            // start refresh
 
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        layout.setRefreshing(false);
-                    }
-                }, 4000);
-            }
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    layout.setRefreshing(false);
+                }
+            }, 4000); // Refresh for 4 seconds
         });
+
 
 
         return v;
