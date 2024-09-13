@@ -11,6 +11,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.MobileAds;
 import com.royal.edunotes.R;
 import com.royal.edunotes._database.DatabaseHelper;
 import com.royal.edunotes._database.ModelDatabase;
@@ -42,6 +47,9 @@ public class VerticlePagerAdapter extends PagerAdapter {
         this.clickInterface = clickInterface;
         this.modelDatabases = modelDatabases;
         Log.d(TAG, "Adapter instantiated");
+
+        // Initialize AdMob
+        MobileAds.initialize(mContext, initializationStatus -> {});
     }
 
     @Override
@@ -144,8 +152,45 @@ public class VerticlePagerAdapter extends PagerAdapter {
             clickInterface.onMoreAppsClick();
         });
 
+        // Load AdMob Banner
+        AdView adView = itemView.findViewById(R.id.adView); // This is the correct way to get the AdView
+     //   adView.setAdSize(com.google.android.gms.ads.AdSize.BANNER);
+
+        // Retrieve AdUnitId from strings.xml
+        String adUnitId = mContext.getResources().getString(R.string.banner_ad);
+     //   adView.setAdUnitId(adUnitId); // Set the AdUnitId from string resource
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+
+        adView.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                Log.d("AdMob", "Ad Loaded Successfully");
+            }
+
+            @Override
+            public void onAdFailedToLoad(LoadAdError adError) {
+                // Handle the error and log it
+                Log.e("AdMob", "Ad failed to load: " + adError.getMessage());
+            }
+
+            @Override
+            public void onAdOpened() {
+                Log.d("AdMob", "Ad Opened");
+            }
+
+            @Override
+            public void onAdClosed() {
+                Log.d("AdMob", "Ad Closed");
+            }
+        });
+
+
         container.addView(itemView);
         Log.d(TAG, "instantiateItem: itemView added for position " + position);
+
+
 
         return itemView;
     }

@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,9 +17,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 //import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.FullScreenContentCallback;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.royal.edunotes.R;
 import com.royal.edunotes.VerticalViewPager;
 import com.royal.edunotes._adapters.VerticlePagerAdapter;
@@ -42,7 +49,7 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
     ArrayList<QuoteModel> quoteModels;
     TextView nobookmarkTxt;
     VerticalViewPager verticalViewPager;
-    //InterstitialAd mInterstitialAd;
+    InterstitialAd mInterstitialAd;
     public BookmarkFragment() {
     }
     public static BookmarkFragment newInstance(String param1, String param2) {
@@ -61,6 +68,7 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        loadInterstitialAd();
     }
 
     @Override
@@ -99,6 +107,7 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
             verticalViewPager.setAdapter(verticlePagerAdapter);
 
         }
+
 
 
         return v;
@@ -157,6 +166,48 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
         }
     }
 
+    private void loadInterstitialAd(){
+        AdRequest adRequestNew = new AdRequest.Builder().build();
+
+        InterstitialAd.load(getActivity(), getString(R.string.interstitial_full_screen), adRequestNew, new InterstitialAdLoadCallback() {
+            @Override
+            public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                // The interstitial ad was loaded successfully
+                mInterstitialAd = interstitialAd;
+                Log.d("TAG", "New Interstitial Ad Loaded");
+
+                // Set FullScreenContentCallback for ad events
+                mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                    @Override
+                    public void onAdDismissedFullScreenContent() {
+                        // Called when the ad is dismissed
+                        Log.d("TAG", "Ad was dismissed.");
+                        mInterstitialAd = null;  // Reset the interstitial ad after it's dismissed
+                    }
+
+                    @Override
+                    public void onAdFailedToShowFullScreenContent(AdError adError) {
+                        // Called when the ad failed to show
+                        Log.e("TAG", "Ad failed to show.");
+                    }
+
+                    @Override
+                    public void onAdShowedFullScreenContent() {
+                        // Called when the ad is shown
+                        Log.d("TAG", "Ad was shown.");
+                    }
+                });
+            }
+
+            @Override
+            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                Log.e("TAG", "New Ad failed to load: " + loadAdError.getMessage());
+                mInterstitialAd = null;  // Reset the interstitial ad if it fails to load
+            }
+        });
+
+    }
+
     @Override
     public void onBoookmarkClick(QuoteModel quoteModel, ImageView star) {
 
@@ -167,7 +218,7 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
 
 
 
-
+        showInterstitial();
 
        /* mInterstitialAd = new InterstitialAd(getActivity());
 
@@ -230,27 +281,13 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
                 verticalViewPager.setAdapter(verticlePagerAdapter);
 
             }
-
-
-
-
-
-
-
-
             verticlePagerAdapter.notifyDataSetChanged();
-
-
         } else {
 
 //           Add in to bookmark table
-
             db = new DatabaseHelper(getActivity(), quoteModel);
-
             quoteModel.setBookmark("1");
-
             db.insertNote(quoteModel);
-
 
             star.setImageDrawable(getResources().getDrawable(R.drawable.starfilled));
             quoteModel.setBookmared(true);
@@ -263,6 +300,21 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
             mInterstitialAd.show();
         }
     }*/
+
+    // Show the interstitial ad if it's loaded
+    private void showInterstitial() {
+        if (mInterstitialAd != null) {
+            mInterstitialAd.show(getActivity());  // Show the new interstitial ad
+        } else {
+            Log.e("TAG", "No interstitial ad loaded");
+        }
+    }
+
+
+
+
+
+
     @Override
     public void onCopyClick(QuoteModel quoteModel) {
         Toast.makeText(getActivity(), "Copied", Toast.LENGTH_SHORT).show();

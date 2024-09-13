@@ -16,6 +16,10 @@
         android:logo="@drawable/vocab_swap_logo"
         android:theme="@style/AppTheme">
 
+     <!--   <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-1811294933992844~4579242630"/>-->
+        <!--This is use for test ids-->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-3940256099942544~3347511713"/>

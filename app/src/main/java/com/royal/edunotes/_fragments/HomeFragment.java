@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -19,8 +21,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
-//import com.google.android.gms.ads.InterstitialAd;
+
+import com.google.android.gms.ads.FullScreenContentCallback;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.royal.edunotes.Utility;
 import com.royal.edunotes._activities.HackList;
 import com.royal.edunotes._models.CategoryModel;
@@ -43,7 +50,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.CategoryCl
     GridLayoutManager manager;
     private OnFragmentInteractionListener mListener;
     private Menu menu = null;
-  //  InterstitialAd mInterstitialAd;
+    InterstitialAd mInterstitialAd;
     public HomeFragment() {
     }
 
@@ -64,6 +71,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.CategoryCl
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        loadInterstitialAd();
     }
 
     @Override
@@ -162,20 +170,22 @@ public class HomeFragment extends Fragment implements CategoryAdapter.CategoryCl
     @Override
     public void categoryClick(CategoryModel categoryModel) {
 //        Toast.makeText(getActivity(), categoryModel.getTitle(), Toast.LENGTH_SHORT).show();
-
         Intent intent = new Intent(getActivity(), HackList.class);
         intent.putExtra(Utility.TITLE_KEY, categoryModel.getTitle());
         intent.putExtra(Utility.DBNAME_KEY, categoryModel.getDbname());
         startActivity(intent);
+        showInterstitial();
 
 
-       // mInterstitialAd = new InterstitialAd(getActivity());
+/*
+        mInterstitialAd = new InterstitialAd(getActivity());
 
-        // set the ad unit ID
-      //  mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen));
+     //    set the ad unit ID
+        mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen));
 
         AdRequest adRequest = new AdRequest.Builder()
                 .build();
+*/
 
         // Load ads into Interstitial Ads
      //   mInterstitialAd.loadAd(adRequest);
@@ -198,6 +208,59 @@ public class HomeFragment extends Fragment implements CategoryAdapter.CategoryCl
             mInterstitialAd.show();
         }
     }*/
+
+    private void loadInterstitialAd() {
+        // Use test ad unit ID during development: "ca-app-pub-3940256099942544/1033173712"
+        AdRequest adRequestNew = new AdRequest.Builder().build();
+
+        InterstitialAd.load(getActivity(), getString(R.string.interstitial_full_screen), adRequestNew, new InterstitialAdLoadCallback() {
+            @Override
+            public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                mInterstitialAd = interstitialAd;
+                Log.d("TAG", "Interstitial Ad Loaded");
+
+                // Set FullScreenContentCallback for ad events
+                mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                    @Override
+                    public void onAdDismissedFullScreenContent() {
+                        Log.d("TAG", "Ad was dismissed.");
+                        // Reset and reload the interstitial ad after it's dismissed
+                        mInterstitialAd = null;
+                        loadInterstitialAd();  // Immediately reload the ad after dismissal
+                    }
+
+                    @Override
+                    public void onAdFailedToShowFullScreenContent(AdError adError) {
+                        Log.e("TAG", "Ad failed to show.");
+                    }
+
+                    @Override
+                    public void onAdShowedFullScreenContent() {
+                        Log.d("TAG", "Ad was shown.");
+                    }
+                });
+            }
+
+            @Override
+            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                Log.e("TAG", "Ad failed to load: " + loadAdError.getMessage());
+                mInterstitialAd = null; // Reset the ad if it fails to load
+            }
+        });
+    }
+
+    private void showInterstitial() {
+        if (mInterstitialAd != null) {
+            mInterstitialAd.show(getActivity());
+        } else {
+            Log.e("TAG", "No interstitial ad loaded");
+
+            // Load a new ad if one is not available
+            loadInterstitialAd();
+        }
+    }
+
+
 
 
     public interface OnFragmentInteractionListener {
