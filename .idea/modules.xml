@@ -11,10 +11,10 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/library/Education_quotes.library.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/library/Education_quotes.library.androidTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/library/Education_quotes.library.main.iml" filepath="$PROJECT_DIR$/.idea/modules/library/Education_quotes.library.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/library/Education_quotes.library.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/library/Education_quotes.library.unitTest.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/navigationtabbar/Education_quotes.navigationtabbar.iml" filepath="$PROJECT_DIR$/.idea/modules/navigationtabbar/Education_quotes.navigationtabbar.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/navigationtabbar/Education_quotes.navigationtabbar.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/navigationtabbar/Education_quotes.navigationtabbar.androidTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/navigationtabbar/Education_quotes.navigationtabbar.main.iml" filepath="$PROJECT_DIR$/.idea/modules/navigationtabbar/Education_quotes.navigationtabbar.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/navigationtabbar/Education_quotes.navigationtabbar.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/navigationtabbar/Education_quotes.navigationtabbar.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/navigationtabbar/devlight.io.Education_quotes.navigationtabbar.iml" filepath="$PROJECT_DIR$/.idea/modules/navigationtabbar/devlight.io.Education_quotes.navigationtabbar.iml" />
     </modules>
   </component>
 </project>

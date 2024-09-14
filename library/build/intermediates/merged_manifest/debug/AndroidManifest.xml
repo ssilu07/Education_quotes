@@ -17,8 +17,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="uk.co.samuelwall.materialtaptargetprompt" >
 
-    <uses-sdk
-        android:minSdkVersion="15"
-        android:targetSdkVersion="26" />
+    <uses-sdk android:minSdkVersion="15" />
 
 </manifest>
