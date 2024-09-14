@@ -87,12 +87,14 @@ card_view:contentPadding="0dp">
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             ads:adSize="BANNER"
-            ads:adUnitId="ca-app-pub-1811294933992844/8357046981"
+            ads:adUnitId="ca-app-pub-3940256099942544/6300978111"
             />
 
     </LinearLayout>
   <!--  ads:adUnitId="ca-app-pub-3940256099942544/6300978111" />  &lt;!&ndash; Test Ad Unit ID &ndash;&gt;
 -->
+
+   <!-- ads:adUnitId="ca-app-pub-1811294933992844/8357046981"-->  <!--this is original id-->
 
     <LinearLayout
         android:layout_width="match_parent"

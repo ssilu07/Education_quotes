@@ -1,7 +1,9 @@
 <resources>
 
-    <string name="interstitial_full_screen">ca-app-pub-1811294933992844/7703798104</string>     <!--his is original interstial-->
-  <!--  <string name="interstitial_full_screen">ca-app-pub-3940256099942544/1033173712</string>--> <!--this is test id-->
+  <!--  <string name="interstitial_full_screen">ca-app-pub-1811294933992844/7703798104</string>     &lt;!&ndash;his is original interstial&ndash;&gt;
+-->
+
+      <string name="interstitial_full_screen">ca-app-pub-3940256099942544/1033173712</string>    <!--this is test id-->
     <string name="banner_ad">ca-app-pub-3940256099942544/6300978111</string>
 
     <string name="app_name">Vocab Tricks Reels</string>
