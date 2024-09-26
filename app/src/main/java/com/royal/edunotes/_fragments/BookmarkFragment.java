@@ -301,6 +301,7 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
         }
     }*/
 
+
     // Show the interstitial ad if it's loaded
     private void showInterstitial() {
         if (mInterstitialAd != null) {

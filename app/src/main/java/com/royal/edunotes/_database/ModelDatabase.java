@@ -29,6 +29,7 @@ public class ModelDatabase {
             "CREATE TABLE " + TABLE_NAME + "("
                     + COLUMN_ID + " INTEGER,"
                     + COLUMN_NOTE + " TEXT,"
+                    + COLUMN_NOTE_VALUE + " TEXT,"
                     + COLUMN_TIMESTAMP + " DATETIME DEFAULT CURRENT_TIMESTAMP,"
                     + COLUMN_BOOKMARK + " TEXT,"
                     + COLUMN_CATEGORY + " TEXT"

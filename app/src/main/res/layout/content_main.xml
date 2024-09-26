@@ -1,5 +1,4 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -8,163 +7,168 @@
     android:minHeight="500dp"
     android:orientation="vertical">
 
-<androidx.cardview.widget.CardView
-android:id="@+id/card_view"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:layout_gravity="center"
-android:layout_margin="15dp"
-card_view:cardCornerRadius="7dp"
-card_view:cardElevation="7dp"
-card_view:contentPadding="0dp">
-
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#ffffff"
-    android:orientation="vertical"
-    android:weightSum="1">
-
-    <!--  <Space
-          android:layout_width="match_parent"
-          android:layout_height="0dp"
-          android:layout_weight="0.03" />-->
-
-    <!-- <TextView
-         android:id="@+id/title"
-         android:layout_width="match_parent"
-         android:layout_height="10dp"
-         android:layout_weight="0.04"
-         android:layout_marginTop="4dp"
-         android:gravity="center"
-         android:textColor="#BD0946"
-         android:layout_marginRight="10dp"
-         android:layout_marginLeft="10dp"
-         android:text=""
-         android:textSize="20sp"
-         android:textStyle="bold" />-->
-
-    <!--<Space
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_view"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.05" />-->
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_margin="15dp"
+        card_view:cardCornerRadius="7dp"
+        card_view:cardElevation="7dp"
+        card_view:contentPadding="0dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:layout_weight="0.85"
-        android:orientation="vertical">
-
-        <ImageView
-            android:id="@+id/hackText2"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.84"
-            android:gravity="center_horizontal"
-            android:padding="1dp"
-            android:layout_margin="14dp"
-            android:textColor="@android:color/black"
-            android:textStyle="bold"
-            android:visibility="gone"
-            android:text=""/>
+            android:layout_height="match_parent"
+            android:background="#ffffff"
+            android:orientation="vertical"
+            android:weightSum="1">
 
-        <TextView
-            android:id="@+id/hackText"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.84"
-            android:gravity="center_horizontal"
-            android:padding="1dp"
-            android:textColor="@android:color/black"
-            android:textStyle="bold"
-            android:text="Stop using Google.com to search information for school essays. Use scholar.google.com instead. You will find information right away!"
-            android:textSize="20sp" />
+            <!--  <Space
+                  android:layout_width="match_parent"
+                  android:layout_height="0dp"
+                  android:layout_weight="0.03" />-->
 
-        <!-- Add AdView at the bottom -->
-        <com.google.android.gms.ads.AdView
-            android:id="@+id/adView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            ads:adSize="BANNER"
-            ads:adUnitId="ca-app-pub-3940256099942544/6300978111"
-            />
+            <!-- <TextView
+                 android:id="@+id/title"
+                 android:layout_width="match_parent"
+                 android:layout_height="10dp"
+                 android:layout_weight="0.04"
+                 android:layout_marginTop="4dp"
+                 android:gravity="center"
+                 android:textColor="#BD0946"
+                 android:layout_marginRight="10dp"
+                 android:layout_marginLeft="10dp"
+                 android:text=""
+                 android:textSize="20sp"
+                 android:textStyle="bold" />-->
 
-    </LinearLayout>
-  <!--  ads:adUnitId="ca-app-pub-3940256099942544/6300978111" />  &lt;!&ndash; Test Ad Unit ID &ndash;&gt;
--->
-
-   <!-- ads:adUnitId="ca-app-pub-1811294933992844/8357046981"-->  <!--this is original id-->
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.120"
-        android:background="#ffffff"
-        android:orientation="horizontal"
-        android:weightSum="1">
-
-        <LinearLayout
-            android:id="@+id/copyLL"
-            android:gravity="center"
-            android:layout_gravity="center"
-            android:layout_width="0dp"
-            android:layout_weight="0.25"
-            android:layout_height="match_parent">
-            <ImageView
-                android:src="@drawable/copy"
-                android:layout_gravity="center"
-                android:layout_width="25dp"
-                android:layout_height="25dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/starLL"
-            android:gravity="center"
-            android:layout_gravity="center"
-            android:layout_width="0dp"
-            android:layout_weight="0.25"
-            android:layout_height="match_parent">
-            <ImageView
-                android:id="@+id/star"
-                android:src="@drawable/star"
-                android:layout_gravity="center"
-                android:layout_width="25dp"
-                android:layout_height="25dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/shareLL"
-            android:gravity="center"
-            android:layout_gravity="center"
-            android:layout_width="0dp"
-            android:layout_weight="0.25"
-            android:layout_height="match_parent">
-            <ImageView
-                android:src="@drawable/newshareee"
-                android:layout_gravity="center"
-                android:layout_width="25dp"
-                android:layout_height="25dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ourappLL"
-            android:gravity="center"
-            android:layout_gravity="center"
-            android:layout_width="0dp"
-            android:layout_weight="0.25"
-            android:layout_height="match_parent">
-            <TextView
-                android:textColor="#c7c7c7"
-                android:text="@string/moreapp"
-                android:textSize="13sp"
-                android:gravity="center"
-                android:layout_gravity="center"
+            <!--<Space
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </LinearLayout>
-    </LinearLayout>
+                android:layout_height="0dp"
+                android:layout_weight="0.05" />-->
 
-</LinearLayout>
-</androidx.cardview.widget.CardView>
+            <LinearLayout
+                android:id="@+id/ll_quote"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="0.85"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/hackText2"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_margin="14dp"
+                    android:layout_weight="0.84"
+                    android:gravity="center_horizontal"
+                    android:padding="1dp"
+                    android:text=""
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/hackText"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.84"
+                    android:gravity="center_horizontal"
+                    android:padding="1dp"
+                    android:text="Stop using Google.com to search information for school essays. Use scholar.google.com instead. You will find information right away!"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.120"
+                android:background="#ffffff"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <LinearLayout
+                    android:id="@+id/copyLL"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.25"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/copy" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/starLL"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.25"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/star"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/star" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/shareLL"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.25"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/newshareee" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ourappLL"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.25"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="@string/moreapp"
+                        android:textColor="#c7c7c7"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Add AdView at the bottom -->
+            <com.google.android.gms.ads.AdView
+                android:id="@+id/adView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                ads:adSize="BANNER"
+                ads:adUnitId="@string/banner_ad"
+                />
+
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 </LinearLayout>

@@ -105,7 +105,7 @@ public class MyDatabase extends SQLiteAssetHelper {
 
 
         SQLiteDatabase db = getWritableDatabase();
-        String[] columns = {MyDatabase.ID, MyDatabase.NOTE, MyDatabase.TIMESTAMP, MyDatabase.BOOKMARK, MyDatabase.CATEGORY};
+        String[] columns = {MyDatabase.ID, MyDatabase.NOTE,MyDatabase.NOTEVALUE, MyDatabase.TIMESTAMP, MyDatabase.BOOKMARK, MyDatabase.CATEGORY};
         Cursor cursor = db.query(MyDatabase.BOOKMARK_TABLE, columns, null, null, null, null, null);
         ArrayList<QuoteModel> questionsArrayList = new ArrayList<>();
 

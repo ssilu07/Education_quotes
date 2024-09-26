@@ -17,7 +17,7 @@
         android:theme="@style/AppTheme">
 
         <!--This is use for original ids-->
-   <!--     <meta-data
+       <!-- <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-1811294933992844~4579242630"/>-->
         <!--This is use for test ids-->
