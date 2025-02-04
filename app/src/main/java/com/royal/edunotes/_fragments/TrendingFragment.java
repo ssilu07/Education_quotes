@@ -83,14 +83,13 @@ public class TrendingFragment extends Fragment implements VerticlePagerAdapter.C
         mainQuoteModels = new ArrayList<>();
 
         String[] dbdata = getResources().getStringArray(R.array.mydb);
-        String[] catdata =getResources().getStringArray(R.array.mycat);
-        for (int i = 0; i < dbdata.length; i++) {
-            ArrayList<QuoteModel> quoteModels = new ArrayList<>();
-            myDatabase = new MyDatabase(getActivity(), dbdata[i],catdata[i]);
-            quoteModels = myDatabase.getPoses();
+        String[] catdata = getResources().getStringArray(R.array.mycat);
 
+
+        for (int i = 0; i < Math.min(dbdata.length, catdata.length); i++) {
+            myDatabase = new MyDatabase(getActivity(), dbdata[i], catdata[i]);
+            ArrayList<QuoteModel> quoteModels = myDatabase.getPoses();
             mainQuoteModels.addAll(quoteModels);
-
         }
 
         Log.e("TAG===", "SIZEEEE==" + mainQuoteModels.size());

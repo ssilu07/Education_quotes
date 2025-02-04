@@ -153,14 +153,14 @@ public class VerticlePagerAdapter extends PagerAdapter {
         });
 
         // Load AdMob Banner
-        AdView adView = itemView.findViewById(R.id.adView); // This is the correct way to get the AdView
+    //    AdView adView = itemView.findViewById(R.id.adView); // This is the correct way to get the AdView
      //   adView.setAdSize(com.google.android.gms.ads.AdSize.BANNER);
 
         // Retrieve AdUnitId from strings.xml
         String adUnitId = mContext.getResources().getString(R.string.banner_ad);
      //   adView.setAdUnitId(adUnitId); // Set the AdUnitId from string resource
 
-        AdRequest adRequest = new AdRequest.Builder().build();
+ /*       AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
 
         adView.setAdListener(new AdListener() {
@@ -184,7 +184,7 @@ public class VerticlePagerAdapter extends PagerAdapter {
             public void onAdClosed() {
                 Log.d("AdMob", "Ad Closed");
             }
-        });
+        });*/
 
 
         container.addView(itemView);
