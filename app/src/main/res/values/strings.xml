@@ -298,7 +298,7 @@
         <item>trust_quotes_idiom</item>
         <item>martin_luther_quotes_idiom</item>
         <item>freedom_quotes_idiom</item>
-        <!--<item>humanity_quotes</item>
+        <item>humanity_quotes</item>
           <item>simplicity_quotes</item>
           <item>music_quotes</item>
           <item>attitude_quotes</item>
@@ -308,7 +308,7 @@
           <item>silence_quotes</item>
           <item>gm_quotes</item>
           <item>rumi_quotes</item>
-          <item>deep_quotes</item>
+        <!--  <item>deep_quotes</item>
           <item>nature_quotes</item>
           <item>respect_quotes</item>
           <item>leadership_quotes</item>
