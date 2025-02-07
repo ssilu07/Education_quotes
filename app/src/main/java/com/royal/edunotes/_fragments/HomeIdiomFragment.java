@@ -5,6 +5,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,31 +20,23 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ProgressBar;
-
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
-
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.royal.edunotes.R;
 import com.royal.edunotes.Utility;
 import com.royal.edunotes._activities.HackList;
-import com.royal.edunotes._models.CategoryModel;
 import com.royal.edunotes._adapters.CategoryAdapter;
-import com.royal.edunotes.R;
+import com.royal.edunotes._models.CategoryModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class HomeFragment extends Fragment implements CategoryAdapter.CategoryClickInterface {
+public class HomeIdiomFragment extends Fragment implements CategoryAdapter.CategoryClickInterface {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private String mParam1;
@@ -51,11 +49,11 @@ public class HomeFragment extends Fragment implements CategoryAdapter.CategoryCl
     private OnFragmentInteractionListener mListener;
     private Menu menu = null;
     InterstitialAd mInterstitialAd;
-    public HomeFragment() {
+    public HomeIdiomFragment() {
     }
 
-    public static HomeFragment newInstance(String param1, String param2) {
-        HomeFragment fragment = new HomeFragment();
+    public static HomeIdiomFragment newInstance(String param1, String param2) {
+        HomeIdiomFragment fragment = new HomeIdiomFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -125,18 +123,9 @@ public class HomeFragment extends Fragment implements CategoryAdapter.CategoryCl
     }
 
     private void prepareMovieData() {
-        String[] catdata;
-        String[] dbdata;
 
-        if (Utility.ScreenCheck.equals("Vocab")) {
-            catdata = getResources().getStringArray(R.array.mycat);
-            dbdata = getResources().getStringArray(R.array.mydb);
-        } else {
-            catdata = getResources().getStringArray(R.array.myidiomcat);
-            dbdata = getResources().getStringArray(R.array.myidiomdb);
-        }
-
-
+        String[] catdata = getResources().getStringArray(R.array.mycat);
+        String[] dbdata = getResources().getStringArray(R.array.mydb);
 
         Log.e("Tag===", "SIZE : " + catdata.length + "   " + dbdata.length);
 

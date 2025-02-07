@@ -20,6 +20,7 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 //import com.google.android.gms.ads.InterstitialAd;
 import com.royal.edunotes.R;
+import com.royal.edunotes.Utility;
 import com.royal.edunotes.VerticalViewPager;
 import com.royal.edunotes._adapters.VerticlePagerAdapter;
 import com.royal.edunotes._database.DatabaseHelper;
@@ -82,8 +83,16 @@ public class TrendingFragment extends Fragment implements VerticlePagerAdapter.C
 
         mainQuoteModels = new ArrayList<>();
 
-        String[] dbdata = getResources().getStringArray(R.array.mydb);
-        String[] catdata = getResources().getStringArray(R.array.mycat);
+        String[] catdata;
+        String[] dbdata;
+
+        if (Utility.ScreenCheck.equals("Vocab")) {
+            catdata = getResources().getStringArray(R.array.mycat);
+            dbdata = getResources().getStringArray(R.array.mydb);
+        } else {
+            catdata = getResources().getStringArray(R.array.myidiomcat);
+            dbdata = getResources().getStringArray(R.array.myidiomdb);
+        }
 
 
         for (int i = 0; i < Math.min(dbdata.length, catdata.length); i++) {

@@ -17,4 +17,6 @@ public class Utility {
     public static final String PREF_NAME = "MYPREF";
     public static final String PREF_DATA_KEY = "MYDATA";
 
+    public static String ScreenCheck = "";
+
 }

@@ -1,12 +1,12 @@
 <resources>
 
-<!--
+    <!--
     <string name="interstitial_full_screen">ca-app-pub-1811294933992844/7703798104</string>     &lt;!&ndash;his is original interstial&ndash;&gt;
     <string name="banner_ad">ca-app-pub-1811294933992844/8357046981</string>  &lt;!&ndash;original&ndash;&gt;
 -->
 
     <!--testId-->
-      <string name="interstitial_full_screen">ca-app-pub-3940256099942544/1033173712</string>    <!--this is test id-->
+    <string name="interstitial_full_screen">ca-app-pub-3940256099942544/1033173712</string>    <!--this is test id-->
     <string name="banner_ad">ca-app-pub-3940256099942544/6300978111</string>  <!--test-->
 
     <string name="app_name">Vocab Tricks Reels</string>
@@ -141,7 +141,7 @@
         <item>Chapter 8</item>
         <item>Chapter 9</item>
         <item>Chapter 10</item>
-       <!-- <item>Powerful Freedom Quotes</item>
+        <!-- <item>Powerful Freedom Quotes</item>
         <item>Humanity Quotes</item>
         <item>Simplicity Quotes</item>
         <item>Inspiring Music Quotes</item>
@@ -193,43 +193,146 @@
         <item>travel_quotes</item>
         <item>trust_quotes</item>
         <item>martin_luther_quotes</item>
-       <!-- <item>freedom_quotes</item>
-        <item>humanity_quotes</item>
-        <item>simplicity_quotes</item>
-        <item>music_quotes</item>
-        <item>attitude_quotes</item>
-        <item>zen_quotes</item>
-        <item>smile_quotes</item>
-        <item>art_quotes</item>
-        <item>silence_quotes</item>
-        <item>gm_quotes</item>
-        <item>rumi_quotes</item>
-        <item>deep_quotes</item>
-        <item>nature_quotes</item>
-        <item>respect_quotes</item>
-        <item>leadership_quotes</item>
-        <item>family_quotes</item>
-        <item>kindness_quotes</item>
-        <item>tim_ferris_quotes</item>
-        <item>love_quotes</item>
-        <item>marcus_aurelis_quotes</item>
-        <item>success_quotes</item>
-        <item>history_quotes</item>
-        <item>albert_einstein_quotes</item>
-        <item>maya_angelou_quotes</item>
-        <item>friendship_quotes</item>
-        <item>gratitude_quotes</item>
-        <item>creativity_quotes</item>
-        <item>benjamin_franklin_quotes</item>
-        <item>children_quotes</item>
-        <item>funny_quotes</item>
-        <item>word_wisdom_quotes</item>
-        <item>how_to_learn</item>
-        <item>steve_jobs_quotes</item>
-        <item>short_quotes</item>
-        <item>education_quotes</item>
-        <item>buddha_quotes</item>-->
+        <item>freedom_quotes</item>
+        <!--<item>humanity_quotes</item>
+          <item>simplicity_quotes</item>
+          <item>music_quotes</item>
+          <item>attitude_quotes</item>
+          <item>zen_quotes</item>
+          <item>smile_quotes</item>
+          <item>art_quotes</item>
+          <item>silence_quotes</item>
+          <item>gm_quotes</item>
+          <item>rumi_quotes</item>
+          <item>deep_quotes</item>
+          <item>nature_quotes</item>
+          <item>respect_quotes</item>
+          <item>leadership_quotes</item>
+          <item>family_quotes</item>
+          <item>kindness_quotes</item>
+          <item>tim_ferris_quotes</item>
+          <item>love_quotes</item>
+          <item>marcus_aurelis_quotes</item>
+          <item>success_quotes</item>
+          <item>history_quotes</item>
+          <item>albert_einstein_quotes</item>
+          <item>maya_angelou_quotes</item>
+          <item>friendship_quotes</item>
+          <item>gratitude_quotes</item>
+          <item>creativity_quotes</item>
+          <item>benjamin_franklin_quotes</item>
+          <item>children_quotes</item>
+          <item>funny_quotes</item>
+          <item>word_wisdom_quotes</item>
+          <item>how_to_learn</item>
+          <item>steve_jobs_quotes</item>
+          <item>short_quotes</item>
+          <item>education_quotes</item>
+          <item>buddha_quotes</item>-->
     </string-array>
 
+
+    <!-- Category for quotes .....................................................................-->
+    <string-array name="myidiomcat">
+        <item>idiom 1</item>
+        <item>idiom 2</item>
+        <item>idiom 3</item>
+        <item>idiom 4</item>
+        <item>idiom 5</item>
+        <item>idiom 6</item>
+        <item>idiom 7</item>
+        <item>idiom 8</item>
+        <item>idiom 9</item>
+        <item>idiom 10</item>
+        <item>idiom 11</item>
+        <!-- <item>Powerful Freedom Quotes</item>
+        <item>Humanity Quotes</item>
+        <item>Simplicity Quotes</item>
+        <item>Inspiring Music Quotes</item>
+        <item>Attitude Quotes</item>
+        <item>Zen Quotes</item>
+        <item>Smile Quotes</item>
+        <item>Art Quotes</item>
+        <item>Amazing Silence Quotes</item>
+        <item>Good Morning Quotes</item>
+        <item>Rumi Quotes</item>
+        <item>Deep Quotes</item>
+        <item>Best Nature Quotes</item>
+        <item>Respect Quotes</item>
+        <item>Leadership Quotes</item>
+        <item>Family Quotes</item>
+        <item>Kindness Quotes</item>
+        <item>Tim Ferriss Quotes</item>
+        <item>Amazing Love Quotes</item>
+        <item>Marcus Aurelius Quotes</item>
+        <item>Success Quotes</item>
+        <item>Brilliant History Quotes</item>
+        <item>Albert Einstein Quotes</item>
+        <item>Maya Angelou Quotes</item>
+        <item>Friendship Quotes</item>
+        <item>Gratitude Quotes</item>
+        <item>Creativity Quotes</item>
+        <item>Benjamin Franklin Quotes</item>
+        <item>Lovely Children Quotes</item>
+        <item>Funny Quotes</item>
+        <item>Fascinating Wisdom Quotes</item>
+        <item>How to learn faster</item>
+        <item>Steve jobs Quotes</item>
+        <item>Short Quotes</item>
+        <item>Education Quotes</item>
+        <item>Buddha Quotes</item>-->
+    </string-array>
+
+
+    <!-- Db names ...............................................................................-->
+
+    <string-array name="myidiomdb">
+        <item>life_quotes_idiom</item>
+        <item>inspirational_quote_idiom</item>
+        <item>happiness_quotes_idiom</item>
+        <item>beautiful_quotes_idiom</item>
+        <item>change_quote_idiom</item>
+        <item>introvert_quotes_idiom</item>
+        <item>hope_quotes_idiom</item>
+        <item>travel_quotes_idiom</item>
+        <item>trust_quotes_idiom</item>
+        <item>martin_luther_quotes_idiom</item>
+        <item>freedom_quotes_idiom</item>
+        <!--<item>humanity_quotes</item>
+          <item>simplicity_quotes</item>
+          <item>music_quotes</item>
+          <item>attitude_quotes</item>
+          <item>zen_quotes</item>
+          <item>smile_quotes</item>
+          <item>art_quotes</item>
+          <item>silence_quotes</item>
+          <item>gm_quotes</item>
+          <item>rumi_quotes</item>
+          <item>deep_quotes</item>
+          <item>nature_quotes</item>
+          <item>respect_quotes</item>
+          <item>leadership_quotes</item>
+          <item>family_quotes</item>
+          <item>kindness_quotes</item>
+          <item>tim_ferris_quotes</item>
+          <item>love_quotes</item>
+          <item>marcus_aurelis_quotes</item>
+          <item>success_quotes</item>
+          <item>history_quotes</item>
+          <item>albert_einstein_quotes</item>
+          <item>maya_angelou_quotes</item>
+          <item>friendship_quotes</item>
+          <item>gratitude_quotes</item>
+          <item>creativity_quotes</item>
+          <item>benjamin_franklin_quotes</item>
+          <item>children_quotes</item>
+          <item>funny_quotes</item>
+          <item>word_wisdom_quotes</item>
+          <item>how_to_learn</item>
+          <item>steve_jobs_quotes</item>
+          <item>short_quotes</item>
+          <item>education_quotes</item>
+          <item>buddha_quotes</item>-->
+    </string-array>
 
 </resources>

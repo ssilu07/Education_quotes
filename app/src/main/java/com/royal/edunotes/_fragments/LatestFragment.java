@@ -20,6 +20,7 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 //import com.google.android.gms.ads.InterstitialAd;
 import com.royal.edunotes.R;
+import com.royal.edunotes.Utility;
 import com.royal.edunotes.VerticalViewPager;
 import com.royal.edunotes._adapters.VerticlePagerAdapter;
 import com.royal.edunotes._database.DatabaseHelper;
@@ -83,16 +84,25 @@ public class LatestFragment extends Fragment implements VerticlePagerAdapter.Cli
         mainQuoteModels = new ArrayList<>();
 
 
-        String[] dbdata = getResources().getStringArray(R.array.mydb);
-        String[] catdata = getResources().getStringArray(R.array.mycat);
-        for (int i = 0; i < dbdata.length; i++) {
-            ArrayList<QuoteModel> quoteModels = new ArrayList<>();
+        String[] catdata;
+        String[] dbdata;
+
+        if (Utility.ScreenCheck.equals("Vocab")) {
+            catdata = getResources().getStringArray(R.array.mycat);
+            dbdata = getResources().getStringArray(R.array.mydb);
+        } else {
+            catdata = getResources().getStringArray(R.array.myidiomcat);
+            dbdata = getResources().getStringArray(R.array.myidiomdb);
+        }
+
+        for (int i = 0; i < Math.min(dbdata.length, catdata.length); i++) {
             myDatabase = new MyDatabase(getActivity(), dbdata[i], catdata[i]);
-            quoteModels = myDatabase.getPoses();
-
-
+            ArrayList<QuoteModel> quoteModels = myDatabase.getPoses();
             mainQuoteModels.addAll(quoteModels);
         }
+
+        Log.d("TAG", "MainQuoteModels size: " + mainQuoteModels.size());
+
 
 //        for (int i = 0; i < mainQuoteModels.size(); i++) {
 //            db = new DatabaseHelper(getActivity(), mainQuoteModels.get(i));
