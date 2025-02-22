@@ -18,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.AdError;
-import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 //import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.FullScreenContentCallback;
@@ -26,6 +25,7 @@ import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.royal.edunotes.R;
+import com.royal.edunotes.Utility;
 import com.royal.edunotes.VerticalViewPager;
 import com.royal.edunotes._adapters.VerticlePagerAdapter;
 import com.royal.edunotes._database.DatabaseHelper;
@@ -92,20 +92,70 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
         myDatabase = new MyDatabase(getActivity(),"bookmark_db");
 
         quoteModels = myDatabase.getBookmarkData();
-
+        ArrayList<QuoteModel> allBookmarksCheck = myDatabase.getBookmarkData();
 
         if(quoteModels.size()==0){
 
             verticalViewPager.setVisibility(View.GONE);
             nobookmarkTxt.setVisibility(View.VISIBLE);
 
-        }else{
-            verticalViewPager.setVisibility(View.VISIBLE);
+        }else {
+            if (Utility.ScreenCheck.equals("Vocab")) {
+
+                for (int i = 0; i < allBookmarksCheck.size(); i++) {
+                    String categoryName = allBookmarksCheck.get(i).getCategoryName();
+
+                    // Debugging log to check actual category name
+                    Log.d("DEBUG", "Category Name: [" + categoryName + "]");
+
+                    // Normalize category name: Trim spaces, convert to lowercase, and remove special characters
+                    String normalizedCategory = categoryName.toLowerCase().trim().replaceAll("[^a-z0-9 ]", "");
+
+                    if (normalizedCategory.contains("vocab")) {
+                        verticalViewPager.setVisibility(View.VISIBLE);
+                        nobookmarkTxt.setVisibility(View.GONE);
+                        verticlePagerAdapter = new VerticlePagerAdapter(getActivity(), quoteModels, this, modelDatabases);
+                        verticalViewPager.setOffscreenPageLimit(0);
+                        verticalViewPager.setAdapter(verticlePagerAdapter);
+                    } else {
+                        verticalViewPager.setVisibility(View.GONE);
+                        nobookmarkTxt.setVisibility(View.VISIBLE);
+                    }
+                }
+
+            } else if (Utility.ScreenCheck.equals("Idiom")) {
+
+                for (int i = 0; i < allBookmarksCheck.size(); i++) {
+
+                    String categoryName = allBookmarksCheck.get(i).getCategoryName();
+
+                    // Debugging log to check actual category name
+                    Log.d("DEBUG", "Category Name: [" + categoryName + "]");
+
+                    // Normalize category name: Trim spaces, convert to lowercase, and remove special characters
+                    String normalizedCategory = categoryName.toLowerCase().trim().replaceAll("[^a-z0-9 ]", "");
+
+                    if (normalizedCategory.contains("idiom")) {
+
+                        verticalViewPager.setVisibility(View.VISIBLE);
+                        nobookmarkTxt.setVisibility(View.GONE);
+                        verticlePagerAdapter = new VerticlePagerAdapter(getActivity(), quoteModels, this, modelDatabases);
+                        verticalViewPager.setOffscreenPageLimit(0);
+                        verticalViewPager.setAdapter(verticlePagerAdapter);
+
+                    } else {
+                        verticalViewPager.setVisibility(View.GONE);
+                        nobookmarkTxt.setVisibility(View.VISIBLE);
+                    }
+
+                }
+    /*        verticalViewPager.setVisibility(View.VISIBLE);
             nobookmarkTxt.setVisibility(View.GONE);
             verticlePagerAdapter  = new VerticlePagerAdapter(getActivity(),quoteModels,this,modelDatabases);
             verticalViewPager.setOffscreenPageLimit(0);
             verticalViewPager.setAdapter(verticlePagerAdapter);
-
+*/
+            }
         }
 
 
@@ -141,6 +191,8 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
     public void refresh(){
 
         quoteModels = new ArrayList<>();
+        ArrayList<QuoteModel> vocabQuotes = new ArrayList<>();
+        ArrayList<QuoteModel> idiomQuotes = new ArrayList<>();
 
         db = new DatabaseHelper(getActivity());
         ArrayList<ModelDatabase> modelDatabases = (ArrayList<ModelDatabase>) db.getAllNotes();
@@ -151,6 +203,8 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
 
         quoteModels = myDatabase.getBookmarkData();
 
+        ArrayList<QuoteModel> allBookmarks = myDatabase.getBookmarkData();
+
 
         if(quoteModels.size()==0){
 
@@ -158,11 +212,94 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
             nobookmarkTxt.setVisibility(View.VISIBLE);
 
         }else{
-            verticalViewPager.setVisibility(View.VISIBLE);
-            nobookmarkTxt.setVisibility(View.GONE);
-            verticlePagerAdapter  = new VerticlePagerAdapter(getActivity(),quoteModels,this,modelDatabases);
-            verticalViewPager.setOffscreenPageLimit(0);
-            verticalViewPager.setAdapter(verticlePagerAdapter);
+
+
+            if (Utility.ScreenCheck.equals("Vocab")) {
+
+
+                for (int i = 0; i < allBookmarks.size(); i++) {
+
+                    String categoryName = allBookmarks.get(i).getCategoryName();
+
+                    // Debugging log to check actual category name
+                    Log.d("DEBUG", "Category Name: [" + categoryName + "]");
+
+                    // Normalize category name: Trim spaces, convert to lowercase, and remove special characters
+                    String normalizedCategory = categoryName.toLowerCase().trim().replaceAll("[^a-z0-9 ]", "");
+
+                    if (normalizedCategory.contains("vocab")) {
+
+                        vocabQuotes.add(allBookmarks.get(i)); // Add to new ArrayList
+                        if (vocabQuotes.size() == 0) {
+                            verticalViewPager.setVisibility(View.GONE);
+                            nobookmarkTxt.setVisibility(View.VISIBLE);
+                        } else {
+                            verticalViewPager.setVisibility(View.VISIBLE);
+                            nobookmarkTxt.setVisibility(View.GONE);
+                        }
+                        verticlePagerAdapter = new VerticlePagerAdapter(getActivity(), vocabQuotes, this, modelDatabases);
+                        verticalViewPager.setOffscreenPageLimit(0);
+                        verticalViewPager.setAdapter(verticlePagerAdapter);
+                    }
+                }
+            }else if (Utility.ScreenCheck.equals("Idiom")){
+
+                for (int i = 0; i < allBookmarks.size(); i++) {
+                    String categoryName = allBookmarks.get(i).getCategoryName();
+
+                    // Debugging log to check actual category name
+                    Log.d("DEBUG", "Category Name: [" + categoryName + "]");
+
+                    // Normalize category name: Trim spaces, convert to lowercase, and remove special characters
+                    String normalizedCategory = categoryName.toLowerCase().trim().replaceAll("[^a-z0-9 ]", "");
+
+                    if(normalizedCategory.contains("idiom"))  {
+                        idiomQuotes.add(allBookmarks.get(i)); // Add to new ArrayList
+                        if (idiomQuotes.size() == 0){
+                            verticalViewPager.setVisibility(View.GONE);
+                            nobookmarkTxt.setVisibility(View.VISIBLE);
+                        } else {
+                            verticalViewPager.setVisibility(View.VISIBLE);
+                            nobookmarkTxt.setVisibility(View.GONE);
+                        }
+                        verticlePagerAdapter  = new VerticlePagerAdapter(getActivity(),idiomQuotes,this,modelDatabases);
+                        verticalViewPager.setOffscreenPageLimit(0);
+                        verticalViewPager.setAdapter(verticlePagerAdapter);
+
+                    }
+                }
+
+            }
+           /* for (int i = 0; i < allBookmarks.size(); i++) {
+                if (allBookmarks.get(i).getCategoryName().toLowerCase().contains("Vocab")) {
+
+                    vocabQuotes.add(allBookmarks.get(i)); // Add to new ArrayList
+                    if (vocabQuotes.size() == 0){
+                        verticalViewPager.setVisibility(View.GONE);
+                        nobookmarkTxt.setVisibility(View.VISIBLE);
+                    }else {
+                        verticalViewPager.setVisibility(View.VISIBLE);
+                        nobookmarkTxt.setVisibility(View.GONE);
+                    }
+                    verticlePagerAdapter  = new VerticlePagerAdapter(getActivity(),vocabQuotes,this,modelDatabases);
+                    verticalViewPager.setOffscreenPageLimit(0);
+                    verticalViewPager.setAdapter(verticlePagerAdapter);
+                }
+             else if(allBookmarks.get(i).getCategoryName().toLowerCase().contains("idiom"))  {
+                    idiomQuotes.add(allBookmarks.get(i)); // Add to new ArrayList
+                    if (idiomQuotes.size() == 0){
+                        verticalViewPager.setVisibility(View.GONE);
+                        nobookmarkTxt.setVisibility(View.VISIBLE);
+                    } else {
+                        verticalViewPager.setVisibility(View.VISIBLE);
+                        nobookmarkTxt.setVisibility(View.GONE);
+                    }
+                    verticlePagerAdapter  = new VerticlePagerAdapter(getActivity(),idiomQuotes,this,modelDatabases);
+                    verticalViewPager.setOffscreenPageLimit(0);
+                    verticalViewPager.setAdapter(verticlePagerAdapter);
+
+                }
+            }*/
         }
     }
 
@@ -267,6 +404,11 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
             quoteModel.setBookmared(false);
 
 
+            quoteModels = myDatabase.getBookmarkData();
+            ArrayList<QuoteModel> allBookmarks = myDatabase.getBookmarkData();
+            ArrayList<QuoteModel> allBookmarksCheck = myDatabase.getBookmarkData();
+            ArrayList<QuoteModel> vocabQuotes = new ArrayList<>();
+            ArrayList<QuoteModel> idiomQuotes = new ArrayList<>();
 
             if(quoteModels.size()==0){
 
@@ -274,11 +416,71 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
                 nobookmarkTxt.setVisibility(View.VISIBLE);
 
             }else{
-                verticalViewPager.setVisibility(View.VISIBLE);
+
+
+
+                if (Utility.ScreenCheck.equals("Vocab")) {
+
+
+                    for (int i = 0; i < allBookmarks.size(); i++) {
+
+                        String categoryName = allBookmarks.get(i).getCategoryName();
+
+                        // Debugging log to check actual category name
+                        Log.d("DEBUG", "Category Name: [" + categoryName + "]");
+
+                        // Normalize category name: Trim spaces, convert to lowercase, and remove special characters
+                        String normalizedCategory = categoryName.toLowerCase().trim().replaceAll("[^a-z0-9 ]", "");
+
+                        if (normalizedCategory.contains("vocab")) {
+
+                            vocabQuotes.add(allBookmarks.get(i)); // Add to new ArrayList
+                            if (vocabQuotes.size() == 0) {
+                                verticalViewPager.setVisibility(View.GONE);
+                                nobookmarkTxt.setVisibility(View.VISIBLE);
+                            } else {
+                                verticalViewPager.setVisibility(View.VISIBLE);
+                                nobookmarkTxt.setVisibility(View.GONE);
+                            }
+                            verticlePagerAdapter = new VerticlePagerAdapter(getActivity(), vocabQuotes, this, modelDatabases);
+                            verticalViewPager.setOffscreenPageLimit(0);
+                            verticalViewPager.setAdapter(verticlePagerAdapter);
+                        }
+                    }
+                }else if (Utility.ScreenCheck.equals("Idiom")){
+
+                    for (int i = 0; i < allBookmarks.size(); i++) {
+                        String categoryName = allBookmarks.get(i).getCategoryName();
+
+                        // Debugging log to check actual category name
+                        Log.d("DEBUG", "Category Name: [" + categoryName + "]");
+
+                        // Normalize category name: Trim spaces, convert to lowercase, and remove special characters
+                        String normalizedCategory = categoryName.toLowerCase().trim().replaceAll("[^a-z0-9 ]", "");
+
+                        if(normalizedCategory.contains("idiom"))  {
+                            idiomQuotes.add(allBookmarks.get(i)); // Add to new ArrayList
+                            if (idiomQuotes.size() == 0){
+                                verticalViewPager.setVisibility(View.GONE);
+                                nobookmarkTxt.setVisibility(View.VISIBLE);
+                            } else {
+                                verticalViewPager.setVisibility(View.VISIBLE);
+                                nobookmarkTxt.setVisibility(View.GONE);
+                            }
+                            verticlePagerAdapter  = new VerticlePagerAdapter(getActivity(),idiomQuotes,this,modelDatabases);
+                            verticalViewPager.setOffscreenPageLimit(0);
+                            verticalViewPager.setAdapter(verticlePagerAdapter);
+
+                        }
+                    }
+                }
+
+
+          /*      verticalViewPager.setVisibility(View.VISIBLE);
                 nobookmarkTxt.setVisibility(View.GONE);
                 verticlePagerAdapter  = new VerticlePagerAdapter(getActivity(),quoteModels,this,modelDatabases);
                 verticalViewPager.setOffscreenPageLimit(0);
-                verticalViewPager.setAdapter(verticlePagerAdapter);
+                verticalViewPager.setAdapter(verticlePagerAdapter);*/
 
             }
             verticlePagerAdapter.notifyDataSetChanged();

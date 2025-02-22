@@ -17,14 +17,14 @@ class SelectionActivity : AppCompatActivity(), View.OnClickListener{
 
         val box1: CardView = findViewById(R.id.vocab)
         val box2: CardView = findViewById(R.id.idiom)
-        val box3: CardView = findViewById(R.id.box3)
-        val box4: CardView = findViewById(R.id.box4)
+      /*  val box3: CardView = findViewById(R.id.box3)
+        val box4: CardView = findViewById(R.id.box4)*/
 
         // Set click listeners
         box1.setOnClickListener(this)
         box2.setOnClickListener(this)
-        box3.setOnClickListener(this)
-        box4.setOnClickListener(this)
+      /*  box3.setOnClickListener(this)
+        box4.setOnClickListener(this)*/
     }
 
     override fun onClick(view: View?) {
@@ -52,8 +52,8 @@ class SelectionActivity : AppCompatActivity(), View.OnClickListener{
                 )
 
             }
-            R.id.box3 -> showToast("Box 3 Clicked")
-            R.id.box4 -> showToast("Box 4 Clicked")
+       /*     R.id.box3 -> showToast("Box 3 Clicked")
+            R.id.box4 -> showToast("Box 4 Clicked")*/
         }
     }
 

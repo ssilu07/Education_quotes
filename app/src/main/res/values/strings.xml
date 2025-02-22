@@ -131,16 +131,16 @@
 
     <!-- Category for quotes .....................................................................-->
     <string-array name="mycat">
-        <item>Chapter 1</item>
-        <item>Chapter 2</item>
-        <item>Chapter 3</item>
-        <item>Chapter 4</item>
-        <item>Chapter 5</item>
-        <item>Chapter 6</item>
-        <item>Chapter 7</item>
-        <item>Chapter 8</item>
-        <item>Chapter 9</item>
-        <item>Chapter 10</item>
+        <item>Vocab Chapter 1</item>
+        <item>Vocab Chapter 2</item>
+        <item>Vocab Chapter 3</item>
+        <item>Vocab Chapter 4</item>
+        <item>Vocab Chapter 5</item>
+        <item>Vocab Chapter 6</item>
+        <item>Vocab Chapter 7</item>
+        <item>Vocab Chapter 8</item>
+        <item>Vocab Chapter 9</item>
+        <item>Vocab Chapter 10</item>
         <!-- <item>Powerful Freedom Quotes</item>
         <item>Humanity Quotes</item>
         <item>Simplicity Quotes</item>
@@ -245,6 +245,16 @@
         <item>idiom 9</item>
         <item>idiom 10</item>
         <item>idiom 11</item>
+        <item>idiom 12</item>
+               <item>idiom 13</item>
+          <item>idiom 14</item>
+          <item>idiom 15</item>
+          <item>idiom 16</item>
+               <item>idiom 17</item>
+               <item>idiom 18</item>
+               <item>idiom 19</item>
+               <item>idiom 20</item>
+               <item>idiom 21</item>
         <!-- <item>Powerful Freedom Quotes</item>
         <item>Humanity Quotes</item>
         <item>Simplicity Quotes</item>
@@ -298,16 +308,16 @@
         <item>trust_quotes_idiom</item>
         <item>martin_luther_quotes_idiom</item>
         <item>freedom_quotes_idiom</item>
-        <item>humanity_quotes</item>
-          <item>simplicity_quotes</item>
-          <item>music_quotes</item>
-          <item>attitude_quotes</item>
-          <item>zen_quotes</item>
-          <item>smile_quotes</item>
-          <item>art_quotes</item>
-          <item>silence_quotes</item>
-          <item>gm_quotes</item>
-          <item>rumi_quotes</item>
+        <item>humanity_quotes_idiom</item>
+             <item>simplicity_quotes_idiom</item>
+           <item>music_quotes_idiom</item>
+           <item>attitude_quotes_idiom</item>
+            <item>zen_quotes_idiom</item>
+              <item>smile_quotes_idiom</item>
+              <item>art_quotes_idiom</item>
+              <item>silence_quotes_idiom</item>
+              <item>gm_quotes_idiom</item>
+              <item>rumi_quotes_idiom</item>
         <!--  <item>deep_quotes</item>
           <item>nature_quotes</item>
           <item>respect_quotes</item>

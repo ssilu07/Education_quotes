@@ -185,10 +185,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ModelDatabase note = new ModelDatabase();
                 note.setId(cursor.getInt(cursor.getColumnIndex(ModelDatabase.COLUMN_ID)));
                 note.setNote(cursor.getString(cursor.getColumnIndex(ModelDatabase.COLUMN_NOTE)));
-                note.setNote(cursor.getString(cursor.getColumnIndex(ModelDatabase.COLUMN_NOTE_VALUE)));
+                note.setNoteValue(cursor.getString(cursor.getColumnIndex(ModelDatabase.COLUMN_NOTE_VALUE)));
                 note.setTimestamp(cursor.getString(cursor.getColumnIndex(ModelDatabase.COLUMN_TIMESTAMP)));
-                note.setTimestamp(cursor.getString(cursor.getColumnIndex(ModelDatabase.COLUMN_BOOKMARK)));
-                note.setTimestamp(cursor.getString(cursor.getColumnIndex(ModelDatabase.COLUMN_CATEGORY)));
+                note.setBookmark(cursor.getString(cursor.getColumnIndex(ModelDatabase.COLUMN_BOOKMARK)));
+                note.setCategory(cursor.getString(cursor.getColumnIndex(ModelDatabase.COLUMN_CATEGORY)));
 
                 notes.add(note);
             } while (cursor.moveToNext());

@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     tools:context="._activities.SelectionActivity">
 
-    <!-- Horizontal guideline at 50% to split screen -->
+    <!--this is use for align at center-->
+    <!-- Vertical guideline at 50% to split screen -->
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineVertical"
         android:layout_width="wrap_content"
@@ -15,6 +16,62 @@
         app:layout_constraintGuide_percent="0.5" />
 
     <!-- Box 1 -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/vocab"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:cardBackgroundColor="@android:color/holo_blue_light"
+        app:cardCornerRadius="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/guidelineVertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        android:layout_margin="8dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vocabs"
+            android:textSize="30sp"
+            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:layout_gravity="center"/>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Box 2 -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/idiom"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:cardBackgroundColor="@android:color/holo_red_light"
+        app:cardCornerRadius="16dp"
+        app:layout_constraintStart_toEndOf="@id/guidelineVertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        android:layout_margin="8dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Idiom and\nPhrases"
+            android:textSize="30sp"
+            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:layout_gravity="center"/>
+    </androidx.cardview.widget.CardView>
+
+  <!--  &lt;!&ndash; Horizontal guideline at 50% to split screen &ndash;&gt;
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineVertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    &lt;!&ndash; Box 1 &ndash;&gt;
     <androidx.cardview.widget.CardView
         android:id="@+id/vocab"
         android:layout_width="0dp"
@@ -37,7 +94,7 @@
             android:layout_gravity="center"/>
     </androidx.cardview.widget.CardView>
 
-    <!-- Box 2 -->
+    &lt;!&ndash; Box 2 &ndash;&gt;
     <androidx.cardview.widget.CardView
         android:id="@+id/idiom"
         android:layout_width="0dp"
@@ -58,9 +115,9 @@
             android:textColor="@android:color/white"
             android:gravity="center"
             android:layout_gravity="center"/>
-    </androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView>-->
 
-    <!-- Box 3 -->
+ <!--   &lt;!&ndash; Box 3 &ndash;&gt;
     <androidx.cardview.widget.CardView
         android:id="@+id/box3"
         android:layout_width="0dp"
@@ -83,7 +140,7 @@
             android:layout_gravity="center"/>
     </androidx.cardview.widget.CardView>
 
-    <!-- Box 4 -->
+    &lt;!&ndash; Box 4 &ndash;&gt;
     <androidx.cardview.widget.CardView
         android:id="@+id/box4"
         android:layout_width="0dp"
@@ -104,6 +161,6 @@
             android:textColor="@android:color/white"
             android:gravity="center"
             android:layout_gravity="center"/>
-    </androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView>-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

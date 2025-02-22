@@ -24,7 +24,6 @@ import com.royal.edunotes.R;
 import com.royal.edunotes._database.DatabaseHelper;
 import com.royal.edunotes._fragments.BookmarkFragment;
 import com.royal.edunotes._fragments.HomeFragment;
-import com.royal.edunotes._fragments.HomeIdiomFragment;
 import com.royal.edunotes._fragments.LatestFragment;
 import com.royal.edunotes._fragments.ProfileFragment;
 import com.royal.edunotes._fragments.TrendingFragment;

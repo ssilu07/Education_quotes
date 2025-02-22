@@ -128,29 +128,48 @@ public class HomeFragment extends Fragment implements CategoryAdapter.CategoryCl
         String[] catdata;
         String[] dbdata;
 
+        String[] catdataIdiom;
+        String[] dbdataIdiom;
+
         if (Utility.ScreenCheck.equals("Vocab")) {
             catdata = getResources().getStringArray(R.array.mycat);
             dbdata = getResources().getStringArray(R.array.mydb);
+
+            Log.e("Tag===", "SIZE : " + catdata.length + "   " + dbdata.length);
+
+
+            for (int i = 0; i < catdata.length; i++) {
+                CategoryModel movie = new CategoryModel(catdata[i], dbdata[i]);
+                movieList.add(movie);
+            }
+
+
+            recyclerView.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.INVISIBLE);
+
+            mAdapter.notifyDataSetChanged();
         } else {
-            catdata = getResources().getStringArray(R.array.myidiomcat);
-            dbdata = getResources().getStringArray(R.array.myidiomdb);
+            catdataIdiom = getResources().getStringArray(R.array.myidiomcat);
+            dbdataIdiom = getResources().getStringArray(R.array.myidiomdb);
+
+            Log.e("Tag===", "SIZE : " + catdataIdiom.length + "   " + dbdataIdiom.length);
+
+
+            for (int i = 0; i < catdataIdiom.length; i++) {
+                CategoryModel movie = new CategoryModel(catdataIdiom[i], dbdataIdiom[i]);
+                movieList.add(movie);
+            }
+
+
+            recyclerView.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.INVISIBLE);
+
+            mAdapter.notifyDataSetChanged();
         }
 
 
 
-        Log.e("Tag===", "SIZE : " + catdata.length + "   " + dbdata.length);
 
-
-        for (int i = 0; i < catdata.length; i++) {
-            CategoryModel movie = new CategoryModel(catdata[i], dbdata[i]);
-            movieList.add(movie);
-        }
-
-
-        recyclerView.setVisibility(View.VISIBLE);
-        progressBar.setVisibility(View.INVISIBLE);
-
-        mAdapter.notifyDataSetChanged();
     }
 
     public void onButtonPressed(Uri uri) {

@@ -13,10 +13,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.royal.edunotes.R;
 import com.royal.edunotes.Utility;
@@ -72,7 +68,7 @@ public class VerticlePagerAdapter extends PagerAdapter {
         if (Utility.ScreenCheck.equals("Vocab")) {
             CardView cardViewVocab = itemView.findViewById(R.id.card_view_vocab);
             CardView cardViewIdiom = itemView.findViewById(R.id.card_view_idiom);
-            TextView titleTxt = itemView.findViewById(R.id.title);
+         //   TextView titleTxt = itemView.findViewById(R.id.title);
             TextView hackTxt = itemView.findViewById(R.id.tv_vocab);
             ImageView hackTxt2 = itemView.findViewById(R.id.iv_vocab);
 
@@ -111,7 +107,7 @@ public class VerticlePagerAdapter extends PagerAdapter {
             hackTxt.setTextColor(randomColor);
 
             if (modelDatabases != null) {
-                for (ModelDatabase modelDatabase : modelDatabases) {
+             /*   for (ModelDatabase modelDatabase : modelDatabases) {
                     if (modelDatabase != null && currentQuote.getQuote() != null && currentQuote.getQuote().equals(modelDatabase.getNote())) {
                         currentQuote.setBookmark("1");
                         currentQuote.setBookmared(true);
@@ -132,6 +128,23 @@ public class VerticlePagerAdapter extends PagerAdapter {
                     } else {
                         currentQuote.setBookmark("0");
                         currentQuote.setBookmared(false);
+                    }
+                }*/
+
+                ///only check the quote because not required to compare  images and its identifier is "value"
+                for (int i = 0; i < modelDatabases.size(); i++) {
+                    Log.d("BOOKMARK_CHECK", "Checking Quote: " + quoteModels.get(position).getQuote() + " at position: " + position);
+                    Log.d("BOOKMARK_CHECK", "ModelDatabase Note: " + modelDatabases.get(i).getNote() + " at position: " + i);
+
+                    if (quoteModels.get(position).getQuote().equals(modelDatabases.get(i).getNote())) {
+                        Log.d("BOOKMARK_CHECK", "MATCH FOUND at position: " + position);
+                        quoteModels.get(position).setBookmark("1");
+                        quoteModels.get(position).setBookmared(true);
+                        break;
+                    } else {
+                        Log.d("BOOKMARK_CHECK", "No match at position: " + position);
+                        quoteModels.get(position).setBookmark("0");
+                        quoteModels.get(position).setBookmared(false);
                     }
                 }
             } else {
@@ -160,21 +173,20 @@ public class VerticlePagerAdapter extends PagerAdapter {
                 Log.d(TAG, "onClick: Other apps clicked at position " + position);
                 clickInterface.onMoreAppsClick();
             });
-        } else if (Utility.ScreenCheck.equals("Idiom")){
+        } else if (Utility.ScreenCheck.equals("Idiom")) {
             CardView cardViewVocab = itemView.findViewById(R.id.card_view_vocab);
             CardView cardViewIdiom = itemView.findViewById(R.id.card_view_idiom);
-            TextView titleTxt = itemView.findViewById(R.id.title);
-            TextView hackTxt = itemView.findViewById(R.id.tv_idiom);
-            ImageView hackTxt2 = itemView.findViewById(R.id.iv_idiom);
-
-            LinearLayout copy = itemView.findViewById(R.id.copyLLIdiom);
-            final LinearLayout starLL = itemView.findViewById(R.id.starLLIdiom);
-            LinearLayout share = itemView.findViewById(R.id.shareLLIdiom);
-            LinearLayout otherapp = itemView.findViewById(R.id.ourappLLIdiom);
-
             cardViewVocab.setVisibility(View.GONE);
             cardViewIdiom.setVisibility(View.VISIBLE);
-            final ImageView star = itemView.findViewById(R.id.star);
+            Log.d(TAG, "instantiateItem: CardView visibility set - Vocab: GONE, Idiom: VISIBLE");
+
+            TextView hackTxt = itemView.findViewById(R.id.tv_idiom);
+            ImageView hackTxt2 = itemView.findViewById(R.id.iv_idiom);
+            LinearLayout copy = itemView.findViewById(R.id.copyLLIdiom);
+            final LinearLayout starLLIdiom = itemView.findViewById(R.id.starLLIdiom);
+            LinearLayout share = itemView.findViewById(R.id.shareLLIdiom);
+            LinearLayout otherapp = itemView.findViewById(R.id.ourappLLIdiom);
+            final ImageView star_idiom = itemView.findViewById(R.id.star_idiom);
 
             QuoteModel currentQuote = quoteModels.get(position);
             if (currentQuote == null) {
@@ -183,12 +195,13 @@ public class VerticlePagerAdapter extends PagerAdapter {
             }
 
             hackTxt.setText(currentQuote.getQuote());
-            String url = currentQuote.getValue();
+            Log.d(TAG, "instantiateItem: Quote set at position " + position + " -> " + currentQuote.getQuote());
 
+            String url = currentQuote.getValue();
             if (url != null && !url.isEmpty()) {
                 hackTxt2.setVisibility(View.VISIBLE);
                 Picasso.get().load(url).into(hackTxt2);
-                Log.d(TAG, "instantiateItem: Image loaded for position " + position);
+                Log.d(TAG, "instantiateItem: Image loaded for position " + position + " -> " + url);
             } else {
                 hackTxt2.setVisibility(View.GONE);
                 Log.d(TAG, "instantiateItem: No image for position " + position);
@@ -201,7 +214,7 @@ public class VerticlePagerAdapter extends PagerAdapter {
             hackTxt.setTextColor(randomColor);
 
             if (modelDatabases != null) {
-                for (ModelDatabase modelDatabase : modelDatabases) {
+             /*   for (ModelDatabase modelDatabase : modelDatabases) {
                     if (modelDatabase != null && currentQuote.getQuote() != null && currentQuote.getQuote().equals(modelDatabase.getNote())) {
                         currentQuote.setBookmark("1");
                         currentQuote.setBookmared(true);
@@ -223,26 +236,53 @@ public class VerticlePagerAdapter extends PagerAdapter {
                         currentQuote.setBookmark("0");
                         currentQuote.setBookmared(false);
                     }
+                }*/
+
+                ///only check the quote because not using images and its identifier is "value"
+
+                for (int i = 0; i < modelDatabases.size(); i++) {
+                    Log.d("BOOKMARK_CHECK", "Checking Quote: " + quoteModels.get(position).getQuote() + " at position: " + position);
+                    Log.d("BOOKMARK_CHECK", "ModelDatabase Note: " + modelDatabases.get(i).getNote() + " at position: " + i);
+
+                    if (quoteModels.get(position).getQuote().equals(modelDatabases.get(i).getNote())) {
+                        Log.d("BOOKMARK_CHECK", "MATCH FOUND at position: " + position);
+                        quoteModels.get(position).setBookmark("1");
+                        quoteModels.get(position).setBookmared(true);
+                        break;
+                    } else {
+                        Log.d("BOOKMARK_CHECK", "No match at position: " + position);
+                        quoteModels.get(position).setBookmark("0");
+                        quoteModels.get(position).setBookmared(false);
+                    }
                 }
+
+
             } else {
-                Log.e(TAG, "instantiateItem: modelDatabases is null");
+                Log.e(TAG, "instantiateItem: modelDatabases is null at position " + position);
             }
 
+
+
             if (currentQuote.isBookmared()) {
-                star.setImageResource(R.drawable.starfilled);
+                star_idiom.setImageResource(R.drawable.starfilled);
+                Log.d(TAG, "instantiateItem: Star icon set to filled at position " + position);
             } else {
-                star.setImageResource(R.drawable.star);
+                star_idiom.setImageResource(R.drawable.star);
+                Log.d(TAG, "instantiateItem: Star icon set to unfilled at position " + position);
             }
 
             copy.setOnClickListener(view -> {
+                Log.d(TAG, "onClick: Copy clicked at position " + position);
                 clickInterface.onCopyClick(currentQuote);
             });
 
-            starLL.setOnClickListener(view -> {
-                clickInterface.onBoookmarkClick(currentQuote, star);
+            starLLIdiom.setOnClickListener(view -> {
+                Log.d(TAG, "onClick: Bookmark clicked at position " + position);
+                clickInterface.onBoookmarkClick(currentQuote, star_idiom);
             });
 
             share.setOnClickListener(view -> {
+                Log.d(TAG, "onClick: Share clicked at position " + position);
                 clickInterface.onShareClick(currentQuote);
             });
 
@@ -254,9 +294,7 @@ public class VerticlePagerAdapter extends PagerAdapter {
         }
 
 
-
-
-        // Load AdMob Banner
+            // Load AdMob Banner
     //    AdView adView = itemView.findViewById(R.id.adView); // This is the correct way to get the AdView
      //   adView.setAdSize(com.google.android.gms.ads.AdSize.BANNER);
 
