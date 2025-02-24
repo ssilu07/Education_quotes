@@ -17,8 +17,10 @@
         android:theme="@style/AppTheme">
         <activity
             android:name="._activities.IdiomPhrasesActivity" />
+
+
         <activity
-            android:name="._activities.SelectionActivity" />
+            android:name="._activities.SelectedActivity" />
         <!-- This is use for original ids -->
         <!--
  <meta-data

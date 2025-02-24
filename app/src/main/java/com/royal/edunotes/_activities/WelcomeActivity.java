@@ -128,7 +128,7 @@ public class WelcomeActivity extends AppCompatActivity {
     private void launchHomeScreen() {
         Log.i("sumit","launch 127");
         prefManager.setFirstTimeLaunch(false);
-        startActivity(new Intent(WelcomeActivity.this, SelectionActivity.class));
+        startActivity(new Intent(WelcomeActivity.this, SelectedActivity.class));
         finish();
     }
 

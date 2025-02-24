@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="._activities.SelectionActivity">
+    tools:context="._activities.SelectedActivity">
 
     <!--this is use for align at center-->
     <!-- Vertical guideline at 50% to split screen -->
