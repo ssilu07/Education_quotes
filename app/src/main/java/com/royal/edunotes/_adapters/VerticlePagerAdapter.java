@@ -9,11 +9,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdLoader;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.nativead.NativeAd;
+import com.google.android.gms.ads.nativead.NativeAdView;
 import com.royal.edunotes.R;
 import com.royal.edunotes.Utility;
 import com.royal.edunotes._database.DatabaseHelper;
@@ -53,19 +60,33 @@ public class VerticlePagerAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return quoteModels.size();
+        int adCount = quoteModels.size() / 5; // Insert an ad every 5 items
+        return quoteModels.size() + adCount;
     }
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
-        return view == ((LinearLayout) object);
+        return view == object;  // ✅ Fix: Remove explicit casting
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
-        View itemView = mLayoutInflater.inflate(R.layout.content_main, container, false);
+        int actualPosition = position - (position / 6); // Adjust position to skip ads
+        View itemView = null;  // ✅ Always declare itemView at start
 
         if (Utility.ScreenCheck.equals("Vocab")) {
+            // 🔹 Show Ad Every 6th Position (For "Vocab" Section)
+            if (position > 0 && (position + 1) % 6 == 0) {
+                itemView = mLayoutInflater.inflate(R.layout.native_ad_layout, container, false);
+                if (itemView != null) {
+                    loadNativeAd(itemView);
+                } else {
+                    Log.e(TAG, "instantiateItem: Failed to inflate native_ad_layout at position " + position);
+                }
+            }
+            else {
+                itemView = mLayoutInflater.inflate(R.layout.content_main, container, false);
+
             CardView cardViewVocab = itemView.findViewById(R.id.card_view_vocab);
             CardView cardViewIdiom = itemView.findViewById(R.id.card_view_idiom);
          //   TextView titleTxt = itemView.findViewById(R.id.title);
@@ -173,7 +194,21 @@ public class VerticlePagerAdapter extends PagerAdapter {
                 Log.d(TAG, "onClick: Other apps clicked at position " + position);
                 clickInterface.onMoreAppsClick();
             });
+            }
+
         } else if (Utility.ScreenCheck.equals("Idiom")) {
+
+            // 🔹 Show Ad Every 6th Position (For "Vocab" Section)
+            if (position > 0 && (position + 1) % 6 == 0) {
+                itemView = mLayoutInflater.inflate(R.layout.native_ad_layout, container, false);
+                if (itemView != null) {
+                    loadNativeAd(itemView);
+                } else {
+                    Log.e(TAG, "instantiateItem: Failed to inflate native_ad_layout at position " + position);
+                }
+            }
+            else {
+                itemView = mLayoutInflater.inflate(R.layout.content_main, container, false);
             CardView cardViewVocab = itemView.findViewById(R.id.card_view_vocab);
             CardView cardViewIdiom = itemView.findViewById(R.id.card_view_idiom);
             cardViewVocab.setVisibility(View.GONE);
@@ -291,6 +326,7 @@ public class VerticlePagerAdapter extends PagerAdapter {
                 clickInterface.onMoreAppsClick();
             });
 
+            }
         }
 
 
@@ -337,6 +373,43 @@ public class VerticlePagerAdapter extends PagerAdapter {
         return itemView;
     }
 
+    private void loadNativeAd(View adView) {
+
+        String adUnitId = mContext.getResources().getString(R.string.native_ad);
+        AdLoader adLoader = new AdLoader.Builder(mContext, adUnitId)
+                .forNativeAd(nativeAd -> {
+                    NativeAdView adLayout = adView.findViewById(R.id.native_ad_view);
+                    populateNativeAdView(nativeAd, adLayout);
+                })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError adError) {
+                        Log.e("NativeAd", "Failed to load ad: " + adError.getMessage());
+                    }
+                })
+                .build();
+
+        adLoader.loadAd(new AdRequest.Builder().build());
+    }
+
+    private void populateNativeAdView(NativeAd nativeAd, NativeAdView adView) {
+        adView.setHeadlineView(adView.findViewById(R.id.ad_headline));
+        adView.setBodyView(adView.findViewById(R.id.ad_body));
+        adView.setIconView(adView.findViewById(R.id.ad_icon));
+        adView.setCallToActionView(adView.findViewById(R.id.ad_call_to_action));
+
+        ((TextView) adView.getHeadlineView()).setText(nativeAd.getHeadline());
+        ((TextView) adView.getBodyView()).setText(nativeAd.getBody());
+        ((Button) adView.getCallToActionView()).setText(nativeAd.getCallToAction());
+
+        if (nativeAd.getIcon() != null) {
+            ((ImageView) adView.getIconView()).setImageDrawable(nativeAd.getIcon().getDrawable());
+        } else {
+            adView.getIconView().setVisibility(View.GONE);
+        }
+
+        adView.setNativeAd(nativeAd);
+    }
     public interface ClickInterface {
         void onBoookmarkClick(QuoteModel CategoryModel, ImageView star);
 
@@ -349,7 +422,11 @@ public class VerticlePagerAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        container.removeView((LinearLayout) object);
-        Log.d(TAG, "destroyItem: itemView removed for position " + position);
+        if (object instanceof View) {
+            container.removeView((View) object);  // ✅ No more casting issues!
+        } else {
+            Log.e(TAG, "destroyItem: Unable to remove view at position " + position + " due to incorrect type.");
+        }
     }
+
 }
