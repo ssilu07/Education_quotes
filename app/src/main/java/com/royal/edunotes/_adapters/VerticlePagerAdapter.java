@@ -374,17 +374,21 @@ public class VerticlePagerAdapter extends PagerAdapter {
     }
 
     private void loadNativeAd(View adView) {
-
+        // ✅ Fetch Ad Unit ID from strings.xml
         String adUnitId = mContext.getResources().getString(R.string.native_ad);
+
+        Log.d("AdMob", "Loading Native Ad with Ad Unit ID: " + adUnitId);  // Debugging Log
+
         AdLoader adLoader = new AdLoader.Builder(mContext, adUnitId)
                 .forNativeAd(nativeAd -> {
+                    Log.d("AdMob", "✅ Native Ad Loaded Successfully!");
                     NativeAdView adLayout = adView.findViewById(R.id.native_ad_view);
                     populateNativeAdView(nativeAd, adLayout);
                 })
                 .withAdListener(new AdListener() {
                     @Override
                     public void onAdFailedToLoad(LoadAdError adError) {
-                        Log.e("NativeAd", "Failed to load ad: " + adError.getMessage());
+                        Log.e("AdMob", "❌ Native Ad Failed to Load: " + adError.getMessage());
                     }
                 })
                 .build();
