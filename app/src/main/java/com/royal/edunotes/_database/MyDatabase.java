@@ -54,26 +54,43 @@ public class MyDatabase extends SQLiteAssetHelper {
     }
 
     public ArrayList<QuoteModel> getSearchedData(String searchKey) {
+        ArrayList<QuoteModel> list = new ArrayList<>();
 
-        String whereClause =  "note LIKE ?";
+        SQLiteDatabase db = getReadableDatabase();
 
-        SQLiteDatabase db = getWritableDatabase();
-        String[] columns = {MyDatabase.ID, MyDatabase.NOTE, MyDatabase.TIMESTAMP, MyDatabase.BOOKMARK, MyDatabase.CATEGORY};
-        Cursor cursor = db.query(MyDatabase.BOOKMARK_TABLE, columns, whereClause, new String[] {"%"+ searchKey+ "%" }, null, null, null);
-        ArrayList<QuoteModel> questionsArrayList = new ArrayList<>();
+        // Use only columns that are guaranteed to exist in all DBs
+        String[] columns = {ID, QUOTE, TIMESTAMP};
+
+/*        String whereClause = QUOTE + " LIKE ?";
+        String[] whereArgs = new String[]{"%" + searchKey + "%"};*/
+
+        // Simulate word-boundary match using LIKE this is use for exact search
+        String whereClause = QUOTE + " LIKE ? OR " + QUOTE + " LIKE ? OR " + QUOTE + " LIKE ? OR " + QUOTE + " LIKE ?";
+        String[] whereArgs = new String[]{
+                searchKey,                      // exact match
+                searchKey + " %",               // start of sentence
+                "% " + searchKey,               // end of sentence
+                "% " + searchKey + " %"         // word in middle
+        };
+
+        Cursor cursor = db.query(TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
 
         while (cursor.moveToNext()) {
-            QuoteModel questions = new QuoteModel();
-            questions.id = cursor.getInt(cursor.getColumnIndex(MyDatabase.ID));
-            questions.quote = cursor.getString(cursor.getColumnIndex(MyDatabase.NOTE));
-            questions.value = cursor.getString(cursor.getColumnIndex(MyDatabase.NOTEVALUE));
+            QuoteModel model = new QuoteModel();
+            model.id = cursor.getInt(cursor.getColumnIndex(ID));
+            model.quote = cursor.getString(cursor.getColumnIndex(QUOTE));
+            model.timestamp = cursor.getString(cursor.getColumnIndex(TIMESTAMP));
 
-            questions.timestamp = cursor.getString(cursor.getColumnIndex(MyDatabase.TIMESTAMP));
-            questions.categoryName = cursor.getString(cursor.getColumnIndex(MyDatabase.CATEGORY));
-            questions.bookmark = cursor.getString(cursor.getColumnIndex(MyDatabase.BOOKMARK));
-            questionsArrayList.add(questions);
+            // set the category name from current DB name passed in constructor
+            model.categoryName = categoryName;
+
+            list.add(model);
         }
-        return questionsArrayList;
+
+        cursor.close();
+        db.close();
+
+        return list;
     }
 
 
