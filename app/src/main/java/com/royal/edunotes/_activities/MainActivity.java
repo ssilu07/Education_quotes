@@ -1,13 +1,18 @@
 package com.royal.edunotes._activities;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.Uri;
+
+import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,13 +20,17 @@ import android.os.Bundle;
 
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import androidx.appcompat.widget.SearchView;
 import android.widget.Toast;
 
 import com.royal.edunotes.R;
 import com.royal.edunotes.CustomViewPager;
 import com.royal.edunotes.NotificationHelper;
+import com.royal.edunotes.Utility;
 import com.royal.edunotes._database.DatabaseHelper;
 import com.royal.edunotes._fragments.BookmarkFragment;
 import com.royal.edunotes._fragments.HomeFragment;
@@ -33,10 +42,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import devlight.io.library.ntb.NavigationTabBar;
+import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt;
 
 public class MainActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener,
         TrendingFragment.OnFragmentInteractionListener, LatestFragment.OnFragmentInteractionListener,
-        ProfileFragment.OnFragmentInteractionListener, BookmarkFragment.OnFragmentInteractionListener/*, SearchView.OnQueryTextListener */{
+        ProfileFragment.OnFragmentInteractionListener, BookmarkFragment.OnFragmentInteractionListener, SearchView.OnQueryTextListener {
     private Toolbar mToolbar;
     boolean first = true;
     boolean second = true;
@@ -208,15 +218,15 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         }, 500);
     }
 //
-//    public void showSearchPrompt() {
-//        new MaterialTapTargetPrompt.Builder(this)
-//                .setPrimaryText("HELLOOOOOO")
-//                .setSecondaryText("This is test This is test This is test This is test This is test ")
-//                .setAnimationInterpolator(new FastOutSlowInInterpolator())
-//                .setMaxTextWidth(R.dimen.tap_target_menu_max_width)
-//                .setTarget(R.id.action_search)
-//                .show();
-//    }
+    public void showSearchPrompt() {
+        new MaterialTapTargetPrompt.Builder(this)
+                .setPrimaryText("HELLOOOOOO")
+                .setSecondaryText("This is test This is test This is test This is test This is test ")
+                .setAnimationInterpolator(new FastOutSlowInInterpolator())
+                .setMaxTextWidth(R.dimen.tap_target_menu_max_width)
+                .setTarget(R.id.action_search)
+                .show();
+    }
 //
 //
 //    public void showQuotePrompt() {
@@ -244,11 +254,12 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
     }
 
     //Todo For Search Icon Commente
-  /*  @Override
+    @Override
     public boolean onQueryTextSubmit(String query) {
         Log.e("TAG===", "STR : " + query);
-        Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+        Intent intent = new Intent(MainActivity.this, SearchActivity.class);
         intent.putExtra(Utility.SEARCH_KEY, query);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         return false;
     }
@@ -256,7 +267,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
     @Override
     public boolean onQueryTextChange(String newText) {
         return false;
-    }*/
+    }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
@@ -289,7 +300,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
 
     //Todo For Search Icon Comment
 
-    /*@Override
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -300,7 +311,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         searchView.setOnQueryTextListener(this);
 
         return true;
-    }*/
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -322,15 +333,15 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
 
         if (id == R.id.action_search) {
 
-//            if (first) {
-//                showSearchPrompt();
-//                first = false;
-//
-//            } else {
-//                Toast.makeText(this, "Clickeddddddd", Toast.LENGTH_SHORT).show();
-//            }
+            if (first) {
+                showSearchPrompt();
+                first = false;
 
-//            Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Clickeddddddd", Toast.LENGTH_SHORT).show();
+            }
+
+            Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show();
 
             return true;
         }

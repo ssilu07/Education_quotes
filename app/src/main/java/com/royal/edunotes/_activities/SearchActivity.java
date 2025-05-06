@@ -28,6 +28,19 @@ import com.royal.edunotes._models.QuoteModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import com.google.ai.client.generativeai.GenerativeModel;
+import com.google.ai.client.generativeai.type.Content;
+import com.google.ai.client.generativeai.type.TextPart;
+import com.google.ai.client.generativeai.type.GenerateContentResponse;
+
+import java.util.Collections;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+
 
 public class SearchActivity extends AppCompatActivity implements VerticlePagerAdapter.ClickInterface {
     String title;
@@ -77,9 +90,34 @@ public class SearchActivity extends AppCompatActivity implements VerticlePagerAd
         resultTv  =(TextView) findViewById(R.id.resultTV);
 
         VerticalViewPager verticalViewPager = (VerticalViewPager) findViewById(R.id.vPager);
-        myDatabase = new MyDatabase(SearchActivity.this, "alldata");
 
-        quoteModels = myDatabase.getSearchedData(title);
+        String[] filesToSearch = {
+                "life_quotes",
+                "inspirational_quote",
+                "happiness_quotes",
+                "beautiful_quotes",
+                "change_quote",
+                "introvert_quotes",
+                "hope_quotes",
+                "travel_quotes",
+                "trust_quotes",
+                "martin_luther_quotes",
+                "freedom_quotes"
+        };
+        quoteModels = new ArrayList<>();
+
+
+        for (String dbName : filesToSearch) {
+            MyDatabase myDb = new MyDatabase(SearchActivity.this, dbName, dbName);
+            ArrayList<QuoteModel> tempList = myDb.getSearchedData(title);
+
+            for (QuoteModel q : tempList) {
+                q.setCategoryName(dbName);
+            }
+
+            quoteModels.addAll(tempList);
+        }
+
 
         Collections.shuffle(quoteModels);
 
@@ -97,6 +135,9 @@ public class SearchActivity extends AppCompatActivity implements VerticlePagerAd
             nodata.setVisibility(View.VISIBLE);
             resultTv.setText(quoteModels.size()+" Results");
 
+            // 🧠 New: Use Gemini
+         //   fetchGeminiResponse(title);
+
         } else {
 
             resultTv.setText(quoteModels.size()+" Results");
@@ -107,6 +148,46 @@ public class SearchActivity extends AppCompatActivity implements VerticlePagerAd
 
 
     }
+
+  /*  private void fetchGeminiResponse(String query) {
+        resultTv.setText("Trying AI...");
+
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+        executorService.execute(() -> {
+            try {
+                GenerativeModel model = new GenerativeModel(
+                        "gemini-pro", // Model name
+                        "AIzaSyDLlpMizdzXIPZoYG56bLoYeeFO1v_xP90" // Replace with actual API Key
+                );
+
+                Content content = new Content.Builder()
+                        .addText(query)
+                        .build();
+
+                GenerateContentResponse response = model.generateContent(content);
+                String result = response.getText();
+
+                runOnUiThread(() -> {
+                    if (result != null && !result.isEmpty()) {
+                        resultTv.setText("AI: " + result);
+                    } else {
+                        resultTv.setText("No results from Gemini.");
+                    }
+                });
+
+            } catch (Exception e) {
+                runOnUiThread(() -> {
+                    resultTv.setText("Gemini Error: " + e.getMessage());
+                });
+                Log.e("Gemini", "Error fetching response", e);
+            }
+        });
+    }*/
+
+
+
+
     @Override
     public void onBoookmarkClick(QuoteModel quoteModel, ImageView star) {
 
