@@ -61,6 +61,7 @@ public class MyDatabase extends SQLiteAssetHelper {
         // Use only columns that are guaranteed to exist in all DBs
         String[] columns = {ID, QUOTE, TIMESTAMP};
 
+
 /*        String whereClause = QUOTE + " LIKE ?";
         String[] whereArgs = new String[]{"%" + searchKey + "%"};*/
 
