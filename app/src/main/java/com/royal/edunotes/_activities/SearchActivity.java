@@ -14,8 +14,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
 //import com.google.android.gms.ads.InterstitialAd;
 import com.royal.edunotes.R;
 import com.royal.edunotes.Utility;
@@ -31,14 +29,11 @@ import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.google.ai.client.generativeai.GenerativeModel;
-import com.google.ai.client.generativeai.type.Content;
-import com.google.ai.client.generativeai.type.TextPart;
-import com.google.ai.client.generativeai.type.GenerateContentResponse;
 
-import java.util.Collections;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import com.google.genai.Client;
+import com.google.genai.types.GenerateContentResponse;
+
+
 
 
 
@@ -136,7 +131,7 @@ public class SearchActivity extends AppCompatActivity implements VerticlePagerAd
             resultTv.setText(quoteModels.size()+" Results");
 
             // 🧠 New: Use Gemini
-         //   fetchGeminiResponse(title);
+            fetchGeminiResponse(title);
 
         } else {
 
@@ -149,41 +144,49 @@ public class SearchActivity extends AppCompatActivity implements VerticlePagerAd
 
     }
 
-  /*  private void fetchGeminiResponse(String query) {
-        resultTv.setText("Trying AI...");
+    private void fetchGeminiResponse(String query) {
+        // show interim UI
+        resultTv.setText("Trying AI…");
 
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-
-        executorService.execute(() -> {
+        // run on a background thread
+        new Thread(() -> {
             try {
-                GenerativeModel model = new GenerativeModel(
-                        "gemini-pro", // Model name
-                        "AIzaSyDLlpMizdzXIPZoYG56bLoYeeFO1v_xP90" // Replace with actual API Key
-                );
-
-                Content content = new Content.Builder()
-                        .addText(query)
+                // 1) build a Client that talks to the Gemini Developer API
+                Client client = Client.builder()
+                        .apiKey("AIzaSyDLlpMizdzXIPZoYG56bLoYeeFO1v_xP90")   // ← put your AI Studio key here
                         .build();
 
-                GenerateContentResponse response = model.generateContent(content);
-                String result = response.getText();
+                // 2) call generateContent (model name, prompt, no extra config)
+                GenerateContentResponse resp =
+                        client.models.generateContent(
+                                "gemini-2.0-flash-001",  // pick your Gemini model
+                                query,
+                                null
+                        );
 
-                runOnUiThread(() -> {
-                    if (result != null && !result.isEmpty()) {
-                        resultTv.setText("AI: " + result);
-                    } else {
-                        resultTv.setText("No results from Gemini.");
-                    }
-                });
+                // 3) pull out the text
+                String aiText = resp.text();
+
+                // 4) update UI on main thread
+                runOnUiThread(() ->
+                        resultTv.setText(aiText != null && !aiText.isEmpty()
+                                ? "AI: " + aiText
+                                : "No response from Gemini.")
+                );
 
             } catch (Exception e) {
-                runOnUiThread(() -> {
-                    resultTv.setText("Gemini Error: " + e.getMessage());
-                });
-                Log.e("Gemini", "Error fetching response", e);
+                // show error on UI
+                runOnUiThread(() ->
+                        resultTv.setText("Gemini Error: " + e.getMessage())
+                );
+                Log.e("Gemini", "fetch failed", e);
             }
-        });
-    }*/
+        }).start();
+    }
+
+
+
+
 
 
 
