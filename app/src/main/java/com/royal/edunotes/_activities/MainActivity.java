@@ -20,6 +20,8 @@ import android.os.Bundle;
 
 import androidx.appcompat.widget.Toolbar;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -181,6 +183,9 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
 
             @Override
             public void onPageSelected(final int position) {
+                Log.d("MainActivity_DEBUG", "🔧 Page selected: " + position +
+                        ", Current ScreenCheck: " + Utility.ScreenCheck);
+
                 navigationTabBar.getModels().get(position).hideBadge();
 
                 if (position == 0) {
@@ -191,8 +196,15 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
                     mToolbar.setTitle(getResources().getString(R.string.latest));
                 } else if (position == 3) {
                     mToolbar.setTitle(getResources().getString(R.string.bookmark));
-                    Fragment activeFragment = adapter.getItem(position);
-                    ((BookmarkFragment) activeFragment).refresh();
+
+                    // CRITICAL: Add delay to prevent immediate refresh
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                        Fragment activeFragment = adapter.getItem(position);
+                        if (activeFragment instanceof BookmarkFragment) {
+                            Log.d("MainActivity_DEBUG", "🔧 Calling refresh on BookmarkFragment");
+                            ((BookmarkFragment) activeFragment).refresh();
+                        }
+                    }, 150); // 150ms delay to allow ViewPager transition to complete
                 }
             }
 

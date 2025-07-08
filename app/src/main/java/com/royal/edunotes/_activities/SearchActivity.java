@@ -291,4 +291,12 @@ public class SearchActivity extends AppCompatActivity implements VerticlePagerAd
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/search?q=pub:Hirvasoft")));
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        if (verticlePagerAdapter != null) {
+            verticlePagerAdapter.cleanup();
+        }
+        super.onDestroy();
+    }
 }

@@ -255,4 +255,12 @@ public class LatestFragment extends Fragment implements VerticlePagerAdapter.Cli
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
     }
+
+    @Override
+    public void onDestroy() {
+        if (verticlePagerAdapter != null) {
+            verticlePagerAdapter.cleanup();
+        }
+        super.onDestroy();
+    }
 }

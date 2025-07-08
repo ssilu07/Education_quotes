@@ -249,4 +249,12 @@ public class HackList extends AppCompatActivity implements VerticlePagerAdapter.
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.royals.englishtrickyvocab")));
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        if (verticlePagerAdapter != null) {
+            verticlePagerAdapter.cleanup();
+        }
+        super.onDestroy();
+    }
 }

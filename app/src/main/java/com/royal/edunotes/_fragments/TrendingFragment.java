@@ -250,4 +250,12 @@ public class TrendingFragment extends Fragment implements VerticlePagerAdapter.C
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    @Override
+    public void onDestroy() {
+        if (verticlePagerAdapter != null) {
+            verticlePagerAdapter.cleanup();
+        }
+        super.onDestroy();
+    }
 }
