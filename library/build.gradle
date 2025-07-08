@@ -17,15 +17,16 @@
 apply plugin: 'jacoco'
 apply plugin: 'com.android.library'
 
-// Maven Group ID for the artifact
 group = 'uk.co.samuelwall'
 
 android {
-    compileSdkVersion 26
+    namespace 'uk.co.samuelwall.materialtaptargetprompt'
+
+    compileSdkVersion 34
 
     defaultConfig {
-        minSdkVersion 15
-        targetSdkVersion 26
+        minSdkVersion 21
+        targetSdkVersion 34
     }
 
     buildTypes {
@@ -42,6 +43,11 @@ android {
     lintOptions {
         abortOnError false
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 configurations {
@@ -49,20 +55,19 @@ configurations {
 }
 
 dependencies {
-    implementation 'androidx.annotation:annotation:1.0.0'
+    implementation 'androidx.annotation:annotation:1.8.2'
 
-    testImplementation 'androidx.annotation:annotation:1.0.0'
-    testImplementation 'junit:junit:4.12'
-    testImplementation 'org.robolectric:robolectric:3.5.1'
-    testImplementation 'org.mockito:mockito-core:2.10.0'
+    testImplementation 'androidx.annotation:annotation:1.8.2'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.robolectric:robolectric:4.13'
+    testImplementation 'org.mockito:mockito-core:5.14.2'
 
-    javadocCompile 'androidx.annotation:annotation:1.0.0'
+    javadocCompile 'androidx.annotation:annotation:1.8.2'
 }
-
 
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
+    archiveClassifier = 'sources'
 }
 
 task javadoc(type: Javadoc) {
@@ -70,10 +75,11 @@ task javadoc(type: Javadoc) {
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
     classpath += configurations.javadocCompile
     failOnError false
+    options.addBooleanOption('Xdoclint:none', true)
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
+    archiveClassifier = 'javadoc'
     from javadoc.destinationDir
 }
 
@@ -83,24 +89,21 @@ artifacts {
 }
 
 jacoco {
-    toolVersion = "0.7.1.201405082137"
+    toolVersion = "0.8.12"
 }
 
-//gradlew clean jacocoTestReport
 task jacocoTestReport(type: JacocoReport, dependsOn: 'testDebugUnitTest') {
-
     reports {
-        xml.enabled = true
-        html.enabled = true
+        xml.required = true
+        html.required = true
     }
 
-
     def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*']
-    def debugTree = fileTree(dir: "${buildDir}/intermediates/classes/debug", excludes: fileFilter)
+    def debugTree = fileTree(dir: "${buildDir}/intermediates/javac/debug/classes", excludes: fileFilter)
     def mainSrc = "${project.projectDir}/src/main/java"
 
-    additionalSourceDirs.from = files([mainSrc])
-    sourceDirectories.from = files([mainSrc])
-    classDirectories.from = files([debugTree])
-    executionData.from = files("${buildDir}/jacoco/testDebugUnitTest.exec")
+    getAdditionalSourceDirs().from(files([mainSrc]))
+    getSourceDirectories().from(files([mainSrc]))
+    getClassDirectories().from(files([debugTree]))
+    getExecutionData().from(files("${buildDir}/jacoco/testDebugUnitTest.exec"))
 }

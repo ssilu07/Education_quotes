@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         viewPager = (CustomViewPager) findViewById(R.id.vp_horizontal_ntb);
         setupViewPager(viewPager);
 
-        final String[] colors = getResources().getStringArray(R.array.default_preview);
+        final String[] colors = getResources().getStringArray(devlight.io.library.R.array.default_preview);
         final NavigationTabBar navigationTabBar = (NavigationTabBar) findViewById(R.id.ntb_horizontal);
         final ArrayList<NavigationTabBar.Model> models = new ArrayList<>();
         models.add(
