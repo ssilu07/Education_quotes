@@ -22,11 +22,11 @@ version = "1.2.5"
 android {
     namespace 'devlight.io.library'
 
-    compileSdkVersion 34
+    compileSdkVersion 35
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 34
+        targetSdkVersion 35
     }
 
     compileOptions {
