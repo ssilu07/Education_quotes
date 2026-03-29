@@ -22,7 +22,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#ffffff"
+            android:background="@color/cardBackground"
             android:orientation="vertical"
             android:weightSum="1">
 
@@ -65,7 +65,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="0.120"
-                android:background="#ffffff"
+                android:background="@color/cardBackground"
+                android:baselineAligned="false"
                 android:orientation="horizontal"
                 android:weightSum="1">
 
@@ -74,13 +75,14 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:layout_weight="0.25"
+                    android:layout_weight="0.20"
                     android:gravity="center">
 
                     <ImageView
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_gravity="center"
+                        android:contentDescription="Copy"
                         android:src="@drawable/copy" />
                 </LinearLayout>
 
@@ -89,7 +91,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:layout_weight="0.25"
+                    android:layout_weight="0.20"
                     android:gravity="center">
 
                     <ImageView
@@ -97,6 +99,7 @@
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_gravity="center"
+                        android:contentDescription="Bookmark"
                         android:src="@drawable/star" />
                 </LinearLayout>
 
@@ -105,22 +108,23 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:layout_weight="0.25"
+                    android:layout_weight="0.20"
                     android:gravity="center">
 
                     <ImageView
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_gravity="center"
+                        android:contentDescription="Share"
                         android:src="@drawable/newshareee" />
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/ourappLLVocab"
+                    android:id="@+id/ttsLLVocab"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:layout_weight="0.25"
+                    android:layout_weight="0.20"
                     android:gravity="center">
 
                     <TextView
@@ -128,9 +132,28 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="@string/moreapp"
+                        android:text="@string/tts_label"
                         android:textColor="#c7c7c7"
-                        android:textSize="13sp" />
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/explainLLVocab"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.20"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="@string/ai_label"
+                        android:textColor="#4acfda"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -151,7 +174,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#ffffff"
+            android:background="@color/cardBackground"
             android:orientation="vertical"
             android:weightSum="1">
 
@@ -194,7 +217,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="0.120"
-                android:background="#ffffff"
+                android:background="@color/cardBackground"
+                android:baselineAligned="false"
                 android:orientation="horizontal"
                 android:weightSum="1">
 
@@ -203,13 +227,14 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:layout_weight="0.25"
+                    android:layout_weight="0.20"
                     android:gravity="center">
 
                     <ImageView
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_gravity="center"
+                        android:contentDescription="Copy"
                         android:src="@drawable/copy" />
                 </LinearLayout>
 
@@ -218,7 +243,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:layout_weight="0.25"
+                    android:layout_weight="0.20"
                     android:gravity="center">
 
                     <ImageView
@@ -226,6 +251,7 @@
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_gravity="center"
+                        android:contentDescription="Bookmark"
                         android:src="@drawable/star" />
                 </LinearLayout>
 
@@ -234,22 +260,23 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:layout_weight="0.25"
+                    android:layout_weight="0.20"
                     android:gravity="center">
 
                     <ImageView
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_gravity="center"
+                        android:contentDescription="Share"
                         android:src="@drawable/newshareee" />
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/ourappLLIdiom"
+                    android:id="@+id/ttsLLIdiom"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:layout_weight="0.25"
+                    android:layout_weight="0.20"
                     android:gravity="center">
 
                     <TextView
@@ -257,9 +284,28 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="@string/moreapp"
+                        android:text="@string/tts_label"
                         android:textColor="#c7c7c7"
-                        android:textSize="13sp" />
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/explainLLIdiom"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.20"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="@string/ai_label"
+                        android:textColor="#4acfda"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
 

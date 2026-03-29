@@ -112,6 +112,10 @@
 
 
     <string name="moreapp">More\nApps</string>
+    <string name="tts_label">\uD83D\uDD0A</string>
+    <string name="ai_label">AI\nExplain</string>
+    <string name="quiz_title">Daily Quiz</string>
+    <string name="streak_label">Streak</string>
 
     <!-- Example settings for Notifications -->
     <string name="pref_header_notifications">Notifications</string>

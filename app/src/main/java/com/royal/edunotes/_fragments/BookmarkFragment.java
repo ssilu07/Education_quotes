@@ -23,7 +23,12 @@ import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.royal.edunotes.AIExplainHelper;
+import com.royal.edunotes.BuildConfig;
+import com.royal.edunotes.ProgressManager;
 import com.royal.edunotes.R;
+import com.royal.edunotes.ShareUtils;
+import com.royal.edunotes.TTSHelper;
 import com.royal.edunotes.Utility;
 import com.royal.edunotes.VerticalViewPager;
 import com.royal.edunotes._adapters.VerticlePagerAdapter;
@@ -43,6 +48,9 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
     private OnFragmentInteractionListener mListener;
     VerticlePagerAdapter verticlePagerAdapter;
     MyDatabase myDatabase;
+    TTSHelper ttsHelper;
+    AIExplainHelper aiExplainHelper;
+    ProgressManager progressManager;
     TextView nobookmarkTxt;
     VerticalViewPager verticalViewPager;
     InterstitialAd mInterstitialAd;
@@ -88,6 +96,9 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
         super.onViewCreated(view, savedInstanceState);
         Log.d(TAG, "🔧 onViewCreated - ScreenCheck: " + Utility.ScreenCheck);
 
+        ttsHelper = new TTSHelper(getActivity());
+        aiExplainHelper = new AIExplainHelper();
+        progressManager = new ProgressManager(getActivity());
         currentScreenType = Utility.ScreenCheck;
         loadData();
     }
@@ -197,7 +208,7 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
         if (getActivity() == null) return;
 
         AdRequest adRequest = new AdRequest.Builder().build();
-        InterstitialAd.load(getActivity(), getString(R.string.interstitial_full_screen), adRequest,
+        InterstitialAd.load(getActivity(), BuildConfig.ADMOB_INTERSTITIAL_ID, adRequest,
                 new InterstitialAdLoadCallback() {
                     @Override
                     public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
@@ -240,6 +251,7 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
             if (verticlePagerAdapter != null) {
                 verticlePagerAdapter.notifyDataSetChanged();
             }
+            if (progressManager != null) progressManager.onWordBookmarked();
         }
     }
 
@@ -264,6 +276,25 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
         sendIntent.putExtra(Intent.EXTRA_TEXT, quoteModel.getQuote());
         sendIntent.setType("text/plain");
         startActivity(sendIntent);
+    }
+
+    @Override
+    public void onTTSClick(QuoteModel quoteModel) {
+        if (ttsHelper != null) ttsHelper.speak(quoteModel.getQuote());
+    }
+
+    @Override
+    public void onExplainClick(QuoteModel quoteModel) {
+        if (getActivity() != null && aiExplainHelper != null) {
+            aiExplainHelper.explain(getActivity(), quoteModel.getQuote());
+        }
+    }
+
+    @Override
+    public void onShareAsImageClick(View cardView) {
+        if (getActivity() != null) {
+            ShareUtils.shareViewAsImage(getActivity(), cardView);
+        }
     }
 
     @Override
@@ -307,9 +338,9 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
 
     @Override
     public void onDestroy() {
-        if (verticlePagerAdapter != null) {
-            verticlePagerAdapter.cleanup();
-        }
+        if (verticlePagerAdapter != null) verticlePagerAdapter.cleanup();
+        if (ttsHelper != null) ttsHelper.shutdown();
+        if (aiExplainHelper != null) aiExplainHelper.shutdown();
         super.onDestroy();
     }
 }

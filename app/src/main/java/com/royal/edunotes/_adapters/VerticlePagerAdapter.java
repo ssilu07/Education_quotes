@@ -22,6 +22,8 @@ import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.royal.edunotes.BuildConfig;
+import com.royal.edunotes.ProgressManager;
 import com.royal.edunotes.R;
 import com.royal.edunotes.Utility;
 import com.royal.edunotes._database.DatabaseHelper;
@@ -50,6 +52,7 @@ public class VerticlePagerAdapter extends PagerAdapter {
     private boolean adsInitialized = false;
     private Handler mainHandler;
     private int lastAdPosition = -1; // Track last position where ad was shown
+    private ProgressManager progressManager;
 
     public VerticlePagerAdapter(Context context, ArrayList<QuoteModel> quoteModels,
                                 ClickInterface clickInterface, ArrayList<ModelDatabase> modelDatabases) {
@@ -59,6 +62,7 @@ public class VerticlePagerAdapter extends PagerAdapter {
         this.clickInterface = clickInterface;
         this.modelDatabases = modelDatabases;
         this.mainHandler = new Handler(Looper.getMainLooper());
+        this.progressManager = new ProgressManager(context);
 
         Log.d(TAG, "🔧 Adapter created - Quotes: " + this.quoteModels.size());
 
@@ -90,7 +94,7 @@ public class VerticlePagerAdapter extends PagerAdapter {
 
         AdRequest adRequest = new AdRequest.Builder().build();
 
-        InterstitialAd.load(mContext, mContext.getString(R.string.interstitial_full_screen), adRequest,
+        InterstitialAd.load(mContext, BuildConfig.ADMOB_INTERSTITIAL_ID, adRequest,
                 new InterstitialAdLoadCallback() {
                     @Override
                     public void onAdLoaded(InterstitialAd interstitialAd) {
@@ -175,6 +179,11 @@ public class VerticlePagerAdapter extends PagerAdapter {
 
         View itemView = mLayoutInflater.inflate(R.layout.content_main, container, false);
 
+        // Track word read for progress
+        if (progressManager != null) {
+            progressManager.onWordRead();
+        }
+
         if (Utility.ScreenCheck.equals("Vocab")) {
             setupVocabView(itemView, currentQuote, position);
         } else if (Utility.ScreenCheck.equals("Idiom")) {
@@ -227,7 +236,8 @@ public class VerticlePagerAdapter extends PagerAdapter {
         LinearLayout copy = itemView.findViewById(R.id.copyLLVocab);
         final LinearLayout starLL = itemView.findViewById(R.id.starLLVocab);
         LinearLayout share = itemView.findViewById(R.id.shareLLVocab);
-        LinearLayout otherapp = itemView.findViewById(R.id.ourappLLVocab);
+        LinearLayout ttsLL = itemView.findViewById(R.id.ttsLLVocab);
+        LinearLayout explainLL = itemView.findViewById(R.id.explainLLVocab);
 
         cardViewVocab.setVisibility(View.VISIBLE);
         cardViewIdiom.setVisibility(View.GONE);
@@ -285,7 +295,14 @@ public class VerticlePagerAdapter extends PagerAdapter {
             }
         });
 
-        otherapp.setOnClickListener(view -> clickInterface.onMoreAppsClick());
+        // Long press share to share as image
+        share.setOnLongClickListener(view -> {
+            clickInterface.onShareAsImageClick(itemView.findViewById(R.id.card_view_vocab));
+            return true;
+        });
+
+        ttsLL.setOnClickListener(view -> clickInterface.onTTSClick(currentQuote));
+        explainLL.setOnClickListener(view -> clickInterface.onExplainClick(currentQuote));
     }
 
     private void setupIdiomView(View itemView, QuoteModel currentQuote, int position) {
@@ -299,7 +316,8 @@ public class VerticlePagerAdapter extends PagerAdapter {
         LinearLayout copy = itemView.findViewById(R.id.copyLLIdiom);
         final LinearLayout starLLIdiom = itemView.findViewById(R.id.starLLIdiom);
         LinearLayout share = itemView.findViewById(R.id.shareLLIdiom);
-        LinearLayout otherapp = itemView.findViewById(R.id.ourappLLIdiom);
+        LinearLayout ttsLL = itemView.findViewById(R.id.ttsLLIdiom);
+        LinearLayout explainLL = itemView.findViewById(R.id.explainLLIdiom);
         final ImageView star_idiom = itemView.findViewById(R.id.star_idiom);
 
         hackTxt.setText(currentQuote.getQuote());
@@ -353,7 +371,14 @@ public class VerticlePagerAdapter extends PagerAdapter {
             }
         });
 
-        otherapp.setOnClickListener(view -> clickInterface.onMoreAppsClick());
+        // Long press share to share as image
+        share.setOnLongClickListener(view -> {
+            clickInterface.onShareAsImageClick(itemView.findViewById(R.id.card_view_idiom));
+            return true;
+        });
+
+        ttsLL.setOnClickListener(view -> clickInterface.onTTSClick(currentQuote));
+        explainLL.setOnClickListener(view -> clickInterface.onExplainClick(currentQuote));
     }
 
     private void updateBookmarkStatus(QuoteModel currentQuote, int position) {
@@ -425,6 +450,9 @@ public class VerticlePagerAdapter extends PagerAdapter {
         void onBoookmarkClick(QuoteModel CategoryModel, ImageView star);
         void onCopyClick(QuoteModel CategoryModel);
         void onShareClick(QuoteModel CategoryModel);
+        void onShareAsImageClick(View cardView);
+        void onTTSClick(QuoteModel quoteModel);
+        void onExplainClick(QuoteModel quoteModel);
         void onMoreAppsClick();
     }
 }

@@ -1,6 +1,5 @@
 package com.royal.edunotes._activities;
 
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
@@ -8,21 +7,18 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.FullScreenContentCallback;
-import com.google.android.gms.ads.OnPaidEventListener;
-import com.google.android.gms.ads.ResponseInfo;
-import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.royal.edunotes.AIExplainHelper;
+import com.royal.edunotes.ProgressManager;
 import com.royal.edunotes.R;
+import com.royal.edunotes.ShareUtils;
+import com.royal.edunotes.TTSHelper;
 import com.royal.edunotes.Utility;
 import com.royal.edunotes.VerticalViewPager;
 import com.royal.edunotes._adapters.VerticlePagerAdapter;
@@ -41,7 +37,9 @@ public class HackList extends AppCompatActivity implements VerticlePagerAdapter.
     ArrayList<QuoteModel> quoteModels = new ArrayList<>();
     VerticlePagerAdapter verticlePagerAdapter;
     DatabaseHelper db;
-    InterstitialAd mInterstitialAd;
+    TTSHelper ttsHelper;
+    AIExplainHelper aiExplainHelper;
+    ProgressManager progressManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +78,10 @@ public class HackList extends AppCompatActivity implements VerticlePagerAdapter.
         Log.e("TAG1===", "SIZEEEE : " + modelDatabases.size());
 
 
+        ttsHelper = new TTSHelper(this);
+        aiExplainHelper = new AIExplainHelper();
+        progressManager = new ProgressManager(this);
+
         verticlePagerAdapter = new VerticlePagerAdapter(HackList.this, quoteModels, this, modelDatabases);
 
         verticalViewPager.setAdapter(verticlePagerAdapter);
@@ -112,75 +114,6 @@ public class HackList extends AppCompatActivity implements VerticlePagerAdapter.
         Log.e("TAGGG ===",quoteModel.getCategoryName());
 
 
-        mInterstitialAd = new InterstitialAd() {
-            @NonNull
-            @Override
-            public String getAdUnitId() {
-                return null;
-            }
-
-            @Override
-            public void show(@NonNull Activity activity) {
-
-            }
-
-            @Override
-            public void setFullScreenContentCallback(@Nullable FullScreenContentCallback fullScreenContentCallback) {
-
-            }
-
-            @Nullable
-            @Override
-            public FullScreenContentCallback getFullScreenContentCallback() {
-                return null;
-            }
-
-            @Override
-            public void setImmersiveMode(boolean b) {
-
-            }
-
-            @NonNull
-            @Override
-            public ResponseInfo getResponseInfo() {
-                return null;
-            }
-
-            @Override
-            public void setOnPaidEventListener(@Nullable OnPaidEventListener onPaidEventListener) {
-
-            }
-
-            @Nullable
-            @Override
-            public OnPaidEventListener getOnPaidEventListener() {
-                return null;
-            }
-        };
-
-      /*  // set the ad unit ID
-        mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen));
-
-        AdRequest adRequest = new AdRequest.Builder()
-                .build();
-
-        // Load ads into Interstitial Ads
-        mInterstitialAd.loadAd(adRequest);
-
-        mInterstitialAd.setAdListener(new AdListener() {
-            public void onAdLoaded() {
-                showInterstitial();
-            }
-
-            @Override
-            public void onAdFailedToLoad(int i) {
-                super.onAdFailedToLoad(i);
-                Log.e("TAG===", "Error ad :" + i);
-            }
-        });
-
-*/
-
         if (quoteModel.isBookmared()) {
 //            Remove from bookmark table
 
@@ -211,8 +144,7 @@ public class HackList extends AppCompatActivity implements VerticlePagerAdapter.
             star.setImageDrawable(getResources().getDrawable(R.drawable.starfilled));
             quoteModel.setBookmared(true);
             verticlePagerAdapter.notifyDataSetChanged();
-
-
+            if (progressManager != null) progressManager.onWordBookmarked();
 
         }
     }
@@ -240,9 +172,23 @@ public class HackList extends AppCompatActivity implements VerticlePagerAdapter.
     }
 
     @Override
+    public void onTTSClick(QuoteModel quoteModel) {
+        ttsHelper.speak(quoteModel.getQuote());
+    }
+
+    @Override
+    public void onExplainClick(QuoteModel quoteModel) {
+        aiExplainHelper.explain(this, quoteModel.getQuote());
+    }
+
+    @Override
+    public void onShareAsImageClick(View cardView) {
+        ShareUtils.shareViewAsImage(this, cardView);
+    }
+
+    @Override
     public void onMoreAppsClick() {
         try {
-          //  startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=Hirvasoft")));
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.royals.englishtrickyvocab")));
 
         } catch (android.content.ActivityNotFoundException anfe) {
@@ -252,9 +198,9 @@ public class HackList extends AppCompatActivity implements VerticlePagerAdapter.
 
     @Override
     protected void onDestroy() {
-        if (verticlePagerAdapter != null) {
-            verticlePagerAdapter.cleanup();
-        }
+        if (verticlePagerAdapter != null) verticlePagerAdapter.cleanup();
+        if (ttsHelper != null) ttsHelper.shutdown();
+        if (aiExplainHelper != null) aiExplainHelper.shutdown();
         super.onDestroy();
     }
 }

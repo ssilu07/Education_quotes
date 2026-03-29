@@ -19,7 +19,11 @@ import android.widget.Toast;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 //import com.google.android.gms.ads.InterstitialAd;
+import com.royal.edunotes.AIExplainHelper;
+import com.royal.edunotes.ProgressManager;
 import com.royal.edunotes.R;
+import com.royal.edunotes.ShareUtils;
+import com.royal.edunotes.TTSHelper;
 import com.royal.edunotes.Utility;
 import com.royal.edunotes.VerticalViewPager;
 import com.royal.edunotes._adapters.VerticlePagerAdapter;
@@ -43,7 +47,9 @@ public class LatestFragment extends Fragment implements VerticlePagerAdapter.Cli
     ArrayList<QuoteModel> mainQuoteModels;
     MyDatabase myDatabase;
     VerticlePagerAdapter verticlePagerAdapter;
-    //InterstitialAd mInterstitialAd;
+    TTSHelper ttsHelper;
+    AIExplainHelper aiExplainHelper;
+    ProgressManager progressManager;
 
     public LatestFragment() {
     }
@@ -123,6 +129,9 @@ public class LatestFragment extends Fragment implements VerticlePagerAdapter.Cli
         Log.e("TAG1===", "SIZEEEE : " + modelDatabases.size());
 
 
+        ttsHelper = new TTSHelper(getActivity());
+        aiExplainHelper = new AIExplainHelper();
+        progressManager = new ProgressManager(getActivity());
         verticlePagerAdapter = new VerticlePagerAdapter(getActivity(), mainQuoteModels, this, modelDatabases);
         verticalViewPager.setOffscreenPageLimit(0);
         verticalViewPager.setAdapter(verticlePagerAdapter);
@@ -214,7 +223,7 @@ public class LatestFragment extends Fragment implements VerticlePagerAdapter.Cli
             star.setImageDrawable(getResources().getDrawable(R.drawable.starfilled));
             quoteModel.setBookmared(true);
             verticlePagerAdapter.notifyDataSetChanged();
-
+            if (progressManager != null) progressManager.onWordBookmarked();
         }
     }
 
@@ -242,11 +251,28 @@ public class LatestFragment extends Fragment implements VerticlePagerAdapter.Cli
     }
 
     @Override
+    public void onTTSClick(QuoteModel quoteModel) {
+        if (ttsHelper != null) ttsHelper.speak(quoteModel.getQuote());
+    }
+
+    @Override
+    public void onExplainClick(QuoteModel quoteModel) {
+        if (getActivity() != null && aiExplainHelper != null) {
+            aiExplainHelper.explain(getActivity(), quoteModel.getQuote());
+        }
+    }
+
+    @Override
+    public void onShareAsImageClick(View cardView) {
+        if (getActivity() != null) {
+            ShareUtils.shareViewAsImage(getActivity(), cardView);
+        }
+    }
+
+    @Override
     public void onMoreAppsClick() {
         try {
-          //  startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=Royal%27s+Family")));
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.royals.englishtrickyvocab")));
-
         } catch (android.content.ActivityNotFoundException anfe) {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.royals.englishtrickyvocab")));
         }
@@ -258,9 +284,9 @@ public class LatestFragment extends Fragment implements VerticlePagerAdapter.Cli
 
     @Override
     public void onDestroy() {
-        if (verticlePagerAdapter != null) {
-            verticlePagerAdapter.cleanup();
-        }
+        if (verticlePagerAdapter != null) verticlePagerAdapter.cleanup();
+        if (ttsHelper != null) ttsHelper.shutdown();
+        if (aiExplainHelper != null) aiExplainHelper.shutdown();
         super.onDestroy();
     }
 }

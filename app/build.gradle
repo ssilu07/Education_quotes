@@ -1,5 +1,12 @@
 apply plugin: 'com.android.application'
 
+// Read local.properties for API keys
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localProperties.load(new FileInputStream(localPropertiesFile))
+}
+
 android {
     namespace 'com.royal.edunotes'
 
@@ -13,8 +20,17 @@ android {
         multiDexEnabled true
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         vectorDrawables.useSupportLibrary = true
+
+        // Gemini API Key from local.properties
+        buildConfigField "String", "GEMINI_API_KEY", "\"${localProperties.getProperty('GEMINI_API_KEY', '')}\""
     }
     useLibrary 'org.apache.http.legacy'
+
+    buildFeatures {
+        buildConfig true
+        viewBinding true
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -27,32 +43,44 @@ android {
         }
     }
     buildTypes {
+        debug {
+            // Test AdMob IDs for development
+            manifestPlaceholders["admobAppId"] = "ca-app-pub-3940256099942544~3347511713"
+            buildConfigField "String", "ADMOB_INTERSTITIAL_ID", "\"ca-app-pub-3940256099942544/1033173712\""
+            buildConfigField "String", "ADMOB_BANNER_ID", "\"ca-app-pub-3940256099942544/6300978111\""
+            buildConfigField "String", "ADMOB_NATIVE_ID", "\"ca-app-pub-3940256099942544/2247696110\""
+        }
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            // Production AdMob IDs
+            manifestPlaceholders["admobAppId"] = localProperties.getProperty('ADMOB_APP_ID', 'ca-app-pub-3940256099942544~3347511713')
+            buildConfigField "String", "ADMOB_INTERSTITIAL_ID", "\"${localProperties.getProperty('ADMOB_INTERSTITIAL_ID', 'ca-app-pub-3940256099942544/1033173712')}\""
+            buildConfigField "String", "ADMOB_BANNER_ID", "\"${localProperties.getProperty('ADMOB_BANNER_ID', 'ca-app-pub-3940256099942544/6300978111')}\""
+            buildConfigField "String", "ADMOB_NATIVE_ID", "\"${localProperties.getProperty('ADMOB_NATIVE_ID', 'ca-app-pub-3940256099942544/2247696110')}\""
         }
     }
 }
 
 configurations.all {
-    resolutionStrategy {
-        force 'com.fasterxml.jackson.core:jackson-core:2.13.3'
-    }
     exclude group: 'com.google.errorprone',    module: 'error_prone_annotations'
-    exclude group: 'org.slf4j',                module: 'slf4j-api'
-    exclude group: 'com.google.auto.value',     module: 'auto-value'
 }
 
 dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
 
-    // Updated AndroidX dependencies
+    // AndroidX dependencies
     implementation 'androidx.activity:activity:1.9.2'
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.recyclerview:recyclerview:1.3.2'
     implementation 'com.google.android.material:material:1.12.0'
+
+    // Splash Screen API
+    implementation 'androidx.core:core-splashscreen:1.0.1'
 
     def lottieVersion = "6.5.2"
 
@@ -64,21 +92,18 @@ dependencies {
     implementation 'androidx.vectordrawable:vectordrawable:1.2.0'
     implementation "com.airbnb.android:lottie:$lottieVersion"
     implementation 'com.squareup.picasso:picasso:2.71828'
-    implementation 'androidx.multidex:multidex:2.0.1'  // ✅ FIXED: Changed multidx to multidex
+    implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
     implementation 'com.google.code.gson:gson:2.10.1'
 
-    // Updated Google Play Services Ads
+    // Google Play Services Ads
     implementation 'com.google.android.gms:play-services-ads:23.5.0'
 
-    // Google Gen AI Java SDK for Gemini Developer API
-    implementation('com.google.genai:google-genai:0.6.1') {
-        exclude group: 'com.google.errorprone', module: 'error_prone_annotations'
-        exclude group: 'org.slf4j',           module: 'slf4j-api'
-        exclude group: 'com.google.auto.value', module: 'auto-value'
-    }
+    // Gemini API called via HttpURLConnection (see GeminiApi.java)
+    // No SDK needed - avoids Apache HttpClient conflict on Android
 
-    // Updated test dependencies
+    // Test dependencies
+    testImplementation 'junit:junit:4.13.2'
     androidTestImplementation "androidx.test:core:1.6.1"
     androidTestImplementation "androidx.test:runner:1.6.2"
     androidTestImplementation "androidx.test:rules:1.6.1"

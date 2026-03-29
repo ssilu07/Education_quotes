@@ -327,45 +327,57 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_todayquote) {
-//            if (second) {
-//                showQuotePrompt();
-//                second = false;
-//
-//            } else {
-//                Toast.makeText(this, "Clickedddd", Toast.LENGTH_SHORT).show();
-//            }
-//
-//            return true;
-//        }
-
         if (id == R.id.action_search) {
-
             if (first) {
                 showSearchPrompt();
                 first = false;
-
-            } else {
-                Toast.makeText(this, "Clickeddddddd", Toast.LENGTH_SHORT).show();
             }
-
-            Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show();
-
             return true;
         }
 
+        if (id == R.id.action_quiz) {
+            startActivity(new Intent(this, DailyQuizActivity.class));
+            return true;
+        }
 
-//        if (id == R.id.action_settings) {
-//            startActivity(new Intent(getApplicationContext(), Setting.class));
-//            return true;
-//        }
-
+        if (id == R.id.action_progress) {
+            showProgressDialog();
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showProgressDialog() {
+        com.royal.edunotes.ProgressManager pm = new com.royal.edunotes.ProgressManager(this);
+        StringBuilder sb = new StringBuilder();
+        sb.append("Level: ").append(pm.getLevel()).append("\n");
+        sb.append("Total XP: ").append(pm.getXP()).append("\n");
+        sb.append("XP to next level: ").append(pm.getXPForNextLevel()).append("\n\n");
+        sb.append("Words Read: ").append(pm.getWordsRead()).append("\n");
+        sb.append("Words Bookmarked: ").append(pm.getWordsBookmarked()).append("\n");
+        sb.append("Quizzes Taken: ").append(pm.getQuizzesTaken()).append("\n");
+        sb.append("Quiz Accuracy: ").append(pm.getQuizCorrect()).append(" correct\n\n");
+        sb.append("Current Streak: ").append(pm.getStreak()).append(" days\n");
+        sb.append("Best Streak: ").append(pm.getBestStreak()).append(" days\n\n");
+
+        String[] badges = pm.getEarnedBadges();
+        if (badges.length > 0) {
+            sb.append("--- Badges ---\n");
+            for (String badge : badges) {
+                sb.append(badge).append("\n");
+            }
+        } else {
+            sb.append("No badges yet. Keep learning!");
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle("My Progress")
+                .setMessage(sb.toString())
+                .setPositiveButton("OK", null)
+                .show();
     }
 }
 

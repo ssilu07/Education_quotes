@@ -28,6 +28,7 @@ import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.royal.edunotes.BuildConfig;
 import com.royal.edunotes.Utility;
 import com.royal.edunotes._activities.HackList;
 import com.royal.edunotes._models.CategoryModel;
@@ -241,7 +242,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.CategoryCl
         // Use test ad unit ID during development: "ca-app-pub-3940256099942544/1033173712"
         AdRequest adRequestNew = new AdRequest.Builder().build();
 
-        InterstitialAd.load(getActivity(), getString(R.string.interstitial_full_screen), adRequestNew, new InterstitialAdLoadCallback() {
+        InterstitialAd.load(getActivity(), BuildConfig.ADMOB_INTERSTITIAL_ID, adRequestNew, new InterstitialAdLoadCallback() {
             @Override
             public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
                 mInterstitialAd = interstitialAd;
