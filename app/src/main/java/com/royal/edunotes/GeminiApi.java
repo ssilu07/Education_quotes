@@ -22,7 +22,7 @@ public class GeminiApi {
     private static final String TAG = "GeminiApi";
     private static final String BASE_URL =
             "https://generativelanguage.googleapis.com/v1beta/models/";
-    private static final String DEFAULT_MODEL = "gemini-2.0-flash-001";
+    private static final String DEFAULT_MODEL = "gemini-2.0-flash";
 
     /**
      * Sends a prompt to Gemini and returns the text response.
@@ -57,8 +57,8 @@ public class GeminiApi {
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Content-Type", "application/json");
         conn.setDoOutput(true);
-        conn.setConnectTimeout(15000);
-        conn.setReadTimeout(30000);
+        conn.setConnectTimeout(20000);
+        conn.setReadTimeout(60000);
 
         try (OutputStream os = conn.getOutputStream()) {
             os.write(requestBody.toString().getBytes(StandardCharsets.UTF_8));
@@ -88,7 +88,7 @@ public class GeminiApi {
                 }
             }
             Log.e(TAG, "API error " + responseCode + ": " + error);
-            throw new Exception("Gemini API error (" + responseCode + ")");
+            throw new Exception("Gemini API error (" + responseCode + "): " + error);
         }
     }
 

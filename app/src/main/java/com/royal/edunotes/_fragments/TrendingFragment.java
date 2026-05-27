@@ -250,17 +250,15 @@ public class TrendingFragment extends Fragment implements VerticlePagerAdapter.C
     }
 
     @Override
-    public void onExplainClick(QuoteModel quoteModel) {
-        if (getActivity() != null && aiExplainHelper != null) {
-            aiExplainHelper.explain(getActivity(), quoteModel.getQuote());
-        }
-    }
-
-    @Override
     public void onShareAsImageClick(View cardView) {
         if (getActivity() != null) {
             ShareUtils.shareViewAsImage(getActivity(), cardView);
         }
+    }
+
+    @Override
+    public void onQuizClick() {
+        startActivity(new Intent(getActivity(), com.royal.edunotes._activities.DailyQuizActivity.class));
     }
 
     @Override

@@ -83,8 +83,16 @@ public class HackList extends AppCompatActivity implements VerticlePagerAdapter.
         progressManager = new ProgressManager(this);
 
         verticlePagerAdapter = new VerticlePagerAdapter(HackList.this, quoteModels, this, modelDatabases);
+        verticlePagerAdapter.setCategoryName(category);
 
         verticalViewPager.setAdapter(verticlePagerAdapter);
+
+        verticalViewPager.addOnPageChangeListener(new androidx.viewpager.widget.ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                if (progressManager != null) progressManager.onWordRead();
+            }
+        });
 
 
 
@@ -122,17 +130,10 @@ public class HackList extends AppCompatActivity implements VerticlePagerAdapter.
 
             db.deleteNote(quoteModel);
 
-
-
-
             star.setImageDrawable(getResources().getDrawable(R.drawable.star));
             quoteModel.setBookmared(false);
-            verticlePagerAdapter.notifyDataSetChanged();
-
 
         } else {
-
-//           Add in to bookmark table
 
             db = new DatabaseHelper(HackList.this, quoteModel);
 
@@ -140,10 +141,8 @@ public class HackList extends AppCompatActivity implements VerticlePagerAdapter.
 
             db.insertNote(quoteModel);
 
-
             star.setImageDrawable(getResources().getDrawable(R.drawable.starfilled));
             quoteModel.setBookmared(true);
-            verticlePagerAdapter.notifyDataSetChanged();
             if (progressManager != null) progressManager.onWordBookmarked();
 
         }
@@ -177,13 +176,14 @@ public class HackList extends AppCompatActivity implements VerticlePagerAdapter.
     }
 
     @Override
-    public void onExplainClick(QuoteModel quoteModel) {
-        aiExplainHelper.explain(this, quoteModel.getQuote());
+    public void onShareAsImageClick(View cardView) {
+        ShareUtils.shareViewAsImage(this, cardView);
     }
 
     @Override
-    public void onShareAsImageClick(View cardView) {
-        ShareUtils.shareViewAsImage(this, cardView);
+    public void onQuizClick() {
+        Intent quizIntent = new Intent(HackList.this, DailyQuizActivity.class);
+        startActivity(quizIntent);
     }
 
     @Override

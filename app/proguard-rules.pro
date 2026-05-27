@@ -74,6 +74,10 @@
 -dontwarn org.apache.http.**
 -dontwarn android.net.http.**
 
+# ---- Conscrypt (optional TLS provider used by OkHttp/networking libs) ----
+-dontwarn org.conscrypt.Conscrypt
+-dontwarn org.conscrypt.OpenSSLProvider
+
 # ---- General ----
 -keepclassmembers class * implements android.os.Parcelable {
     public static final ** CREATOR;

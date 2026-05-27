@@ -60,8 +60,23 @@
             </intent-filter>
         </receiver>
 
+        <activity android:name="._activities.SubCategoryActivity" />
         <activity android:name="._activities.SearchActivity" />
         <activity android:name="._activities.DailyQuizActivity" />
+        <activity android:name="._activities.TricksActivity" />
+
+        <!-- Home Screen Widget -->
+        <receiver
+            android:name=".VocabWidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.royal.edunotes.WIDGET_REFRESH" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info" />
+        </receiver>
 
         <provider
             android:name="androidx.core.content.FileProvider"

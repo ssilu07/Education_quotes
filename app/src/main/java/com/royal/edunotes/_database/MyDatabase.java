@@ -119,6 +119,22 @@ public class MyDatabase extends SQLiteAssetHelper {
     }
 
 
+    public int getTotalCount() {
+        int count = 0;
+        try {
+            SQLiteDatabase db = getReadableDatabase();
+            Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_NAME, null);
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+            cursor.close();
+            db.close();
+        } catch (Exception e) {
+            // DB might not exist or table missing
+        }
+        return count;
+    }
+
     public ArrayList<QuoteModel> getBookmarkData() {
 
 

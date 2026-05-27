@@ -25,6 +25,7 @@ import androidx.core.splashscreen.SplashScreen;
 import com.airbnb.lottie.LottieAnimationView;
 import com.royal.edunotes.PrefManager;
 import com.royal.edunotes.R;
+import com.royal.edunotes.SettingsManager;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -38,6 +39,9 @@ public class SplashActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Apply dark mode setting before splash screen
+        new SettingsManager(this).applyDarkMode();
+
         SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
 

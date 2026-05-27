@@ -8,51 +8,62 @@ import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdError;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
+
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.interstitial.InterstitialAd;
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.google.android.gms.ads.nativead.MediaView;
+import com.google.android.gms.ads.nativead.NativeAd;
+import com.google.android.gms.ads.nativead.NativeAdView;
 import com.royal.edunotes.BuildConfig;
 import com.royal.edunotes.ProgressManager;
 import com.royal.edunotes.R;
+import com.royal.edunotes.SettingsManager;
 import com.royal.edunotes.Utility;
 import com.royal.edunotes._database.DatabaseHelper;
 import com.royal.edunotes._database.ModelDatabase;
 import com.royal.edunotes._models.QuoteModel;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-
 public class VerticlePagerAdapter extends PagerAdapter {
 
-    private static final String TAG = "VerticlePager_ADS"; // Fixed: Max 23 characters
-    private static final int AD_INTERVAL = 5; // Show interstitial ad every 5 scrolls
-    private static final int RETRY_DELAY_MS = 30000; // 30 seconds retry delay
-    private static final int AD_SHOW_DELAY_MS = 300; // Small delay before showing ad
+    private static final String TAG = "VerticlePager_ADS";
+    // Every 6th page (index 5, 11, 17...) is a native ad slot
+    private static final int AD_INTERVAL = 5;
+    private static final int AD_SLOT_SIZE = AD_INTERVAL + 1; // = 6
+    private static final int AD_PRELOAD_COUNT = 5;
 
     Context mContext;
     LayoutInflater mLayoutInflater;
     ArrayList<QuoteModel> quoteModels;
     ClickInterface clickInterface;
     ArrayList<ModelDatabase> modelDatabases;
+    private java.util.HashSet<String> bookmarkedNotes = new java.util.HashSet<>();
 
-    // Interstitial ad management
-    private InterstitialAd mInterstitialAd;
-    private boolean isLoadingAd = false;
+    private final ArrayList<NativeAd> nativeAdList = new ArrayList<>();
+    // slotIndex -> active NativeAdView (so we can populate it when ad loads late)
+    private final SparseArray<NativeAdView> activeAdViews = new SparseArray<>();
+    private boolean nativeAdsLoading = false;
     private boolean adsInitialized = false;
     private Handler mainHandler;
-    private int lastAdPosition = -1; // Track last position where ad was shown
     private ProgressManager progressManager;
+    private SettingsManager settingsManager;
+    private String categoryName = "";
+    private android.util.SparseArray<ArrayList<String>> quizWrongOptionsCache = new android.util.SparseArray<>();
 
     public VerticlePagerAdapter(Context context, ArrayList<QuoteModel> quoteModels,
                                 ClickInterface clickInterface, ArrayList<ModelDatabase> modelDatabases) {
@@ -61,92 +72,126 @@ public class VerticlePagerAdapter extends PagerAdapter {
         this.quoteModels = new ArrayList<>(quoteModels);
         this.clickInterface = clickInterface;
         this.modelDatabases = modelDatabases;
+        buildBookmarkSet(modelDatabases);
         this.mainHandler = new Handler(Looper.getMainLooper());
         this.progressManager = new ProgressManager(context);
+        this.settingsManager = new SettingsManager(context);
 
-        Log.d(TAG, "🔧 Adapter created - Quotes: " + this.quoteModels.size());
+        Log.d(TAG, "Adapter created - Quotes: " + this.quoteModels.size());
 
-        // Initialize AdMob
-        initializeAds();
+        MobileAds.initialize(mContext, status -> {
+            adsInitialized = true;
+            preloadNativeAds();
+        });
     }
 
-    private void initializeAds() {
-        try {
-            MobileAds.initialize(mContext, initializationStatus -> {
-                adsInitialized = true;
-                Log.d(TAG, "🔧 AdMob initialized");
-                // Preload first interstitial ad
-                loadInterstitialAd();
-            });
-        } catch (Exception e) {
-            Log.e(TAG, "🔧 Error initializing AdMob", e);
-            adsInitialized = false;
-        }
+    public void setCategoryName(String name) {
+        this.categoryName = name != null ? name : "";
     }
 
-    private void loadInterstitialAd() {
-        if (isLoadingAd || !adsInitialized || mContext == null) {
-            return;
-        }
+    private boolean isQuizCategory() {
+        return categoryName.toLowerCase().contains("common error");
+    }
 
-        isLoadingAd = true;
-        Log.d(TAG, "🔧 Loading interstitial ad");
+    // ── Native ad helpers ────────────────────────────────────────────────────
 
-        AdRequest adRequest = new AdRequest.Builder().build();
+    /** Position is an ad slot if it's the 6th page in every group of 6. */
+    private boolean isAdPosition(int position) {
+        return position % AD_SLOT_SIZE == AD_INTERVAL;
+    }
 
-        InterstitialAd.load(mContext, BuildConfig.ADMOB_INTERSTITIAL_ID, adRequest,
-                new InterstitialAdLoadCallback() {
+    /** Maps a ViewPager position to the real data index (skipping ad slots). */
+    private int getDataPosition(int position) {
+        return position - position / AD_SLOT_SIZE;
+    }
+
+    /** Maps a ViewPager ad-slot position to the sequential ad slot index (0,1,2…). */
+    private int getAdSlotIndex(int position) {
+        return position / AD_SLOT_SIZE;
+    }
+
+    private void preloadNativeAds() {
+        if (nativeAdsLoading || !adsInitialized || mContext == null) return;
+        nativeAdsLoading = true;
+
+        AdLoader adLoader = new AdLoader.Builder(mContext, BuildConfig.ADMOB_NATIVE_ID)
+                .forNativeAd(nativeAd -> {
+                    nativeAdList.add(nativeAd);
+                    int slotIndex = nativeAdList.size() - 1;
+                    // If the view for this slot is already on screen, populate it now
+                    mainHandler.post(() -> {
+                        NativeAdView view = activeAdViews.get(slotIndex);
+                        if (view != null) populateNativeAdView(view, nativeAd);
+                    });
+                })
+                .withAdListener(new AdListener() {
                     @Override
-                    public void onAdLoaded(InterstitialAd interstitialAd) {
-                        Log.d(TAG, "🔧 Interstitial ad loaded");
-                        mInterstitialAd = interstitialAd;
-                        isLoadingAd = false;
-
-                        // Set up ad callbacks
-                        mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
-                            @Override
-                            public void onAdDismissedFullScreenContent() {
-                                Log.d(TAG, "🔧 Ad dismissed");
-                                mInterstitialAd = null;
-                                // Preload next ad after small delay
-                                mainHandler.postDelayed(() -> loadInterstitialAd(), 2000);
-                            }
-
-                            @Override
-                            public void onAdFailedToShowFullScreenContent(AdError adError) {
-                                Log.e(TAG, "🔧 Ad failed to show: " + adError.getMessage());
-                                mInterstitialAd = null;
-                                // Try to load another ad
-                                mainHandler.postDelayed(() -> loadInterstitialAd(), 5000);
-                            }
-
-                            @Override
-                            public void onAdShowedFullScreenContent() {
-                                Log.d(TAG, "🔧 Ad showed");
-                            }
-
-                            @Override
-                            public void onAdClicked() {
-                                Log.d(TAG, "🔧 Ad clicked");
-                            }
-                        });
+                    public void onAdFailedToLoad(LoadAdError error) {
+                        nativeAdsLoading = false;
+                        Log.e(TAG, "Native ad failed: " + error.getMessage());
                     }
+                })
+                .build();
 
-                    @Override
-                    public void onAdFailedToLoad(LoadAdError loadAdError) {
-                        Log.e(TAG, "🔧 Failed to load ad: " + loadAdError.getMessage());
-                        mInterstitialAd = null;
-                        isLoadingAd = false;
-
-                        // Retry loading after delay
-                        mainHandler.postDelayed(() -> loadInterstitialAd(), RETRY_DELAY_MS);
-                    }
-                });
+        adLoader.loadAds(new AdRequest.Builder().build(), AD_PRELOAD_COUNT);
     }
+
+    private void populateNativeAdView(NativeAdView adView, NativeAd nativeAd) {
+        TextView headline = adView.findViewById(R.id.ad_headline);
+        TextView body = adView.findViewById(R.id.ad_body);
+        TextView advertiser = adView.findViewById(R.id.ad_advertiser);
+        ImageView icon = adView.findViewById(R.id.ad_icon);
+        MediaView mediaView = adView.findViewById(R.id.ad_media);
+        Button cta = adView.findViewById(R.id.ad_call_to_action);
+
+        adView.setHeadlineView(headline);
+        adView.setBodyView(body);
+        adView.setAdvertiserView(advertiser);
+        adView.setIconView(icon);
+        adView.setMediaView(mediaView);
+        adView.setCallToActionView(cta);
+
+        headline.setText(nativeAd.getHeadline());
+
+        if (nativeAd.getBody() != null) {
+            body.setText(nativeAd.getBody());
+            body.setVisibility(View.VISIBLE);
+        } else {
+            body.setVisibility(View.GONE);
+        }
+
+        if (nativeAd.getAdvertiser() != null) {
+            advertiser.setText(nativeAd.getAdvertiser());
+            advertiser.setVisibility(View.VISIBLE);
+        } else {
+            advertiser.setVisibility(View.GONE);
+        }
+
+        if (nativeAd.getIcon() != null) {
+            icon.setImageDrawable(nativeAd.getIcon().getDrawable());
+            icon.setVisibility(View.VISIBLE);
+        } else {
+            icon.setVisibility(View.GONE);
+        }
+
+        if (nativeAd.getCallToAction() != null) {
+            cta.setText(nativeAd.getCallToAction());
+            cta.setVisibility(View.VISIBLE);
+        } else {
+            cta.setVisibility(View.GONE);
+        }
+
+        mediaView.setMediaContent(nativeAd.getMediaContent());
+
+        adView.setNativeAd(nativeAd);
+    }
+
+    // ── PagerAdapter overrides ───────────────────────────────────────────────
 
     @Override
     public int getCount() {
-        return quoteModels.size();
+        // Insert one ad slot after every AD_INTERVAL real cards
+        return quoteModels.size() + quoteModels.size() / AD_INTERVAL;
     }
 
     @Override
@@ -156,76 +201,69 @@ public class VerticlePagerAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
-        Log.d(TAG, "🔧 instantiateItem - position: " + position);
-
-        // Check if we should show interstitial ad
-        checkAndShowInterstitialAd(position);
-
-        // Safety check
-        if (position < 0 || position >= quoteModels.size()) {
-            Log.e(TAG, "🔧 Position out of bounds: " + position + "/" + quoteModels.size());
-            View dummyView = new View(mContext);
-            container.addView(dummyView);
-            return dummyView;
+        if (isAdPosition(position)) {
+            return instantiateAdItem(container, position);
         }
 
-        QuoteModel currentQuote = quoteModels.get(position);
+        int dataPos = getDataPosition(position);
+
+        if (dataPos < 0 || dataPos >= quoteModels.size()) {
+            View dummy = new View(mContext);
+            container.addView(dummy);
+            return dummy;
+        }
+
+        QuoteModel currentQuote = quoteModels.get(dataPos);
         if (currentQuote == null) {
-            Log.e(TAG, "🔧 Quote is null at position: " + position);
-            View dummyView = new View(mContext);
-            container.addView(dummyView);
-            return dummyView;
+            View dummy = new View(mContext);
+            container.addView(dummy);
+            return dummy;
         }
 
         View itemView = mLayoutInflater.inflate(R.layout.content_main, container, false);
 
-        // Track word read for progress
-        if (progressManager != null) {
-            progressManager.onWordRead();
-        }
-
-        if (Utility.ScreenCheck.equals("Vocab")) {
-            setupVocabView(itemView, currentQuote, position);
+        if (isQuizCategory()) {
+            setupQuizView(itemView, currentQuote, dataPos);
+        } else if (Utility.ScreenCheck.equals("Vocab")) {
+            setupVocabView(itemView, currentQuote, dataPos);
         } else if (Utility.ScreenCheck.equals("Idiom")) {
-            setupIdiomView(itemView, currentQuote, position);
+            setupIdiomView(itemView, currentQuote, dataPos);
         }
 
         container.addView(itemView);
         return itemView;
     }
 
-    private void checkAndShowInterstitialAd(int position) {
-        // Show interstitial ad every 5th scroll, but not too frequently
-        boolean shouldShowAd = adsInitialized &&
-                (position + 1) % AD_INTERVAL == 0 &&
-                position > 0 &&
-                position != lastAdPosition &&
-                Math.abs(position - lastAdPosition) >= AD_INTERVAL;
+    private View instantiateAdItem(ViewGroup container, int position) {
+        int slotIndex = getAdSlotIndex(position);
+        View adCardView = mLayoutInflater.inflate(R.layout.native_ad_card, container, false);
+        NativeAdView nativeAdView = adCardView.findViewById(R.id.native_ad_view);
 
-        if (shouldShowAd) {
-            lastAdPosition = position;
-            // Add small delay to ensure smooth transition
-            mainHandler.postDelayed(this::showInterstitialAd, AD_SHOW_DELAY_MS);
+        activeAdViews.put(slotIndex, nativeAdView);
+        adCardView.setTag(slotIndex); // store slotIndex for cleanup in destroyItem
+
+        if (slotIndex < nativeAdList.size()) {
+            populateNativeAdView(nativeAdView, nativeAdList.get(slotIndex));
+        }
+        // else: placeholder shown; will be populated once preloadNativeAds() callback fires
+
+        container.addView(adCardView);
+        return adCardView;
+    }
+
+    @Override
+    public void destroyItem(ViewGroup container, int position, Object object) {
+        if (object instanceof View) {
+            View view = (View) object;
+            Object tag = view.getTag();
+            if (tag instanceof Integer) {
+                activeAdViews.remove((Integer) tag);
+            }
+            container.removeView(view);
         }
     }
 
-    private void showInterstitialAd() {
-        if (mInterstitialAd != null && mContext instanceof Activity) {
-            try {
-                Log.d(TAG, "🔧 Showing ad");
-                mInterstitialAd.show((Activity) mContext);
-            } catch (Exception e) {
-                Log.e(TAG, "🔧 Error showing ad", e);
-                mInterstitialAd = null;
-                loadInterstitialAd();
-            }
-        } else {
-            Log.d(TAG, "🔧 Ad not ready, loading");
-            if (!isLoadingAd) {
-                loadInterstitialAd();
-            }
-        }
-    }
+    // ── Card setup methods (unchanged) ──────────────────────────────────────
 
     private void setupVocabView(View itemView, QuoteModel currentQuote, int position) {
         CardView cardViewVocab = itemView.findViewById(R.id.card_view_vocab);
@@ -237,7 +275,6 @@ public class VerticlePagerAdapter extends PagerAdapter {
         final LinearLayout starLL = itemView.findViewById(R.id.starLLVocab);
         LinearLayout share = itemView.findViewById(R.id.shareLLVocab);
         LinearLayout ttsLL = itemView.findViewById(R.id.ttsLLVocab);
-        LinearLayout explainLL = itemView.findViewById(R.id.explainLLVocab);
 
         cardViewVocab.setVisibility(View.VISIBLE);
         cardViewIdiom.setVisibility(View.GONE);
@@ -245,6 +282,7 @@ public class VerticlePagerAdapter extends PagerAdapter {
         final ImageView star = itemView.findViewById(R.id.star);
 
         hackTxt.setText(currentQuote.getQuote());
+        hackTxt.setTextSize(settingsManager.getFontSize());
         String url = currentQuote.getValue();
 
         if (url != null && !url.isEmpty()) {
@@ -259,14 +297,12 @@ public class VerticlePagerAdapter extends PagerAdapter {
             hackTxt2.setVisibility(View.GONE);
         }
 
-        // Apply random color
         int[] colors = {
                 Color.rgb(36, 7, 80), Color.rgb(255, 0, 128), Color.rgb(50, 1, 47),
                 Color.rgb(249, 115, 0), Color.rgb(27, 66, 66), Color.rgb(64, 165, 120),
                 Color.rgb(100, 13, 107), Color.rgb(181, 27, 117), Color.rgb(0, 0, 0)
         };
-        int randomColor = colors[(int) (Math.random() * colors.length)];
-        hackTxt.setTextColor(randomColor);
+        hackTxt.setTextColor(colors[(int) (Math.random() * colors.length)]);
 
         updateBookmarkStatus(currentQuote, position);
 
@@ -276,33 +312,14 @@ public class VerticlePagerAdapter extends PagerAdapter {
             star.setImageResource(R.drawable.star);
         }
 
-        // Set click listeners
         copy.setOnClickListener(view -> clickInterface.onCopyClick(currentQuote));
-
-        starLL.setOnClickListener(view -> {
-            clickInterface.onBoookmarkClick(currentQuote, star);
-            // Occasionally show ad after bookmark action
-            if (position > 0 && (position % 7 == 0)) { // Every 7th bookmark
-                mainHandler.postDelayed(this::showInterstitialAd, 1000);
-            }
-        });
-
-        share.setOnClickListener(view -> {
-            clickInterface.onShareClick(currentQuote);
-            // Occasionally show ad after share action
-            if (position > 0 && (position % 8 == 0)) { // Every 8th share
-                mainHandler.postDelayed(this::showInterstitialAd, 1000);
-            }
-        });
-
-        // Long press share to share as image
+        starLL.setOnClickListener(view -> clickInterface.onBoookmarkClick(currentQuote, star));
+        share.setOnClickListener(view -> clickInterface.onShareClick(currentQuote));
         share.setOnLongClickListener(view -> {
             clickInterface.onShareAsImageClick(itemView.findViewById(R.id.card_view_vocab));
             return true;
         });
-
         ttsLL.setOnClickListener(view -> clickInterface.onTTSClick(currentQuote));
-        explainLL.setOnClickListener(view -> clickInterface.onExplainClick(currentQuote));
     }
 
     private void setupIdiomView(View itemView, QuoteModel currentQuote, int position) {
@@ -317,10 +334,10 @@ public class VerticlePagerAdapter extends PagerAdapter {
         final LinearLayout starLLIdiom = itemView.findViewById(R.id.starLLIdiom);
         LinearLayout share = itemView.findViewById(R.id.shareLLIdiom);
         LinearLayout ttsLL = itemView.findViewById(R.id.ttsLLIdiom);
-        LinearLayout explainLL = itemView.findViewById(R.id.explainLLIdiom);
         final ImageView star_idiom = itemView.findViewById(R.id.star_idiom);
 
         hackTxt.setText(currentQuote.getQuote());
+        hackTxt.setTextSize(settingsManager.getFontSize());
 
         String url = currentQuote.getValue();
         if (url != null && !url.isEmpty()) {
@@ -335,14 +352,12 @@ public class VerticlePagerAdapter extends PagerAdapter {
             hackTxt2.setVisibility(View.GONE);
         }
 
-        // Apply random color
         int[] colors = {
                 Color.rgb(36, 7, 80), Color.rgb(255, 0, 128), Color.rgb(50, 1, 47),
                 Color.rgb(249, 115, 0), Color.rgb(27, 66, 66), Color.rgb(64, 165, 120),
                 Color.rgb(100, 13, 107), Color.rgb(181, 27, 117), Color.rgb(0, 0, 0)
         };
-        int randomColor = colors[(int) (Math.random() * colors.length)];
-        hackTxt.setTextColor(randomColor);
+        hackTxt.setTextColor(colors[(int) (Math.random() * colors.length)]);
 
         updateBookmarkStatus(currentQuote, position);
 
@@ -352,98 +367,197 @@ public class VerticlePagerAdapter extends PagerAdapter {
             star_idiom.setImageResource(R.drawable.star);
         }
 
-        // Set click listeners
         copy.setOnClickListener(view -> clickInterface.onCopyClick(currentQuote));
-
-        starLLIdiom.setOnClickListener(view -> {
-            clickInterface.onBoookmarkClick(currentQuote, star_idiom);
-            // Occasionally show ad after bookmark action
-            if (position > 0 && (position % 7 == 0)) {
-                mainHandler.postDelayed(this::showInterstitialAd, 1000);
-            }
-        });
-
-        share.setOnClickListener(view -> {
-            clickInterface.onShareClick(currentQuote);
-            // Occasionally show ad after share action
-            if (position > 0 && (position % 8 == 0)) {
-                mainHandler.postDelayed(this::showInterstitialAd, 1000);
-            }
-        });
-
-        // Long press share to share as image
+        starLLIdiom.setOnClickListener(view -> clickInterface.onBoookmarkClick(currentQuote, star_idiom));
+        share.setOnClickListener(view -> clickInterface.onShareClick(currentQuote));
         share.setOnLongClickListener(view -> {
             clickInterface.onShareAsImageClick(itemView.findViewById(R.id.card_view_idiom));
             return true;
         });
-
         ttsLL.setOnClickListener(view -> clickInterface.onTTSClick(currentQuote));
-        explainLL.setOnClickListener(view -> clickInterface.onExplainClick(currentQuote));
     }
 
-    private void updateBookmarkStatus(QuoteModel currentQuote, int position) {
-        if (modelDatabases != null) {
-            currentQuote.setBookmared(false);
+    private void setupQuizView(View itemView, QuoteModel currentQuote, int position) {
+        CardView cardViewVocab = itemView.findViewById(R.id.card_view_vocab);
+        CardView cardViewIdiom = itemView.findViewById(R.id.card_view_idiom);
+        CardView cardViewQuiz = itemView.findViewById(R.id.card_view_quiz);
 
-            for (ModelDatabase modelDatabase : modelDatabases) {
-                if (modelDatabase != null && currentQuote.getQuote() != null &&
-                        currentQuote.getQuote().equals(modelDatabase.getNote())) {
-                    currentQuote.setBookmark("1");
-                    currentQuote.setBookmared(true);
-                    break;
+        cardViewVocab.setVisibility(View.GONE);
+        cardViewIdiom.setVisibility(View.GONE);
+        cardViewQuiz.setVisibility(View.VISIBLE);
+
+        TextView tvQuizNum = itemView.findViewById(R.id.tv_quiz_num);
+        TextView tvQuestion = itemView.findViewById(R.id.tv_quiz_question);
+        TextView tvHint = itemView.findViewById(R.id.tv_quiz_hint);
+
+        CardView cvA = itemView.findViewById(R.id.cv_option_a);
+        CardView cvB = itemView.findViewById(R.id.cv_option_b);
+        CardView cvC = itemView.findViewById(R.id.cv_option_c);
+        CardView cvD = itemView.findViewById(R.id.cv_option_d);
+
+        TextView tvA = itemView.findViewById(R.id.tv_option_a);
+        TextView tvB = itemView.findViewById(R.id.tv_option_b);
+        TextView tvC = itemView.findViewById(R.id.tv_option_c);
+        TextView tvD = itemView.findViewById(R.id.tv_option_d);
+
+        LinearLayout llExplanation = itemView.findViewById(R.id.ll_explanation);
+        TextView tvExplanation = itemView.findViewById(R.id.tv_explanation);
+
+        String quoteText = currentQuote.getQuote();
+        String wrongSentence = "";
+        String rightSentence = "";
+        String rule = "";
+
+        String[] lines = quoteText.split("\r\n|\n");
+        for (String line : lines) {
+            String trimmed = line.trim();
+            if (trimmed.toLowerCase().startsWith("wrong:")) {
+                wrongSentence = trimmed.substring(6).trim();
+            } else if (trimmed.toLowerCase().startsWith("right:")) {
+                rightSentence = trimmed.substring(6).trim();
+            } else if (trimmed.toLowerCase().startsWith("rule:")) {
+                rule = trimmed.substring(5).trim();
+            }
+        }
+
+        tvQuizNum.setText("Q." + (position + 1));
+        tvQuestion.setText("Choose the CORRECT sentence:");
+        tvHint.setText(wrongSentence.isEmpty() ? quoteText : wrongSentence);
+
+        ArrayList<String> options = new ArrayList<>();
+        options.add(rightSentence.isEmpty() ? quoteText : rightSentence);
+
+        ArrayList<String> wrongOptions = quizWrongOptionsCache.get(position);
+        if (wrongOptions == null) {
+            wrongOptions = new ArrayList<>();
+            for (int i = 0; i < quoteModels.size(); i++) {
+                if (i == position) continue;
+                String otherText = quoteModels.get(i).getQuote();
+                String[] otherLines = otherText.split("\r\n|\n");
+                for (String ol : otherLines) {
+                    String ot = ol.trim();
+                    if (ot.toLowerCase().startsWith("wrong:")) {
+                        wrongOptions.add(ot.substring(6).trim());
+                        break;
+                    }
+                }
+            }
+            Collections.shuffle(wrongOptions, new Random(position));
+            quizWrongOptionsCache.put(position, wrongOptions);
+        }
+        for (int i = 0; i < Math.min(3, wrongOptions.size()); i++) {
+            options.add(wrongOptions.get(i));
+        }
+        while (options.size() < 4) options.add("Option " + (options.size() + 1));
+
+        String correctAnswer = options.get(0);
+        Collections.shuffle(options, new Random(position * 7));
+
+        tvA.setText("A) " + options.get(0));
+        tvB.setText("B) " + options.get(1));
+        tvC.setText("C) " + options.get(2));
+        tvD.setText("D) " + options.get(3));
+
+        cvA.setCardBackgroundColor(Color.parseColor("#F5F5F5"));
+        cvB.setCardBackgroundColor(Color.parseColor("#F5F5F5"));
+        cvC.setCardBackgroundColor(Color.parseColor("#F5F5F5"));
+        cvD.setCardBackgroundColor(Color.parseColor("#F5F5F5"));
+        tvA.setTextColor(Color.parseColor("#333333"));
+        tvB.setTextColor(Color.parseColor("#333333"));
+        tvC.setTextColor(Color.parseColor("#333333"));
+        tvD.setTextColor(Color.parseColor("#333333"));
+        llExplanation.setVisibility(View.GONE);
+
+        String finalRule = rule;
+        String finalCorrectAnswer = correctAnswer;
+        String finalRightSentence = rightSentence;
+
+        CardView[] cards = {cvA, cvB, cvC, cvD};
+        TextView[] texts = {tvA, tvB, tvC, tvD};
+
+        for (int i = 0; i < 4; i++) {
+            final int idx = i;
+            cards[i].setOnClickListener(view -> {
+                for (CardView c : cards) c.setClickable(false);
+
+                String selected = options.get(idx).trim();
+                boolean isCorrect = selected.equals(finalCorrectAnswer);
+
+                if (isCorrect) {
+                    cards[idx].setCardBackgroundColor(Color.parseColor("#4CAF50"));
+                    texts[idx].setTextColor(Color.WHITE);
+                } else {
+                    cards[idx].setCardBackgroundColor(Color.parseColor("#F44336"));
+                    texts[idx].setTextColor(Color.WHITE);
+                    for (int j = 0; j < 4; j++) {
+                        if (options.get(j).trim().equals(finalCorrectAnswer)) {
+                            cards[j].setCardBackgroundColor(Color.parseColor("#4CAF50"));
+                            texts[j].setTextColor(Color.WHITE);
+                        }
+                    }
+                }
+
+                String explanation = !finalRule.isEmpty()
+                        ? "Rule: " + finalRule + "\n\nCorrect: " + finalRightSentence
+                        : "Correct: " + finalRightSentence;
+                String detailed = currentQuote.getValue();
+                if (detailed != null && !detailed.trim().isEmpty()) {
+                    explanation += "\n\nExplanation:\n" + detailed.trim();
+                }
+                tvExplanation.setText(explanation);
+                llExplanation.setVisibility(View.VISIBLE);
+            });
+        }
+
+        updateBookmarkStatus(currentQuote, position);
+        final ImageView starQuiz = itemView.findViewById(R.id.star_quiz);
+        starQuiz.setImageResource(currentQuote.isBookmared() ? R.drawable.starfilled : R.drawable.star);
+
+        itemView.findViewById(R.id.copyLLQuiz).setOnClickListener(v -> clickInterface.onCopyClick(currentQuote));
+        itemView.findViewById(R.id.starLLQuiz).setOnClickListener(v -> clickInterface.onBoookmarkClick(currentQuote, starQuiz));
+        itemView.findViewById(R.id.shareLLQuiz).setOnClickListener(v -> clickInterface.onShareClick(currentQuote));
+        itemView.findViewById(R.id.ttsLLQuiz).setOnClickListener(v -> clickInterface.onTTSClick(currentQuote));
+    }
+
+    // ── Bookmark helpers ─────────────────────────────────────────────────────
+
+    private void buildBookmarkSet(ArrayList<ModelDatabase> databases) {
+        bookmarkedNotes.clear();
+        if (databases != null) {
+            for (ModelDatabase db : databases) {
+                if (db != null && db.getNote() != null) {
+                    bookmarkedNotes.add(db.getNote());
                 }
             }
         }
     }
 
-    @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
-        if (object instanceof View) {
-            container.removeView((View) object);
+    private void updateBookmarkStatus(QuoteModel currentQuote, int position) {
+        if (currentQuote.getQuote() != null && bookmarkedNotes.contains(currentQuote.getQuote())) {
+            currentQuote.setBookmark("1");
+            currentQuote.setBookmared(true);
+        } else {
+            currentQuote.setBookmared(false);
         }
     }
 
-    public void cleanup() {
-        Log.d(TAG, "🔧 Cleanup started");
-        if (mInterstitialAd != null) {
-            mInterstitialAd = null;
-        }
-        isLoadingAd = false;
-        lastAdPosition = -1;
+    // ── Public API ───────────────────────────────────────────────────────────
 
-        // Cancel any pending ad loads
-        if (mainHandler != null) {
-            mainHandler.removeCallbacksAndMessages(null);
-        }
+    public void cleanup() {
+        if (mainHandler != null) mainHandler.removeCallbacksAndMessages(null);
+        for (NativeAd ad : nativeAdList) ad.destroy();
+        nativeAdList.clear();
+        activeAdViews.clear();
     }
 
     public void updateData(ArrayList<QuoteModel> newQuoteModels, ArrayList<ModelDatabase> newModelDatabases) {
         this.quoteModels.clear();
         this.quoteModels.addAll(newQuoteModels);
         this.modelDatabases = newModelDatabases;
-        lastAdPosition = -1; // Reset ad position tracking
+        buildBookmarkSet(newModelDatabases);
+        quizWrongOptionsCache.clear();
         notifyDataSetChanged();
-        Log.d(TAG, "🔧 Data updated - size: " + newQuoteModels.size());
-    }
-
-    // Public methods for external control
-    public void showAdNow() {
-        showInterstitialAd();
-    }
-
-    public void preloadAd() {
-        if (!isLoadingAd && mInterstitialAd == null) {
-            loadInterstitialAd();
-        }
-    }
-
-    public boolean isAdReady() {
-        return mInterstitialAd != null;
-    }
-
-    public void setAdInterval(int interval) {
-        // Allow dynamic ad interval adjustment if needed
-        // Note: This would require making AD_INTERVAL non-final
+        Log.d(TAG, "Data updated - size: " + newQuoteModels.size());
     }
 
     public interface ClickInterface {
@@ -452,7 +566,7 @@ public class VerticlePagerAdapter extends PagerAdapter {
         void onShareClick(QuoteModel CategoryModel);
         void onShareAsImageClick(View cardView);
         void onTTSClick(QuoteModel quoteModel);
-        void onExplainClick(QuoteModel quoteModel);
+        void onQuizClick();
         void onMoreAppsClick();
     }
 }
