@@ -79,10 +79,12 @@ public class VerticlePagerAdapter extends PagerAdapter {
 
         Log.d(TAG, "Adapter created - Quotes: " + this.quoteModels.size());
 
-        MobileAds.initialize(mContext, status -> {
-            adsInitialized = true;
-            preloadNativeAds();
-        });
+        if (BuildConfig.ENABLE_ADS) {
+            MobileAds.initialize(mContext, status -> {
+                adsInitialized = true;
+                preloadNativeAds();
+            });
+        }
     }
 
     public void setCategoryName(String name) {
@@ -97,6 +99,7 @@ public class VerticlePagerAdapter extends PagerAdapter {
 
     /** Position is an ad slot if it's the 6th page in every group of 6. */
     private boolean isAdPosition(int position) {
+        if (!BuildConfig.ENABLE_ADS) return false;
         return position % AD_SLOT_SIZE == AD_INTERVAL;
     }
 
@@ -190,6 +193,7 @@ public class VerticlePagerAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
+        if (!BuildConfig.ENABLE_ADS) return quoteModels.size();
         // Insert one ad slot after every AD_INTERVAL real cards
         return quoteModels.size() + quoteModels.size() / AD_INTERVAL;
     }

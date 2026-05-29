@@ -74,7 +74,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.CategoryCl
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        loadInterstitialAd();
+        if (BuildConfig.ENABLE_ADS) loadInterstitialAd();
     }
 
     @Override
@@ -208,7 +208,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.CategoryCl
         intent.putExtra(Utility.TITLE_KEY, categoryModel.getTitle());
         intent.putExtra(Utility.DBNAME_KEY, categoryModel.getDbname());
         startActivity(intent);
-        showInterstitial();
+        if (BuildConfig.ENABLE_ADS) showInterstitial();
 
 
 /*

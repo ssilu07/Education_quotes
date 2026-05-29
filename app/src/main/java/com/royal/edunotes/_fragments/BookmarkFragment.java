@@ -72,7 +72,7 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "🔧 onCreate - ScreenCheck: " + Utility.ScreenCheck);
-        loadInterstitialAd();
+        if (BuildConfig.ENABLE_ADS) loadInterstitialAd();
     }
 
     @Override
@@ -234,7 +234,7 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
     @Override
     public void onBoookmarkClick(QuoteModel quoteModel, ImageView star) {
         Log.d(TAG, "🔧 Bookmark clicked: " + quoteModel.isBookmared());
-        showInterstitial();
+        if (BuildConfig.ENABLE_ADS) showInterstitial();
 
         if (quoteModel.isBookmared()) {
             db = new DatabaseHelper(getActivity(), quoteModel);
