@@ -67,7 +67,7 @@ public class SelectedActivity extends AppCompatActivity implements CategoryAdapt
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Intent intent = new Intent(SelectedActivity.this, SearchActivity.class);
+                Intent intent = new Intent(SelectedActivity.this, VocabSearchActivity.class);
                 intent.putExtra(Utility.SEARCH_KEY, query);
                 startActivity(intent);
                 searchView.clearFocus();

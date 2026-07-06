@@ -62,6 +62,7 @@
 
         <activity android:name="._activities.SubCategoryActivity" />
         <activity android:name="._activities.SearchActivity" />
+        <activity android:name="._activities.VocabSearchActivity" />
         <activity android:name="._activities.DailyQuizActivity" />
         <activity android:name="._activities.TricksActivity" />
 

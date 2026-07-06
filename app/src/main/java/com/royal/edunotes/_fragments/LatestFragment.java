@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.AdListener;
@@ -22,6 +23,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.royal.edunotes.AIExplainHelper;
 import com.royal.edunotes.ProgressManager;
 import com.royal.edunotes.R;
+import com.royal.edunotes.SettingsManager;
 import com.royal.edunotes.ShareUtils;
 import com.royal.edunotes.TTSHelper;
 import com.royal.edunotes.Utility;
@@ -50,6 +52,7 @@ public class LatestFragment extends Fragment implements VerticlePagerAdapter.Cli
     TTSHelper ttsHelper;
     AIExplainHelper aiExplainHelper;
     ProgressManager progressManager;
+    SettingsManager settingsManager;
 
     public LatestFragment() {
     }
@@ -132,6 +135,7 @@ public class LatestFragment extends Fragment implements VerticlePagerAdapter.Cli
         ttsHelper = new TTSHelper(getActivity());
         aiExplainHelper = new AIExplainHelper();
         progressManager = new ProgressManager(getActivity());
+        settingsManager = new SettingsManager(getActivity());
         verticlePagerAdapter = new VerticlePagerAdapter(getActivity(), mainQuoteModels, this, modelDatabases);
         verticalViewPager.setOffscreenPageLimit(0);
         verticalViewPager.setAdapter(verticlePagerAdapter);
@@ -253,6 +257,15 @@ public class LatestFragment extends Fragment implements VerticlePagerAdapter.Cli
     @Override
     public void onTTSClick(QuoteModel quoteModel) {
         if (ttsHelper != null) ttsHelper.speak(quoteModel.getQuote());
+    }
+
+    @Override
+    public void onLearnedClick(QuoteModel quoteModel, TextView learnedLabel) {
+        if (settingsManager == null) return;
+        boolean newState = !quoteModel.isLearned();
+        settingsManager.setWordLearned(quoteModel.getQuote(), newState);
+        quoteModel.setLearned(newState);
+        learnedLabel.setText(newState ? getString(R.string.learned_on_label) : getString(R.string.learned_off_label));
     }
 
     @Override

@@ -269,9 +269,8 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
     @Override
     public boolean onQueryTextSubmit(String query) {
         Log.e("TAG===", "STR : " + query);
-        Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+        Intent intent = new Intent(MainActivity.this, VocabSearchActivity.class);
         intent.putExtra(Utility.SEARCH_KEY, query);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
         return false;
     }

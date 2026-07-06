@@ -77,7 +77,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:layout_weight="0.25"
+                    android:layout_weight="0.2"
                     android:gravity="center">
 
                     <ImageView
@@ -93,7 +93,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:layout_weight="0.25"
+                    android:layout_weight="0.2"
                     android:gravity="center">
 
                     <ImageView
@@ -110,7 +110,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:layout_weight="0.25"
+                    android:layout_weight="0.2"
                     android:gravity="center">
 
                     <ImageView
@@ -126,7 +126,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:layout_weight="0.25"
+                    android:layout_weight="0.2"
                     android:gravity="center">
 
                     <TextView
@@ -135,6 +135,26 @@
                         android:layout_gravity="center"
                         android:gravity="center"
                         android:text="@string/tts_label"
+                        android:textColor="#c7c7c7"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/learnedLLVocab"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.2"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tv_learned_vocab"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:contentDescription="Mark as learned"
+                        android:gravity="center"
+                        android:text="@string/learned_off_label"
                         android:textColor="#c7c7c7"
                         android:textSize="18sp" />
                 </LinearLayout>

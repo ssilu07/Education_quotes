@@ -207,6 +207,13 @@ public class VerticlePagerAdapter extends PagerAdapter {
     }
 
     @Override
+    public int getItemPosition(Object object) {
+        // Forces ViewPager to rebuild every visible page after updateData() —
+        // otherwise notifyDataSetChanged() leaves stale pages on screen (default PagerAdapter behavior).
+        return POSITION_NONE;
+    }
+
+    @Override
     public Object instantiateItem(ViewGroup container, final int position) {
         if (isAdPosition(position)) {
             return instantiateAdItem(container, position);
@@ -282,6 +289,8 @@ public class VerticlePagerAdapter extends PagerAdapter {
         final LinearLayout starLL = itemView.findViewById(R.id.starLLVocab);
         LinearLayout share = itemView.findViewById(R.id.shareLLVocab);
         LinearLayout ttsLL = itemView.findViewById(R.id.ttsLLVocab);
+        LinearLayout learnedLL = itemView.findViewById(R.id.learnedLLVocab);
+        final TextView learnedLabel = itemView.findViewById(R.id.tv_learned_vocab);
 
         cardViewVocab.setVisibility(View.VISIBLE);
         cardViewIdiom.setVisibility(View.GONE);
@@ -319,6 +328,11 @@ public class VerticlePagerAdapter extends PagerAdapter {
             star.setImageResource(R.drawable.star);
         }
 
+        updateLearnedStatus(currentQuote);
+        learnedLabel.setText(currentQuote.isLearned()
+                ? mContext.getString(R.string.learned_on_label)
+                : mContext.getString(R.string.learned_off_label));
+
         copy.setOnClickListener(view -> clickInterface.onCopyClick(currentQuote));
         starLL.setOnClickListener(view -> clickInterface.onBoookmarkClick(currentQuote, star));
         share.setOnClickListener(view -> clickInterface.onShareClick(currentQuote));
@@ -327,6 +341,7 @@ public class VerticlePagerAdapter extends PagerAdapter {
             return true;
         });
         ttsLL.setOnClickListener(view -> clickInterface.onTTSClick(currentQuote));
+        learnedLL.setOnClickListener(view -> clickInterface.onLearnedClick(currentQuote, learnedLabel));
     }
 
     private void setupIdiomView(View itemView, QuoteModel currentQuote, int position) {
@@ -548,7 +563,25 @@ public class VerticlePagerAdapter extends PagerAdapter {
         }
     }
 
+    private void updateLearnedStatus(QuoteModel currentQuote) {
+        currentQuote.setLearned(settingsManager.isWordLearned(currentQuote.getQuote()));
+    }
+
     // ── Public API ───────────────────────────────────────────────────────────
+
+    /** Returns the quote at this pager position, or null if it's an ad slot / out of range. */
+    public QuoteModel getItemAt(int pagerPosition) {
+        if (isAdPosition(pagerPosition)) return null;
+        int dataPos = getDataPosition(pagerPosition);
+        if (dataPos < 0 || dataPos >= quoteModels.size()) return null;
+        return quoteModels.get(dataPos);
+    }
+
+    /** Inverse of getDataPosition(): maps a real data index back to its pager position. */
+    public int getPagerPositionForDataIndex(int dataIndex) {
+        if (!BuildConfig.ENABLE_ADS) return dataIndex;
+        return dataIndex + dataIndex / AD_INTERVAL;
+    }
 
     public void cleanup() {
         if (mainHandler != null) mainHandler.removeCallbacksAndMessages(null);
@@ -573,6 +606,7 @@ public class VerticlePagerAdapter extends PagerAdapter {
         void onShareClick(QuoteModel CategoryModel);
         void onShareAsImageClick(View cardView);
         void onTTSClick(QuoteModel quoteModel);
+        void onLearnedClick(QuoteModel quoteModel, TextView learnedLabel);
         void onQuizClick();
         void onMoreAppsClick();
     }

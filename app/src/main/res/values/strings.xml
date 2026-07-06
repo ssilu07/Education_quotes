@@ -113,6 +113,8 @@
 
     <string name="moreapp">More\nApps</string>
     <string name="tts_label">\uD83D\uDD0A</string>
+    <string name="learned_off_label">\u2B1C</string>
+    <string name="learned_on_label">\u2705</string>
     <string name="ai_label">AI\nExplain</string>
     <string name="quiz_title">Daily Quiz</string>
     <string name="streak_label">Streak</string>

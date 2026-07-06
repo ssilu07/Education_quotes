@@ -20,6 +20,7 @@ public class QuoteModel {
    public String bookmark;
 
     boolean isBookmared;
+    boolean isLearned;
 
     public boolean isBookmared() {
         return isBookmared;
@@ -27,6 +28,14 @@ public class QuoteModel {
 
     public void setBookmared(boolean bookmared) {
         isBookmared = bookmared;
+    }
+
+    public boolean isLearned() {
+        return isLearned;
+    }
+
+    public void setLearned(boolean learned) {
+        isLearned = learned;
     }
 
     public String getCategoryName() {

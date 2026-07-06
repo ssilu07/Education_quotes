@@ -27,6 +27,7 @@ import com.royal.edunotes.AIExplainHelper;
 import com.royal.edunotes.BuildConfig;
 import com.royal.edunotes.ProgressManager;
 import com.royal.edunotes.R;
+import com.royal.edunotes.SettingsManager;
 import com.royal.edunotes.ShareUtils;
 import com.royal.edunotes.TTSHelper;
 import com.royal.edunotes.Utility;
@@ -54,6 +55,7 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
     TextView nobookmarkTxt;
     VerticalViewPager verticalViewPager;
     InterstitialAd mInterstitialAd;
+    SettingsManager settingsManager;
 
     private String currentScreenType = "";
 
@@ -99,7 +101,20 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
         ttsHelper = new TTSHelper(getActivity());
         aiExplainHelper = new AIExplainHelper();
         progressManager = new ProgressManager(getActivity());
+        settingsManager = new SettingsManager(getActivity());
         currentScreenType = Utility.ScreenCheck;
+
+        verticalViewPager.addOnPageChangeListener(new androidx.viewpager.widget.ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                if (verticlePagerAdapter == null || settingsManager == null) return;
+                com.royal.edunotes._models.QuoteModel current = verticlePagerAdapter.getItemAt(position);
+                if (current != null && current.getQuote() != null) {
+                    settingsManager.setLastBookmarkNote(currentScreenType, current.getQuote());
+                }
+            }
+        });
+
         loadData();
     }
 
@@ -192,6 +207,21 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
             verticlePagerAdapter = new VerticlePagerAdapter(getActivity(), bookmarks, this, modelDatabases);
             verticalViewPager.setOffscreenPageLimit(0);
             verticalViewPager.setAdapter(verticlePagerAdapter);
+            restoreLastPosition(bookmarks);
+        }
+    }
+
+    /** Jumps back to the bookmark the user was last viewing instead of resetting to the top. */
+    private void restoreLastPosition(ArrayList<QuoteModel> bookmarks) {
+        if (settingsManager == null) return;
+        String lastNote = settingsManager.getLastBookmarkNote(currentScreenType);
+        if (lastNote == null) return;
+
+        for (int i = 0; i < bookmarks.size(); i++) {
+            if (lastNote.equals(bookmarks.get(i).getQuote())) {
+                verticalViewPager.setCurrentItem(verticlePagerAdapter.getPagerPositionForDataIndex(i), false);
+                break;
+            }
         }
     }
 
@@ -281,6 +311,15 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
     @Override
     public void onTTSClick(QuoteModel quoteModel) {
         if (ttsHelper != null) ttsHelper.speak(quoteModel.getQuote());
+    }
+
+    @Override
+    public void onLearnedClick(QuoteModel quoteModel, TextView learnedLabel) {
+        if (settingsManager == null) return;
+        boolean newState = !quoteModel.isLearned();
+        settingsManager.setWordLearned(quoteModel.getQuote(), newState);
+        quoteModel.setLearned(newState);
+        learnedLabel.setText(newState ? getString(R.string.learned_on_label) : getString(R.string.learned_off_label));
     }
 
     @Override
