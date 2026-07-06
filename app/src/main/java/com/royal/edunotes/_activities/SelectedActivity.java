@@ -90,7 +90,7 @@ public class SelectedActivity extends AppCompatActivity implements CategoryAdapt
         if (selected.subCategories.size() == 1) {
             // Only 1 sub-category → go directly to content
             CategoryDataProvider.SubCategory sub = selected.subCategories.get(0);
-            Utility.ScreenCheck = "Vocab";
+            Utility.ScreenCheck = selected.screenCheck;
             Intent intent = new Intent(this, HackList.class);
             intent.putExtra(Utility.TITLE_KEY, sub.title);
             intent.putExtra(Utility.DBNAME_KEY, sub.dbName);
@@ -100,6 +100,7 @@ public class SelectedActivity extends AppCompatActivity implements CategoryAdapt
             Intent intent = new Intent(this, SubCategoryActivity.class);
             intent.putExtra("CATEGORY_INDEX", categoryIndex);
             intent.putExtra(Utility.TITLE_KEY, selected.title);
+            intent.putExtra("SCREEN_CHECK", selected.screenCheck);
             startActivity(intent);
         }
     }

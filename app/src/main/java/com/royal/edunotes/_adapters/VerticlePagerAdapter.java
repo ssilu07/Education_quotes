@@ -184,7 +184,10 @@ public class VerticlePagerAdapter extends PagerAdapter {
             cta.setVisibility(View.GONE);
         }
 
-        mediaView.setMediaContent(nativeAd.getMediaContent());
+        if (nativeAd.getMediaContent() != null) {
+            mediaView.setMediaContent(nativeAd.getMediaContent());
+            mediaView.setVisibility(View.VISIBLE);
+        }
 
         adView.setNativeAd(nativeAd);
     }
