@@ -44,4 +44,7 @@
     <color name="surfaceBackground">#121212</color>
     <color name="textPrimary">#e0e0e0</color>
     <color name="textSecondary">#aaaaaa</color>
+
+    <!-- Search match highlight -->
+    <color name="searchHighlight">#5a4a1a</color>
 </resources>

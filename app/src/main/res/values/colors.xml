@@ -110,4 +110,7 @@
     <color name="surfaceBackground">#fafafa</color>
     <color name="textPrimary">#222222</color>
     <color name="textSecondary">#666666</color>
+
+    <!-- Search match highlight -->
+    <color name="searchHighlight">#FFF3B0</color>
 </resources>
