@@ -24,6 +24,16 @@ import com.royal.edunotes.R;
 import com.royal.edunotes.TTSHelper;
 import com.royal.edunotes.Utility;
 
+import androidx.annotation.NonNull;
+import com.google.android.gms.ads.AdError;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.FullScreenContentCallback;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -49,6 +59,9 @@ public class SearchActivity extends AppCompatActivity {
     private String currentWord = "";
     private String fullContent = "";
     private boolean isBookmarked = false;
+    
+    private AdView mAdView;
+    private InterstitialAd mInterstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +105,22 @@ public class SearchActivity extends AppCompatActivity {
 
         saveSearchHistory(currentWord);
         fetchWordDetail(currentWord);
+
+        // Initialize AdMob and load ads if enabled
+        if (BuildConfig.ENABLE_ADS) {
+            MobileAds.initialize(this, initializationStatus -> {});
+            
+            // Load Banner Ad
+            mAdView = findViewById(R.id.adView);
+            AdRequest adRequest = new AdRequest.Builder().build();
+            mAdView.loadAd(adRequest);
+
+            // Load Interstitial Ad
+            loadInterstitialAd();
+        } else {
+            View adView = findViewById(R.id.adView);
+            if (adView != null) adView.setVisibility(View.GONE);
+        }
     }
 
     private void fetchWordDetail(String word) {
@@ -295,13 +324,55 @@ public class SearchActivity extends AppCompatActivity {
         prefs.edit().putString("history", sb.toString()).apply();
     }
 
+    private void loadInterstitialAd() {
+        AdRequest adRequest = new AdRequest.Builder().build();
+        InterstitialAd.load(this, BuildConfig.ADMOB_INTERSTITIAL_ID, adRequest,
+            new InterstitialAdLoadCallback() {
+                @Override
+                public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                    mInterstitialAd = interstitialAd;
+                }
+
+                @Override
+                public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                    mInterstitialAd = null;
+                }
+            });
+    }
+
+    private void handleBackPress() {
+        if (mInterstitialAd != null) {
+            mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                @Override
+                public void onAdDismissedFullScreenContent() {
+                    mInterstitialAd = null;
+                    finish();
+                }
+
+                @Override
+                public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
+                    mInterstitialAd = null;
+                    finish();
+                }
+            });
+            mInterstitialAd.show(this);
+        } else {
+            finish();
+        }
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            finish();
+            handleBackPress();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        handleBackPress();
     }
 
     @Override

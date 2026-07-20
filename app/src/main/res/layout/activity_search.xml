@@ -75,7 +75,8 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/card_word_detail"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_margin="12dp"
         android:visibility="gone"
         card_view:cardCornerRadius="12dp"
@@ -323,5 +324,13 @@
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        app:adSize="BANNER"
+        app:adUnitId="@string/banner_ad" />
 
 </LinearLayout>
