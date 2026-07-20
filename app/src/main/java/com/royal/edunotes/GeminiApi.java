@@ -32,11 +32,11 @@ public class GeminiApi {
     private static final String BASE_URL =
             "https://generativelanguage.googleapis.com/v1beta/models/";
 
-    // ✅ Fix: gemini-1.5-flash-8b does NOT exist in v1beta — correct name is gemini-1.5-flash
+    // Latest verified working models for v1beta (July 2026)
+    // gemini-1.5-flash removed — throwing 404 in v1beta
     private static final String[] MODEL_CHAIN = {
-            "gemini-2.0-flash-lite",   // Primary — highest free tier
-            "gemini-1.5-flash",        // Fallback 1 — valid v1beta model
-            "gemini-2.0-flash"         // Fallback 2 — last resort
+            "gemini-2.0-flash-lite",   // Primary — highest free quota, fastest
+            "gemini-2.0-flash"         // Fallback — if lite quota exhausted
     };
 
     private static final int MAX_RETRIES_PER_MODEL = 1;  // 1 retry per model on 429
