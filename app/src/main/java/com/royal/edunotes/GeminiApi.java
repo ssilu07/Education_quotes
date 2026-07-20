@@ -18,9 +18,9 @@ import java.nio.charset.StandardCharsets;
  * (uses Apache HttpClient that conflicts with Android's system classes).
  *
  * Model fallback chain (highest free quota → lowest):
- *   1. gemini-2.0-flash-lite  (primary — highest free tier limit)
- *   2. gemini-1.5-flash        (fallback 1 — valid v1beta model)
- *   3. gemini-2.0-flash        (fallback 2 — last resort)
+ *   1. gemini-3.1-flash-lite  (primary — highest free tier limit)
+ *   2. gemini-3.1-flash       (fallback 1)
+ *   3. gemini-3.1-pro         (fallback 2 — last resort)
  *
  * On 429: auto-waits the retryDelay from the response (max 15 sec cap),
  * retries on the same model once, then moves to the next model in chain.
@@ -32,11 +32,10 @@ public class GeminiApi {
     private static final String BASE_URL =
             "https://generativelanguage.googleapis.com/v1beta/models/";
 
-    // Latest verified working models for v1beta (July 2026)
-    // gemini-1.5-flash removed — throwing 404 in v1beta
+    // Latest verified working models for v1beta
     private static final String[] MODEL_CHAIN = {
-            "gemini-2.0-flash-lite",   // Primary — highest free quota, fastest
-            "gemini-2.0-flash"         // Fallback — if lite quota exhausted
+            "gemini-3.1-flash-lite",   // Primary — highest free quota, fastest
+            "gemini-3.1-flash"         // Fallback — if lite quota exhausted
     };
 
     private static final int MAX_RETRIES_PER_MODEL = 1;  // 1 retry per model on 429
