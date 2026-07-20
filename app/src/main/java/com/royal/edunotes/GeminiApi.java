@@ -19,11 +19,12 @@ import java.nio.charset.StandardCharsets;
  *
  * Model fallback chain (highest free quota → lowest):
  *   1. gemini-2.0-flash-lite  (primary — highest free tier limit)
- *   2. gemini-1.5-flash-8b    (fallback 1)
- *   3. gemini-2.0-flash       (fallback 2 — last resort)
+ *   2. gemini-1.5-flash        (fallback 1 — valid v1beta model)
+ *   3. gemini-2.0-flash        (fallback 2 — last resort)
  *
  * On 429: auto-waits the retryDelay from the response (max 15 sec cap),
  * retries on the same model once, then moves to the next model in chain.
+ * On 404: model not found — skips to next model immediately.
  */
 public class GeminiApi {
 
@@ -31,10 +32,10 @@ public class GeminiApi {
     private static final String BASE_URL =
             "https://generativelanguage.googleapis.com/v1beta/models/";
 
-    // Model chain: gemini-2.0-flash-lite has the most generous free quota
+    // ✅ Fix: gemini-1.5-flash-8b does NOT exist in v1beta — correct name is gemini-1.5-flash
     private static final String[] MODEL_CHAIN = {
             "gemini-2.0-flash-lite",   // Primary — highest free tier
-            "gemini-1.5-flash-8b",     // Fallback 1
+            "gemini-1.5-flash",        // Fallback 1 — valid v1beta model
             "gemini-2.0-flash"         // Fallback 2 — last resort
     };
 
@@ -44,6 +45,7 @@ public class GeminiApi {
     /**
      * Sends a prompt to Gemini and returns the text response.
      * Tries MODEL_CHAIN in order; on 429 waits retryDelay then retries once per model.
+     * On 404 (model not found) skips to next model immediately.
      * Must be called on a background thread.
      */
     public static String generateContent(String apiKey, String prompt) throws Exception {
@@ -68,8 +70,13 @@ public class GeminiApi {
                     } else {
                         Log.w(TAG, "429 exhausted retries for " + model + ", trying next model.");
                     }
+                } catch (ModelNotFoundException e) {
+                    // ✅ Fix: 404 → model nahi mila, seedha next model pe jao (chain mat todo)
+                    lastException = e;
+                    Log.w(TAG, "404 model not found: " + model + ", skipping to next model.");
+                    break; // inner retry loop se niklo, outer loop next model try karega
                 }
-                // Non-quota exceptions bubble up immediately (network, auth, etc.)
+                // Other exceptions (network, auth) bubble up immediately
             }
         }
 
@@ -143,6 +150,11 @@ public class GeminiApi {
                     throw new QuotaExceededException(model, retryDelayMs);
                 }
 
+                if (responseCode == 404) {
+                    // ✅ Fix: Model exist nahi karta — next model try karo
+                    throw new ModelNotFoundException(model);
+                }
+
                 throw new Exception("Gemini API error (" + responseCode + "): " + errorBody);
             }
         } finally {
@@ -214,6 +226,13 @@ public class GeminiApi {
             super("Quota exceeded for model: " + model + ". RetryDelay: " + retryDelayMs + "ms");
             this.model = model;
             this.retryDelayMs = retryDelayMs;
+        }
+    }
+
+    /** Thrown when Gemini returns 404 — model name invalid or not available in this API version. */
+    static class ModelNotFoundException extends Exception {
+        ModelNotFoundException(String model) {
+            super("Model not found: " + model + " (404 - not available in v1beta)");
         }
     }
 }
