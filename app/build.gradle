@@ -23,7 +23,7 @@ android {
 
         // Gemini API Key from local.properties
         buildConfigField "String", "GEMINI_API_KEY", "\"${localProperties.getProperty('GEMINI_API_KEY', '')}\""
-        buildConfigField "boolean", "ENABLE_ADS", "${localProperties.getProperty('ENABLE_ADS', 'false')}"
+        buildConfigField "boolean", "ENABLE_ADS", "${localProperties.getProperty('ENABLE_ADS', 'true')}"
     }
     useLibrary 'org.apache.http.legacy'
 
