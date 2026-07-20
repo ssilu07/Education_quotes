@@ -244,7 +244,7 @@ public class SearchActivity extends AppCompatActivity {
     private void showError(String msg) {
         layoutLoading.setVisibility(View.GONE);
         cardWordDetail.setVisibility(View.GONE);
-        layoutError.setVisibility(View.VISIBLE);    // ✅ yahi missing tha - ab properly VISIBLE hoga
+        layoutError.setVisibility(View.VISIBLE);
         String display;
         if (msg == null || msg.isEmpty()) {
             display = "Something went wrong. Please try again.";
@@ -252,8 +252,11 @@ public class SearchActivity extends AppCompatActivity {
             display = "No internet connection.\nPlease check your network and retry.";
         } else if (msg.contains("401") || msg.contains("403")) {
             display = "AI service error: Invalid API key.\nPlease contact support.";
-        } else if (msg.contains("429")) {
-            display = "Too many requests. Please wait a moment and retry.";
+        } else if (msg.contains("Quota exceeded") || msg.contains("429") || msg.contains("RESOURCE_EXHAUSTED")) {
+            // 429 — all models in fallback chain are also quota-exhausted
+            display = "⚠️ AI quota limit reached for today.\n\n"
+                    + "The free Gemini API limit has been exceeded. "
+                    + "Please wait a few minutes and try again, or try a different word.";
         } else if (msg.contains("API key") && msg.contains("empty")) {
             display = "AI feature not configured. Please set up the Gemini API key.";
         } else {
