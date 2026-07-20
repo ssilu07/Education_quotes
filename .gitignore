@@ -7,3 +7,10 @@
 /build
 /captures
 .externalNativeBuild
+.claude/
+.idea/caches/
+.idea/copilot.data.migration.agent.xml
+.idea/copilot.data.migration.ask2agent.xml
+.idea/deploymentTargetSelector.xml
+.idea/runConfigurations.xml
+library/build/

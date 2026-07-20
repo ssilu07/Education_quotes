@@ -19,12 +19,17 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
-//import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.royal.edunotes.AIExplainHelper;
+import com.royal.edunotes.BuildConfig;
+import com.royal.edunotes.ProgressManager;
 import com.royal.edunotes.R;
+import com.royal.edunotes.SettingsManager;
+import com.royal.edunotes.ShareUtils;
+import com.royal.edunotes.TTSHelper;
 import com.royal.edunotes.Utility;
 import com.royal.edunotes.VerticalViewPager;
 import com.royal.edunotes._adapters.VerticlePagerAdapter;
@@ -37,26 +42,30 @@ import java.util.ArrayList;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
 
-public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.ClickInterface{
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-    private String mParam1;
-    private String mParam2;
+public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.ClickInterface {
+    private static final String TAG = "BookmarkFrag_MINIMAL";
+
     DatabaseHelper db;
     private OnFragmentInteractionListener mListener;
     VerticlePagerAdapter verticlePagerAdapter;
     MyDatabase myDatabase;
-    ArrayList<QuoteModel> quoteModels;
+    TTSHelper ttsHelper;
+    AIExplainHelper aiExplainHelper;
+    ProgressManager progressManager;
     TextView nobookmarkTxt;
     VerticalViewPager verticalViewPager;
     InterstitialAd mInterstitialAd;
+    SettingsManager settingsManager;
+
+    private String currentScreenType = "";
+
     public BookmarkFragment() {
+        Log.d(TAG, "🔧 Constructor called");
     }
+
     public static BookmarkFragment newInstance(String param1, String param2) {
         BookmarkFragment fragment = new BookmarkFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -64,459 +73,223 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-        loadInterstitialAd();
+        Log.d(TAG, "🔧 onCreate - ScreenCheck: " + Utility.ScreenCheck);
+        if (BuildConfig.ENABLE_ADS) loadInterstitialAd();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View v =  inflater.inflate(R.layout.fragment_bookmark2, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d(TAG, "🔧 onCreateView - ScreenCheck: " + Utility.ScreenCheck);
 
-
+        View v = inflater.inflate(R.layout.fragment_bookmark2, container, false);
         nobookmarkTxt = (TextView) v.findViewById(R.id.nobookmarkTxt);
+        verticalViewPager = (VerticalViewPager) v.findViewById(R.id.vPager);
 
-        quoteModels = new ArrayList<>();
-
-        verticalViewPager= (VerticalViewPager) v.findViewById(R.id.vPager);
-
-
-        db = new DatabaseHelper(getActivity());
-        ArrayList<ModelDatabase> modelDatabases = (ArrayList<ModelDatabase>) db.getAllNotes();
-        Log.e("TAG1===", "SIZEEEE : " + modelDatabases.size());
-
-
-        myDatabase = new MyDatabase(getActivity(),"bookmark_db");
-
-        quoteModels = myDatabase.getBookmarkData();
-        ArrayList<QuoteModel> allBookmarksCheck = myDatabase.getBookmarkData();
-
-        if(quoteModels.size()==0){
-
-            verticalViewPager.setVisibility(View.GONE);
-            nobookmarkTxt.setVisibility(View.VISIBLE);
-
-        }else {
-            if (Utility.ScreenCheck.equals("Vocab")) {
-
-                for (int i = 0; i < allBookmarksCheck.size(); i++) {
-                    String categoryName = allBookmarksCheck.get(i).getCategoryName();
-
-                    // Debugging log to check actual category name
-                    Log.d("DEBUG", "Category Name: [" + categoryName + "]");
-
-                    // Normalize category name: Trim spaces, convert to lowercase, and remove special characters
-                    String normalizedCategory = categoryName.toLowerCase().trim().replaceAll("[^a-z0-9 ]", "");
-
-                    if (normalizedCategory.contains("vocab")) {
-                        verticalViewPager.setVisibility(View.VISIBLE);
-                        nobookmarkTxt.setVisibility(View.GONE);
-                        verticlePagerAdapter = new VerticlePagerAdapter(getActivity(), quoteModels, this, modelDatabases);
-                        verticalViewPager.setOffscreenPageLimit(0);
-                        verticalViewPager.setAdapter(verticlePagerAdapter);
-                    } else {
-                        verticalViewPager.setVisibility(View.GONE);
-                        nobookmarkTxt.setVisibility(View.VISIBLE);
-                    }
-                }
-
-            } else if (Utility.ScreenCheck.equals("Idiom")) {
-
-                for (int i = 0; i < allBookmarksCheck.size(); i++) {
-
-                    String categoryName = allBookmarksCheck.get(i).getCategoryName();
-
-                    // Debugging log to check actual category name
-                    Log.d("DEBUG", "Category Name: [" + categoryName + "]");
-
-                    // Normalize category name: Trim spaces, convert to lowercase, and remove special characters
-                    String normalizedCategory = categoryName.toLowerCase().trim().replaceAll("[^a-z0-9 ]", "");
-
-                    if (normalizedCategory.contains("idiom")) {
-
-                        verticalViewPager.setVisibility(View.VISIBLE);
-                        nobookmarkTxt.setVisibility(View.GONE);
-                        verticlePagerAdapter = new VerticlePagerAdapter(getActivity(), quoteModels, this, modelDatabases);
-                        verticalViewPager.setOffscreenPageLimit(0);
-                        verticalViewPager.setAdapter(verticlePagerAdapter);
-
-                    } else {
-                        verticalViewPager.setVisibility(View.GONE);
-                        nobookmarkTxt.setVisibility(View.VISIBLE);
-                    }
-
-                }
-    /*        verticalViewPager.setVisibility(View.VISIBLE);
-            nobookmarkTxt.setVisibility(View.GONE);
-            verticlePagerAdapter  = new VerticlePagerAdapter(getActivity(),quoteModels,this,modelDatabases);
-            verticalViewPager.setOffscreenPageLimit(0);
-            verticalViewPager.setAdapter(verticlePagerAdapter);
-*/
-            }
-        }
-
-
+        // Set initial state immediately
+        nobookmarkTxt.setVisibility(View.VISIBLE);
+        verticalViewPager.setVisibility(View.GONE);
+        nobookmarkTxt.setText("Loading...");
 
         return v;
     }
 
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Log.d(TAG, "🔧 onViewCreated - ScreenCheck: " + Utility.ScreenCheck);
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
+        ttsHelper = new TTSHelper(getActivity());
+        aiExplainHelper = new AIExplainHelper();
+        progressManager = new ProgressManager(getActivity());
+        settingsManager = new SettingsManager(getActivity());
+        currentScreenType = Utility.ScreenCheck;
 
-
-
-    public void refresh(){
-
-        quoteModels = new ArrayList<>();
-        ArrayList<QuoteModel> vocabQuotes = new ArrayList<>();
-        ArrayList<QuoteModel> idiomQuotes = new ArrayList<>();
-
-        db = new DatabaseHelper(getActivity());
-        ArrayList<ModelDatabase> modelDatabases = (ArrayList<ModelDatabase>) db.getAllNotes();
-        Log.e("TAG1===", "SIZEEEE : " + modelDatabases.size());
-
-
-        myDatabase = new MyDatabase(getActivity(),"bookmark_db");
-
-        quoteModels = myDatabase.getBookmarkData();
-
-        ArrayList<QuoteModel> allBookmarks = myDatabase.getBookmarkData();
-
-
-        if(quoteModels.size()==0){
-
-            verticalViewPager.setVisibility(View.GONE);
-            nobookmarkTxt.setVisibility(View.VISIBLE);
-
-        }else{
-
-
-            if (Utility.ScreenCheck.equals("Vocab")) {
-
-
-                for (int i = 0; i < allBookmarks.size(); i++) {
-
-                    String categoryName = allBookmarks.get(i).getCategoryName();
-
-                    // Debugging log to check actual category name
-                    Log.d("DEBUG", "Category Name: [" + categoryName + "]");
-
-                    // Normalize category name: Trim spaces, convert to lowercase, and remove special characters
-                    String normalizedCategory = categoryName.toLowerCase().trim().replaceAll("[^a-z0-9 ]", "");
-
-                    if (normalizedCategory.contains("vocab")) {
-
-                        vocabQuotes.add(allBookmarks.get(i)); // Add to new ArrayList
-                        if (vocabQuotes.size() == 0) {
-                            verticalViewPager.setVisibility(View.GONE);
-                            nobookmarkTxt.setVisibility(View.VISIBLE);
-                        } else {
-                            verticalViewPager.setVisibility(View.VISIBLE);
-                            nobookmarkTxt.setVisibility(View.GONE);
-                        }
-                        verticlePagerAdapter = new VerticlePagerAdapter(getActivity(), vocabQuotes, this, modelDatabases);
-                        verticalViewPager.setOffscreenPageLimit(0);
-                        verticalViewPager.setAdapter(verticlePagerAdapter);
-                    }
-                }
-            }else if (Utility.ScreenCheck.equals("Idiom")){
-
-                for (int i = 0; i < allBookmarks.size(); i++) {
-                    String categoryName = allBookmarks.get(i).getCategoryName();
-
-                    // Debugging log to check actual category name
-                    Log.d("DEBUG", "Category Name: [" + categoryName + "]");
-
-                    // Normalize category name: Trim spaces, convert to lowercase, and remove special characters
-                    String normalizedCategory = categoryName.toLowerCase().trim().replaceAll("[^a-z0-9 ]", "");
-
-                    if(normalizedCategory.contains("idiom"))  {
-                        idiomQuotes.add(allBookmarks.get(i)); // Add to new ArrayList
-                        if (idiomQuotes.size() == 0){
-                            verticalViewPager.setVisibility(View.GONE);
-                            nobookmarkTxt.setVisibility(View.VISIBLE);
-                        } else {
-                            verticalViewPager.setVisibility(View.VISIBLE);
-                            nobookmarkTxt.setVisibility(View.GONE);
-                        }
-                        verticlePagerAdapter  = new VerticlePagerAdapter(getActivity(),idiomQuotes,this,modelDatabases);
-                        verticalViewPager.setOffscreenPageLimit(0);
-                        verticalViewPager.setAdapter(verticlePagerAdapter);
-
-                    }
-                }
-
-            }
-           /* for (int i = 0; i < allBookmarks.size(); i++) {
-                if (allBookmarks.get(i).getCategoryName().toLowerCase().contains("Vocab")) {
-
-                    vocabQuotes.add(allBookmarks.get(i)); // Add to new ArrayList
-                    if (vocabQuotes.size() == 0){
-                        verticalViewPager.setVisibility(View.GONE);
-                        nobookmarkTxt.setVisibility(View.VISIBLE);
-                    }else {
-                        verticalViewPager.setVisibility(View.VISIBLE);
-                        nobookmarkTxt.setVisibility(View.GONE);
-                    }
-                    verticlePagerAdapter  = new VerticlePagerAdapter(getActivity(),vocabQuotes,this,modelDatabases);
-                    verticalViewPager.setOffscreenPageLimit(0);
-                    verticalViewPager.setAdapter(verticlePagerAdapter);
-                }
-             else if(allBookmarks.get(i).getCategoryName().toLowerCase().contains("idiom"))  {
-                    idiomQuotes.add(allBookmarks.get(i)); // Add to new ArrayList
-                    if (idiomQuotes.size() == 0){
-                        verticalViewPager.setVisibility(View.GONE);
-                        nobookmarkTxt.setVisibility(View.VISIBLE);
-                    } else {
-                        verticalViewPager.setVisibility(View.VISIBLE);
-                        nobookmarkTxt.setVisibility(View.GONE);
-                    }
-                    verticlePagerAdapter  = new VerticlePagerAdapter(getActivity(),idiomQuotes,this,modelDatabases);
-                    verticalViewPager.setOffscreenPageLimit(0);
-                    verticalViewPager.setAdapter(verticlePagerAdapter);
-
-                }
-            }*/
-        }
-    }
-
-    private void loadInterstitialAd(){
-        AdRequest adRequestNew = new AdRequest.Builder().build();
-
-        InterstitialAd.load(getActivity(), getString(R.string.interstitial_full_screen), adRequestNew, new InterstitialAdLoadCallback() {
+        verticalViewPager.addOnPageChangeListener(new androidx.viewpager.widget.ViewPager.SimpleOnPageChangeListener() {
             @Override
-            public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
-                // The interstitial ad was loaded successfully
-                mInterstitialAd = interstitialAd;
-                Log.d("TAG", "New Interstitial Ad Loaded");
-
-                // Set FullScreenContentCallback for ad events
-                mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
-                    @Override
-                    public void onAdDismissedFullScreenContent() {
-                        // Called when the ad is dismissed
-                        Log.d("TAG", "Ad was dismissed.");
-                        mInterstitialAd = null;  // Reset the interstitial ad after it's dismissed
-                    }
-
-                    @Override
-                    public void onAdFailedToShowFullScreenContent(AdError adError) {
-                        // Called when the ad failed to show
-                        Log.e("TAG", "Ad failed to show.");
-                    }
-
-                    @Override
-                    public void onAdShowedFullScreenContent() {
-                        // Called when the ad is shown
-                        Log.d("TAG", "Ad was shown.");
-                    }
-                });
-            }
-
-            @Override
-            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                Log.e("TAG", "New Ad failed to load: " + loadAdError.getMessage());
-                mInterstitialAd = null;  // Reset the interstitial ad if it fails to load
+            public void onPageSelected(int position) {
+                if (verticlePagerAdapter == null || settingsManager == null) return;
+                com.royal.edunotes._models.QuoteModel current = verticlePagerAdapter.getItemAt(position);
+                if (current != null && current.getQuote() != null) {
+                    settingsManager.setLastBookmarkNote(currentScreenType, current.getQuote());
+                }
             }
         });
 
+        loadData();
+    }
+
+    public void refresh() {
+        Log.d(TAG, "🔧 refresh() called - ScreenCheck: " + Utility.ScreenCheck +
+                ", Last: " + currentScreenType);
+
+        if (getActivity() == null) {
+            Log.d(TAG, "🔧 Activity is null, skipping refresh");
+            return;
+        }
+
+        // Always reload if screen changed
+        if (!currentScreenType.equals(Utility.ScreenCheck)) {
+            Log.d(TAG, "🔧 Screen changed, reloading data");
+            currentScreenType = Utility.ScreenCheck;
+
+            // Show loading immediately
+            if (nobookmarkTxt != null) {
+                nobookmarkTxt.setVisibility(View.VISIBLE);
+                nobookmarkTxt.setText("Loading " + Utility.ScreenCheck + "...");
+            }
+            if (verticalViewPager != null) {
+                verticalViewPager.setVisibility(View.GONE);
+            }
+
+            loadData();
+        } else {
+            Log.d(TAG, "🔧 No screen change, skipping refresh");
+        }
+    }
+
+    private void loadData() {
+        Log.d(TAG, "🔧 loadData() starting for: " + Utility.ScreenCheck);
+
+        if (getActivity() == null) return;
+
+        try {
+            db = new DatabaseHelper(getActivity());
+            myDatabase = new MyDatabase(getActivity(), "bookmark_db");
+
+            ArrayList<QuoteModel> allBookmarks = myDatabase.getBookmarkData();
+            ArrayList<ModelDatabase> modelDatabases = (ArrayList<ModelDatabase>) db.getAllNotes();
+
+            Log.d(TAG, "🔧 Total bookmarks: " + allBookmarks.size() +
+                    ", ModelDB: " + modelDatabases.size());
+
+            // Filter for current screen
+            ArrayList<QuoteModel> filtered = new ArrayList<>();
+            String keyword = Utility.ScreenCheck.equals("Vocab") ? "vocab" : "idiom";
+
+            for (QuoteModel bookmark : allBookmarks) {
+                if (bookmark.getCategoryName() != null) {
+                    String cat = bookmark.getCategoryName().toLowerCase().trim();
+                    if (cat.contains(keyword)) {
+                        filtered.add(bookmark);
+                    }
+                }
+            }
+
+            Log.d(TAG, "🔧 Filtered " + filtered.size() + " bookmarks for " + Utility.ScreenCheck);
+
+            // Update UI
+            showData(filtered, modelDatabases);
+
+        } catch (Exception e) {
+            Log.e(TAG, "🔧 Error loading data: " + e.getMessage());
+            showError();
+        }
+    }
+
+    private void showData(ArrayList<QuoteModel> bookmarks, ArrayList<ModelDatabase> modelDatabases) {
+        Log.d(TAG, "🔧 showData() - " + bookmarks.size() + " bookmarks");
+
+        if (getActivity() == null || nobookmarkTxt == null || verticalViewPager == null) {
+            Log.e(TAG, "🔧 Views are null, cannot update UI");
+            return;
+        }
+
+        if (bookmarks.isEmpty()) {
+            Log.d(TAG, "🔧 No bookmarks - showing empty state");
+            verticalViewPager.setVisibility(View.GONE);
+            nobookmarkTxt.setVisibility(View.VISIBLE);
+            nobookmarkTxt.setText("No " + Utility.ScreenCheck + " bookmarks");
+        } else {
+            Log.d(TAG, "🔧 Showing " + bookmarks.size() + " bookmarks");
+            nobookmarkTxt.setVisibility(View.GONE);
+            verticalViewPager.setVisibility(View.VISIBLE);
+
+            verticlePagerAdapter = new VerticlePagerAdapter(getActivity(), bookmarks, this, modelDatabases);
+            verticalViewPager.setOffscreenPageLimit(0);
+            verticalViewPager.setAdapter(verticlePagerAdapter);
+            restoreLastPosition(bookmarks);
+        }
+    }
+
+    /** Jumps back to the bookmark the user was last viewing instead of resetting to the top. */
+    private void restoreLastPosition(ArrayList<QuoteModel> bookmarks) {
+        if (settingsManager == null) return;
+        String lastNote = settingsManager.getLastBookmarkNote(currentScreenType);
+        if (lastNote == null) return;
+
+        for (int i = 0; i < bookmarks.size(); i++) {
+            if (lastNote.equals(bookmarks.get(i).getQuote())) {
+                verticalViewPager.setCurrentItem(verticlePagerAdapter.getPagerPositionForDataIndex(i), false);
+                break;
+            }
+        }
+    }
+
+    private void showError() {
+        Log.d(TAG, "🔧 showError()");
+        if (nobookmarkTxt != null && verticalViewPager != null) {
+            verticalViewPager.setVisibility(View.GONE);
+            nobookmarkTxt.setVisibility(View.VISIBLE);
+            nobookmarkTxt.setText("Error loading bookmarks");
+        }
+    }
+
+    private void loadInterstitialAd() {
+        if (getActivity() == null) return;
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        InterstitialAd.load(getActivity(), BuildConfig.ADMOB_INTERSTITIAL_ID, adRequest,
+                new InterstitialAdLoadCallback() {
+                    @Override
+                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                        mInterstitialAd = interstitialAd;
+                        mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                            @Override
+                            public void onAdDismissedFullScreenContent() {
+                                mInterstitialAd = null;
+                            }
+                            @Override
+                            public void onAdFailedToShowFullScreenContent(AdError adError) {}
+                            @Override
+                            public void onAdShowedFullScreenContent() {}
+                        });
+                    }
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                        mInterstitialAd = null;
+                    }
+                });
     }
 
     @Override
     public void onBoookmarkClick(QuoteModel quoteModel, ImageView star) {
-
-        Log.e("TAGGG ===", quoteModel.getTimestamp());
-        Log.e("TAGGG ===", String.valueOf(quoteModel.getId()));
-        Log.e("TAGGG ===", quoteModel.getQuote());
-        Log.e("TAGGG ===", quoteModel.getCategoryName());
-
-
-
-        showInterstitial();
-
-       /* mInterstitialAd = new InterstitialAd(getActivity());
-
-        // set the ad unit ID
-        mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen));
-
-        AdRequest adRequest = new AdRequest.Builder()
-                .build();
-
-        // Load ads into Interstitial Ads
-        mInterstitialAd.loadAd(adRequest);
-
-        mInterstitialAd.setAdListener(new AdListener() {
-            public void onAdLoaded() {
-                showInterstitial();
-            }
-
-            @Override
-            public void onAdFailedToLoad(int i) {
-                super.onAdFailedToLoad(i);
-                Log.e("TAG===", "Error ad :" + i);
-            }
-        });*/
-
-
+        Log.d(TAG, "🔧 Bookmark clicked: " + quoteModel.isBookmared());
+        if (BuildConfig.ENABLE_ADS) showInterstitial();
 
         if (quoteModel.isBookmared()) {
-//            Remove from bookmark table
-
-
-
             db = new DatabaseHelper(getActivity(), quoteModel);
-
             db.deleteNote(quoteModel);
-
-
-            quoteModels.remove(quoteModel);
-
-
-            db = new DatabaseHelper(getActivity());
-            ArrayList<ModelDatabase> modelDatabases = (ArrayList<ModelDatabase>) db.getAllNotes();
-            Log.e("TAG1===", "SIZEEEE : " + modelDatabases.size());
-
-
             star.setImageDrawable(getResources().getDrawable(R.drawable.star));
             quoteModel.setBookmared(false);
-
-
-            quoteModels = myDatabase.getBookmarkData();
-            ArrayList<QuoteModel> allBookmarks = myDatabase.getBookmarkData();
-            ArrayList<QuoteModel> allBookmarksCheck = myDatabase.getBookmarkData();
-            ArrayList<QuoteModel> vocabQuotes = new ArrayList<>();
-            ArrayList<QuoteModel> idiomQuotes = new ArrayList<>();
-
-            if(quoteModels.size()==0){
-
-                verticalViewPager.setVisibility(View.GONE);
-                nobookmarkTxt.setVisibility(View.VISIBLE);
-
-            }else{
-
-
-
-                if (Utility.ScreenCheck.equals("Vocab")) {
-
-
-                    for (int i = 0; i < allBookmarks.size(); i++) {
-
-                        String categoryName = allBookmarks.get(i).getCategoryName();
-
-                        // Debugging log to check actual category name
-                        Log.d("DEBUG", "Category Name: [" + categoryName + "]");
-
-                        // Normalize category name: Trim spaces, convert to lowercase, and remove special characters
-                        String normalizedCategory = categoryName.toLowerCase().trim().replaceAll("[^a-z0-9 ]", "");
-
-                        if (normalizedCategory.contains("vocab")) {
-
-                            vocabQuotes.add(allBookmarks.get(i)); // Add to new ArrayList
-                            if (vocabQuotes.size() == 0) {
-                                verticalViewPager.setVisibility(View.GONE);
-                                nobookmarkTxt.setVisibility(View.VISIBLE);
-                            } else {
-                                verticalViewPager.setVisibility(View.VISIBLE);
-                                nobookmarkTxt.setVisibility(View.GONE);
-                            }
-                            verticlePagerAdapter = new VerticlePagerAdapter(getActivity(), vocabQuotes, this, modelDatabases);
-                            verticalViewPager.setOffscreenPageLimit(0);
-                            verticalViewPager.setAdapter(verticlePagerAdapter);
-                        }
-                    }
-                }else if (Utility.ScreenCheck.equals("Idiom")){
-
-                    for (int i = 0; i < allBookmarks.size(); i++) {
-                        String categoryName = allBookmarks.get(i).getCategoryName();
-
-                        // Debugging log to check actual category name
-                        Log.d("DEBUG", "Category Name: [" + categoryName + "]");
-
-                        // Normalize category name: Trim spaces, convert to lowercase, and remove special characters
-                        String normalizedCategory = categoryName.toLowerCase().trim().replaceAll("[^a-z0-9 ]", "");
-
-                        if(normalizedCategory.contains("idiom"))  {
-                            idiomQuotes.add(allBookmarks.get(i)); // Add to new ArrayList
-                            if (idiomQuotes.size() == 0){
-                                verticalViewPager.setVisibility(View.GONE);
-                                nobookmarkTxt.setVisibility(View.VISIBLE);
-                            } else {
-                                verticalViewPager.setVisibility(View.VISIBLE);
-                                nobookmarkTxt.setVisibility(View.GONE);
-                            }
-                            verticlePagerAdapter  = new VerticlePagerAdapter(getActivity(),idiomQuotes,this,modelDatabases);
-                            verticalViewPager.setOffscreenPageLimit(0);
-                            verticalViewPager.setAdapter(verticlePagerAdapter);
-
-                        }
-                    }
-                }
-
-
-          /*      verticalViewPager.setVisibility(View.VISIBLE);
-                nobookmarkTxt.setVisibility(View.GONE);
-                verticlePagerAdapter  = new VerticlePagerAdapter(getActivity(),quoteModels,this,modelDatabases);
-                verticalViewPager.setOffscreenPageLimit(0);
-                verticalViewPager.setAdapter(verticlePagerAdapter);*/
-
-            }
-            verticlePagerAdapter.notifyDataSetChanged();
+            loadData(); // Refresh after removal
         } else {
-
-//           Add in to bookmark table
             db = new DatabaseHelper(getActivity(), quoteModel);
             quoteModel.setBookmark("1");
             db.insertNote(quoteModel);
-
             star.setImageDrawable(getResources().getDrawable(R.drawable.starfilled));
             quoteModel.setBookmared(true);
-            verticlePagerAdapter.notifyDataSetChanged();
-
+            if (verticlePagerAdapter != null) {
+                verticlePagerAdapter.notifyDataSetChanged();
+            }
+            if (progressManager != null) progressManager.onWordBookmarked();
         }
     }
-  /*  private void showInterstitial() {
-        if (mInterstitialAd.isLoaded()) {
-            mInterstitialAd.show();
-        }
-    }*/
 
-
-    // Show the interstitial ad if it's loaded
     private void showInterstitial() {
         if (mInterstitialAd != null) {
-            mInterstitialAd.show(getActivity());  // Show the new interstitial ad
-        } else {
-            Log.e("TAG", "No interstitial ad loaded");
+            mInterstitialAd.show(getActivity());
         }
     }
-
-
-
-
-
 
     @Override
     public void onCopyClick(QuoteModel quoteModel) {
@@ -536,19 +309,75 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
     }
 
     @Override
-    public void onMoreAppsClick() {
-        try {
-        //    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=Royal%27s+Family")));
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.royals.englishtrickyvocab")));
+    public void onTTSClick(QuoteModel quoteModel) {
+        if (ttsHelper != null) ttsHelper.speak(quoteModel.getQuote());
+    }
 
-        } catch (android.content.ActivityNotFoundException anfe) {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.royals.englishtrickyvocab")));
+    @Override
+    public void onLearnedClick(QuoteModel quoteModel, TextView learnedLabel) {
+        if (settingsManager == null) return;
+        boolean newState = !quoteModel.isLearned();
+        settingsManager.setWordLearned(quoteModel.getQuote(), newState);
+        quoteModel.setLearned(newState);
+        learnedLabel.setText(newState ? getString(R.string.learned_on_label) : getString(R.string.learned_off_label));
+    }
+
+    @Override
+    public void onShareAsImageClick(View cardView) {
+        if (getActivity() != null) {
+            ShareUtils.shareViewAsImage(getActivity(), cardView);
         }
     }
 
+    @Override
+    public void onQuizClick() {
+        startActivity(new Intent(getActivity(), com.royal.edunotes._activities.DailyQuizActivity.class));
+    }
+
+    @Override
+    public void onMoreAppsClick() {
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("https://play.google.com/store/apps/details?id=com.royals.englishtrickyvocab")));
+        } catch (android.content.ActivityNotFoundException anfe) {
+            startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("https://play.google.com/store/apps/details?id=com.royals.englishtrickyvocab")));
+        }
+    }
+
+    public void onButtonPressed(Uri uri) {
+        if (mListener != null) {
+            mListener.onFragmentInteraction(uri);
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Log.d(TAG, "🔧 onAttach");
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Log.d(TAG, "🔧 onDetach");
+        mListener = null;
+    }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public void onDestroy() {
+        if (verticlePagerAdapter != null) verticlePagerAdapter.cleanup();
+        if (ttsHelper != null) ttsHelper.shutdown();
+        if (aiExplainHelper != null) aiExplainHelper.shutdown();
+        super.onDestroy();
     }
 }

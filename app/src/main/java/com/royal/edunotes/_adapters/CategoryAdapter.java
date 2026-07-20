@@ -1,17 +1,16 @@
 package com.royal.edunotes._adapters;
 
-/**
- * Created by Admin on 20-03-2018.
- */
-
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.royal.edunotes.R;
@@ -24,25 +23,22 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
     private List<CategoryModel> categoryList;
     Context context;
 
-
     String[] firstcolor;
     String[] secondcolor;
-    boolean flag = false;
-    int i = 0;
     protected CategoryClickInterface clickInterface;
-    CategoryModel categoryModel;
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView title;
-//        public ImageView icon;
+        public TextView title, tvProgress;
         public LinearLayout mainLL;
+        public ProgressBar progressBar;
         CategoryModel categoryModel;
 
         public MyViewHolder(View view) {
             super(view);
-            title = (TextView) view.findViewById(R.id.catTitle);
-//            icon = (ImageView) view.findViewById(R.id.catImg);
-            mainLL = (LinearLayout) view.findViewById(R.id.mainLL);
+            title = view.findViewById(R.id.catTitle);
+            mainLL = view.findViewById(R.id.mainLL);
+            progressBar = view.findViewById(R.id.progressBar);
+            tvProgress = view.findViewById(R.id.tvProgress);
             mainLL.setOnClickListener(this);
         }
 
@@ -58,7 +54,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
         }
     }
 
-
     public CategoryAdapter(Context context, List<CategoryModel> categoryList, CategoryClickInterface clickInterface) {
         this.categoryList = categoryList;
         this.context = context;
@@ -69,59 +64,41 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.category_list_row, parent, false);
-
         return new MyViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-
         holder.setData(categoryList.get(position));
 
         CategoryModel model = categoryList.get(position);
         holder.title.setText(model.getTitle());
-//        Log.e("TAG==", model.getImageUrl());
 
-//        Picasso.Builder builder = new Picasso.Builder(context);
-//        builder.listener(new Picasso.Listener() {
-//            @Override
-//            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-//                exception.printStackTrace();
-//                Toast.makeText(context, exception.getMessage(), Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//
-//        builder.build().load(model.getImageUrl()).into(holder.icon);
+        // Progress display
+        int total = model.getTotalCount();
+        int viewed = model.getViewedCount();
+        if (total > 0) {
+            int progressPercent = (viewed * 100) / total;
+            holder.progressBar.setMax(100);
+            holder.progressBar.setProgress(progressPercent);
+            holder.tvProgress.setText(total + " Questions");
+            holder.progressBar.setVisibility(View.VISIBLE);
+            holder.tvProgress.setVisibility(View.VISIBLE);
+        } else {
+            holder.progressBar.setVisibility(View.INVISIBLE);
+            holder.tvProgress.setVisibility(View.INVISIBLE);
+        }
 
+        // Gradient background
         firstcolor = context.getResources().getStringArray(R.array.firstcolor);
         secondcolor = context.getResources().getStringArray(R.array.secondcolor);
 
+        int colorIndex = position % firstcolor.length;
+        int[] colors = {Color.parseColor(firstcolor[colorIndex]), Color.parseColor(secondcolor[colorIndex])};
 
-        if (categoryList.size() > firstcolor.length) {
-
-            for (int i = 0; i < categoryList.size(); i++) {
-
-                if (position % firstcolor.length == i) {
-
-                    int[] colors = {Color.parseColor(firstcolor[i]), Color.parseColor(secondcolor[i])};
-
-                    GradientDrawable gd = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, colors);
-                    gd.setCornerRadius(0f);
-
-                    holder.mainLL.setBackgroundDrawable(gd);
-                }
-            }
-        } else {
-            String random = (firstcolor[position]);
-            String random1 = (secondcolor[position]);
-
-            int[] colors = {Color.parseColor(random), Color.parseColor(random1)};
-
-            GradientDrawable gd = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, colors);
-            gd.setCornerRadius(0f);
-
-            holder.mainLL.setBackgroundDrawable(gd);
-        }
+        GradientDrawable gd = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, colors);
+        gd.setCornerRadius(0f);
+        holder.mainLL.setBackground(gd);
     }
 
     @Override

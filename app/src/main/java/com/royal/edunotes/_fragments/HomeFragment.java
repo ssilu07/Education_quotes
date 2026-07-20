@@ -28,8 +28,11 @@ import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.royal.edunotes.BuildConfig;
 import com.royal.edunotes.Utility;
 import com.royal.edunotes._activities.HackList;
+import com.royal.edunotes._database.CardProgressDatabase;
+import com.royal.edunotes._database.MyDatabase;
 import com.royal.edunotes._models.CategoryModel;
 import com.royal.edunotes._adapters.CategoryAdapter;
 import com.royal.edunotes.R;
@@ -71,7 +74,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.CategoryCl
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        loadInterstitialAd();
+        if (BuildConfig.ENABLE_ADS) loadInterstitialAd();
     }
 
     @Override
@@ -128,8 +131,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.CategoryCl
         String[] catdata;
         String[] dbdata;
 
-        String[] catdataIdiom;
-        String[] dbdataIdiom;
+        CardProgressDatabase progressDb = new CardProgressDatabase(getActivity());
 
         if (Utility.ScreenCheck.equals("Vocab")) {
             catdata = getResources().getStringArray(R.array.mycat);
@@ -137,39 +139,43 @@ public class HomeFragment extends Fragment implements CategoryAdapter.CategoryCl
 
             Log.e("Tag===", "SIZE : " + catdata.length + "   " + dbdata.length);
 
+            for (int i = 0; i < catdata.length; i++) {
+                int totalCount = 0;
+                int viewedCount = 0;
+                try {
+                    MyDatabase myDb = new MyDatabase(getActivity(), dbdata[i], catdata[i]);
+                    totalCount = myDb.getTotalCount();
+                    viewedCount = progressDb.getViewedCount(dbdata[i]);
+                } catch (Exception e) {
+                    Log.e("Tag===", "Error getting progress: " + e.getMessage());
+                }
+                CategoryModel movie = new CategoryModel(catdata[i], dbdata[i], viewedCount, totalCount);
+                movieList.add(movie);
+            }
+        } else {
+            catdata = getResources().getStringArray(R.array.myidiomcat);
+            dbdata = getResources().getStringArray(R.array.myidiomdb);
+
+            Log.e("Tag===", "SIZE : " + catdata.length + "   " + dbdata.length);
 
             for (int i = 0; i < catdata.length; i++) {
-                CategoryModel movie = new CategoryModel(catdata[i], dbdata[i]);
+                int totalCount = 0;
+                int viewedCount = 0;
+                try {
+                    MyDatabase myDb = new MyDatabase(getActivity(), dbdata[i], catdata[i]);
+                    totalCount = myDb.getTotalCount();
+                    viewedCount = progressDb.getViewedCount(dbdata[i]);
+                } catch (Exception e) {
+                    Log.e("Tag===", "Error getting progress: " + e.getMessage());
+                }
+                CategoryModel movie = new CategoryModel(catdata[i], dbdata[i], viewedCount, totalCount);
                 movieList.add(movie);
             }
-
-
-            recyclerView.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.INVISIBLE);
-
-            mAdapter.notifyDataSetChanged();
-        } else {
-            catdataIdiom = getResources().getStringArray(R.array.myidiomcat);
-            dbdataIdiom = getResources().getStringArray(R.array.myidiomdb);
-
-            Log.e("Tag===", "SIZE : " + catdataIdiom.length + "   " + dbdataIdiom.length);
-
-
-            for (int i = 0; i < catdataIdiom.length; i++) {
-                CategoryModel movie = new CategoryModel(catdataIdiom[i], dbdataIdiom[i]);
-                movieList.add(movie);
-            }
-
-
-            recyclerView.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.INVISIBLE);
-
-            mAdapter.notifyDataSetChanged();
         }
 
-
-
-
+        recyclerView.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.INVISIBLE);
+        mAdapter.notifyDataSetChanged();
     }
 
     public void onButtonPressed(Uri uri) {
@@ -202,7 +208,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.CategoryCl
         intent.putExtra(Utility.TITLE_KEY, categoryModel.getTitle());
         intent.putExtra(Utility.DBNAME_KEY, categoryModel.getDbname());
         startActivity(intent);
-        showInterstitial();
+        if (BuildConfig.ENABLE_ADS) showInterstitial();
 
 
 /*
@@ -241,7 +247,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.CategoryCl
         // Use test ad unit ID during development: "ca-app-pub-3940256099942544/1033173712"
         AdRequest adRequestNew = new AdRequest.Builder().build();
 
-        InterstitialAd.load(getActivity(), getString(R.string.interstitial_full_screen), adRequestNew, new InterstitialAdLoadCallback() {
+        InterstitialAd.load(getActivity(), BuildConfig.ADMOB_INTERSTITIAL_ID, adRequestNew, new InterstitialAdLoadCallback() {
             @Override
             public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
                 mInterstitialAd = interstitialAd;

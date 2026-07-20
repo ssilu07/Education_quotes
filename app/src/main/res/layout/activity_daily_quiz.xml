@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/surfaceBackground">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <!-- Streak & Score Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_streak"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Streak: 0 days"
+            android:textColor="@color/colorPrimary"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Score: 0"
+            android:textColor="@color/textPrimary"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/quiz_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:layout_marginHorizontal="16dp"
+        android:max="5"
+        android:progress="0"
+        android:progressTint="@color/colorPrimary" />
+
+    <!-- Quiz Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/quiz_card"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="16dp"
+        android:elevation="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@color/cardBackground"
+            android:padding="20dp">
+
+            <TextView
+                android:id="@+id/tv_question_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Question 1/5"
+                android:textColor="@color/textSecondary"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/tv_question"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Loading quiz..."
+                android:textColor="@color/textPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:padding="8dp" />
+
+            <LinearLayout
+                android:id="@+id/options_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/btn_option1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:backgroundTint="#E0E0E0"
+                    android:textColor="#333333"
+                    android:textSize="13sp"
+                    android:textAllCaps="false"
+                    android:padding="12dp" />
+
+                <Button
+                    android:id="@+id/btn_option2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:backgroundTint="#E0E0E0"
+                    android:textColor="#333333"
+                    android:textSize="13sp"
+                    android:textAllCaps="false"
+                    android:padding="12dp" />
+
+                <Button
+                    android:id="@+id/btn_option3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:backgroundTint="#E0E0E0"
+                    android:textColor="#333333"
+                    android:textSize="13sp"
+                    android:textAllCaps="false"
+                    android:padding="12dp" />
+
+                <Button
+                    android:id="@+id/btn_option4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:backgroundTint="#E0E0E0"
+                    android:textColor="#333333"
+                    android:textSize="13sp"
+                    android:textAllCaps="false"
+                    android:padding="12dp" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_next"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorPrimary"
+                android:text="Next"
+                android:textColor="#ffffff"
+                android:textAllCaps="false"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Result Layout -->
+    <LinearLayout
+        android:id="@+id/result_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="16dp"
+        android:background="@color/cardBackground"
+        android:elevation="4dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tv_result_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Great Job!"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_result_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="4/5 correct"
+            android:textColor="@color/textPrimary"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/tv_result_xp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="+60 XP earned!"
+            android:textColor="@color/colorPrimary"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_result_badges"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textColor="@color/textSecondary"
+            android:textSize="14sp"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/btn_play_again"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:text="Play Again"
+            android:textColor="#ffffff"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/btn_go_home"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="#E0E0E0"
+            android:text="Go Home"
+            android:textColor="#333333"
+            android:textAllCaps="false" />
+    </LinearLayout>
+
+</LinearLayout>

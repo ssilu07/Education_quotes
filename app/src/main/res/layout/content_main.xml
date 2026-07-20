@@ -10,7 +10,8 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view_vocab"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_gravity="center"
         android:layout_margin="15dp"
         android:visibility="gone"
@@ -21,77 +22,53 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#ffffff"
+            android:background="@color/cardBackground"
             android:orientation="vertical"
             android:weightSum="1">
 
-            <!--  <Space
-                  android:layout_width="match_parent"
-                  android:layout_height="0dp"
-                  android:layout_weight="0.03" />-->
-
-            <!-- <TextView
-                 android:id="@+id/title"
-                 android:layout_width="match_parent"
-                 android:layout_height="10dp"
-                 android:layout_weight="0.04"
-                 android:layout_marginTop="4dp"
-                 android:gravity="center"
-                 android:textColor="#BD0946"
-                 android:layout_marginRight="10dp"
-                 android:layout_marginLeft="10dp"
-                 android:text=""
-                 android:textSize="20sp"
-                 android:textStyle="bold" />-->
-
-            <!--<Space
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.05" />-->
-
-            <LinearLayout
+            <ScrollView
                 android:id="@+id/ll_quote"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginTop="8dp"
                 android:layout_weight="0.85"
-                android:orientation="vertical">
+                android:fillViewport="true">
 
-                <ImageView
-                    android:id="@+id/iv_vocab"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_margin="14dp"
-                    android:layout_weight="0.84"
-                    android:gravity="center_horizontal"
-                    android:padding="1dp"
-                    android:text=""
-                    android:textColor="@android:color/black"
-                    android:textStyle="bold"
-                    android:visibility="gone" />
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                <TextView
-                    android:id="@+id/tv_vocab"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="0.84"
-                    android:gravity="center_horizontal"
-                    android:padding="1dp"
-                    android:text="Stop using Google.com to search information for school essays. Use scholar.google.com instead. You will find information right away!"
-                    android:textColor="@android:color/black"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    <ImageView
+                        android:id="@+id/iv_vocab"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_marginBottom="12dp"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        android:visibility="gone" />
 
+                    <TextView
+                        android:id="@+id/tv_vocab"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:lineSpacingExtra="4dp"
+                        android:text=""
+                        android:textColor="@android:color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
 
-
-            </LinearLayout>
-
+                </LinearLayout>
+            </ScrollView>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="0.120"
-                android:background="#ffffff"
+                android:background="@color/cardBackground"
+                android:baselineAligned="false"
                 android:orientation="horizontal"
                 android:weightSum="1">
 
@@ -100,13 +77,14 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:layout_weight="0.25"
+                    android:layout_weight="0.2"
                     android:gravity="center">
 
                     <ImageView
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_gravity="center"
+                        android:contentDescription="Copy"
                         android:src="@drawable/copy" />
                 </LinearLayout>
 
@@ -115,7 +93,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:layout_weight="0.25"
+                    android:layout_weight="0.2"
                     android:gravity="center">
 
                     <ImageView
@@ -123,6 +101,7 @@
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_gravity="center"
+                        android:contentDescription="Bookmark"
                         android:src="@drawable/star" />
                 </LinearLayout>
 
@@ -131,22 +110,23 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:layout_weight="0.25"
+                    android:layout_weight="0.2"
                     android:gravity="center">
 
                     <ImageView
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_gravity="center"
+                        android:contentDescription="Share"
                         android:src="@drawable/newshareee" />
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/ourappLLVocab"
+                    android:id="@+id/ttsLLVocab"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:layout_weight="0.25"
+                    android:layout_weight="0.2"
                     android:gravity="center">
 
                     <TextView
@@ -154,21 +134,31 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="@string/moreapp"
+                        android:text="@string/tts_label"
                         android:textColor="#c7c7c7"
-                        android:textSize="13sp" />
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/learnedLLVocab"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.2"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tv_learned_vocab"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:contentDescription="Mark as learned"
+                        android:gravity="center"
+                        android:text="@string/learned_off_label"
+                        android:textColor="#c7c7c7"
+                        android:textSize="18sp" />
                 </LinearLayout>
             </LinearLayout>
-
-            <!-- Add AdView at the bottom -->
-     <!--       <com.google.android.gms.ads.AdView
-                android:id="@+id/adView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                ads:adSize="BANNER"
-                ads:adUnitId="@string/banner_ad"
-                />-->
-
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
@@ -176,7 +166,8 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view_idiom"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_gravity="center"
         android:layout_margin="15dp"
         card_view:cardCornerRadius="7dp"
@@ -186,79 +177,53 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#ffffff"
+            android:background="@color/cardBackground"
             android:orientation="vertical"
             android:weightSum="1">
 
-            <!--  <Space
-                  android:layout_width="match_parent"
-                  android:layout_height="0dp"
-                  android:layout_weight="0.03" />-->
-
-            <!-- <TextView
-                 android:id="@+id/title"
-                 android:layout_width="match_parent"
-                 android:layout_height="10dp"
-                 android:layout_weight="0.04"
-                 android:layout_marginTop="4dp"
-                 android:gravity="center"
-                 android:textColor="#BD0946"
-                 android:layout_marginRight="10dp"
-                 android:layout_marginLeft="10dp"
-                 android:text=""
-                 android:textSize="20sp"
-                 android:textStyle="bold" />-->
-
-            <!--<Space
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.05" />-->
-
-            <LinearLayout
+            <ScrollView
                 android:id="@+id/ll_idiom"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginTop="8dp"
                 android:layout_weight="0.85"
-                android:orientation="vertical">
+                android:fillViewport="true">
 
-
-
-                <ImageView
-                    android:id="@+id/iv_idiom"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_margin="14dp"
-                    android:layout_weight="0.84"
-                    android:gravity="center_horizontal"
-                    android:padding="1dp"
-                    android:text=""
-                    android:textColor="@android:color/black"
-                    android:textStyle="bold"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/tv_idiom"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="0.84"
+                    android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:padding="1dp"
-                    android:text="Stop using Google.com to search information for school essays. Use scholar.google.com instead. You will find information right away!"
-                    android:textColor="@android:color/black"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
+                    <ImageView
+                        android:id="@+id/iv_idiom"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_marginBottom="12dp"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        android:visibility="gone" />
 
+                    <TextView
+                        android:id="@+id/tv_idiom"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:lineSpacingExtra="4dp"
+                        android:text=""
+                        android:textColor="@android:color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
 
-            </LinearLayout>
-
+                </LinearLayout>
+            </ScrollView>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="0.120"
-                android:background="#ffffff"
+                android:background="@color/cardBackground"
+                android:baselineAligned="false"
                 android:orientation="horizontal"
                 android:weightSum="1">
 
@@ -274,6 +239,7 @@
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_gravity="center"
+                        android:contentDescription="Copy"
                         android:src="@drawable/copy" />
                 </LinearLayout>
 
@@ -290,6 +256,7 @@
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_gravity="center"
+                        android:contentDescription="Bookmark"
                         android:src="@drawable/star" />
                 </LinearLayout>
 
@@ -305,11 +272,12 @@
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_gravity="center"
+                        android:contentDescription="Share"
                         android:src="@drawable/newshareee" />
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/ourappLLIdiom"
+                    android:id="@+id/ttsLLIdiom"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -321,23 +289,284 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="@string/moreapp"
+                        android:text="@string/tts_label"
                         android:textColor="#c7c7c7"
-                        android:textSize="13sp" />
+                        android:textSize="18sp" />
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Add AdView at the bottom -->
-            <!--       <com.google.android.gms.ads.AdView
-                       android:id="@+id/adView"
-                       android:layout_width="match_parent"
-                       android:layout_height="wrap_content"
-                       ads:adSize="BANNER"
-                       ads:adUnitId="@string/banner_ad"
-                       />-->
-
-
         </LinearLayout>
     </androidx.cardview.widget.CardView>
+
+    <!-- Quiz-style card for Common Errors etc. -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_view_quiz"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:layout_margin="15dp"
+        android:visibility="gone"
+        card_view:cardCornerRadius="7dp"
+        card_view:cardElevation="7dp"
+        card_view:contentPadding="0dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/cardBackground"
+            android:orientation="vertical">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:fillViewport="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <!-- Question number -->
+                    <TextView
+                        android:id="@+id/tv_quiz_num"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:text="Q.1"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <!-- Question text -->
+                    <TextView
+                        android:id="@+id/tv_quiz_question"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:gravity="center_horizontal"
+                        android:lineSpacingExtra="4dp"
+                        android:text="Find the correct sentence:"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <!-- Wrong sentence highlighted -->
+                    <TextView
+                        android:id="@+id/tv_quiz_hint"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp"
+                        android:background="#10000000"
+                        android:gravity="center"
+                        android:lineSpacingExtra="3dp"
+                        android:padding="12dp"
+                        android:text=""
+                        android:textColor="#D32F2F"
+                        android:textSize="15sp"
+                        android:textStyle="italic" />
+
+                    <!-- Option A -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cv_option_a"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        card_view:cardBackgroundColor="#F5F5F5"
+                        card_view:cardCornerRadius="10dp"
+                        card_view:cardElevation="2dp">
+
+                        <TextView
+                            android:id="@+id/tv_option_a"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="14dp"
+                            android:text="A) Option"
+                            android:textColor="@color/textPrimary"
+                            android:textSize="14sp" />
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- Option B -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cv_option_b"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        card_view:cardBackgroundColor="#F5F5F5"
+                        card_view:cardCornerRadius="10dp"
+                        card_view:cardElevation="2dp">
+
+                        <TextView
+                            android:id="@+id/tv_option_b"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="14dp"
+                            android:text="B) Option"
+                            android:textColor="@color/textPrimary"
+                            android:textSize="14sp" />
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- Option C -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cv_option_c"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        card_view:cardBackgroundColor="#F5F5F5"
+                        card_view:cardCornerRadius="10dp"
+                        card_view:cardElevation="2dp">
+
+                        <TextView
+                            android:id="@+id/tv_option_c"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="14dp"
+                            android:text="C) Option"
+                            android:textColor="@color/textPrimary"
+                            android:textSize="14sp" />
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- Option D -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cv_option_d"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        card_view:cardBackgroundColor="#F5F5F5"
+                        card_view:cardCornerRadius="10dp"
+                        card_view:cardElevation="2dp">
+
+                        <TextView
+                            android:id="@+id/tv_option_d"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="14dp"
+                            android:text="D) Option"
+                            android:textColor="@color/textPrimary"
+                            android:textSize="14sp" />
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- Explanation (shown after answering) -->
+                    <LinearLayout
+                        android:id="@+id/ll_explanation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:background="#E8F5E9"
+                        android:orientation="vertical"
+                        android:padding="12dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/tv_explanation"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:lineSpacingExtra="3dp"
+                            android:text="Rule: ..."
+                            android:textColor="#2E7D32"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </ScrollView>
+
+            <!-- Bottom buttons same as other cards -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/cardBackground"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <LinearLayout
+                    android:id="@+id/copyLLQuiz"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.25"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:contentDescription="Copy"
+                        android:src="@drawable/copy" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/starLLQuiz"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.25"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/star_quiz"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:contentDescription="Bookmark"
+                        android:src="@drawable/star" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/shareLLQuiz"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.25"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:contentDescription="Share"
+                        android:src="@drawable/newshareee" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ttsLLQuiz"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.25"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="@string/tts_label"
+                        android:textColor="#c7c7c7"
+                        android:textSize="18sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Banner Ad at the bottom -->
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/banner_ad" />
 
 </LinearLayout>

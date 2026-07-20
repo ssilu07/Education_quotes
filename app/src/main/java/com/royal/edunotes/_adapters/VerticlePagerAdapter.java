@@ -1,11 +1,14 @@
 package com.royal.edunotes._adapters;
 
+import android.app.Activity;
 import android.content.Context;
-
 import androidx.cardview.widget.CardView;
 import androidx.viewpager.widget.PagerAdapter;
 import android.graphics.Color;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,423 +17,597 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
+
 import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.nativead.MediaView;
 import com.google.android.gms.ads.nativead.NativeAd;
 import com.google.android.gms.ads.nativead.NativeAdView;
+import com.royal.edunotes.BuildConfig;
+import com.royal.edunotes.ProgressManager;
 import com.royal.edunotes.R;
+import com.royal.edunotes.SettingsManager;
 import com.royal.edunotes.Utility;
 import com.royal.edunotes._database.DatabaseHelper;
 import com.royal.edunotes._database.ModelDatabase;
 import com.royal.edunotes._models.QuoteModel;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-
-/**
- * Created by rizvan on 12/13/16.
- */
-
 public class VerticlePagerAdapter extends PagerAdapter {
 
-    private static final String TAG = "VerticlePagerAdapter";
+    private static final String TAG = "VerticlePager_ADS";
+    // Every 6th page (index 5, 11, 17...) is a native ad slot
+    private static final int AD_INTERVAL = 5;
+    private static final int AD_SLOT_SIZE = AD_INTERVAL + 1; // = 6
+    private static final int AD_PRELOAD_COUNT = 5;
+
     Context mContext;
     LayoutInflater mLayoutInflater;
     ArrayList<QuoteModel> quoteModels;
-    String category;
     ClickInterface clickInterface;
-    DatabaseHelper db;
-
     ArrayList<ModelDatabase> modelDatabases;
+    private java.util.HashSet<String> bookmarkedNotes = new java.util.HashSet<>();
 
-    public VerticlePagerAdapter(Context context, ArrayList<QuoteModel> quoteModels, ClickInterface clickInterface, ArrayList<ModelDatabase> modelDatabases) {
+    private final ArrayList<NativeAd> nativeAdList = new ArrayList<>();
+    // slotIndex -> active NativeAdView (so we can populate it when ad loads late)
+    private final SparseArray<NativeAdView> activeAdViews = new SparseArray<>();
+    private boolean nativeAdsLoading = false;
+    private boolean adsInitialized = false;
+    private Handler mainHandler;
+    private ProgressManager progressManager;
+    private SettingsManager settingsManager;
+    private String categoryName = "";
+    private android.util.SparseArray<ArrayList<String>> quizWrongOptionsCache = new android.util.SparseArray<>();
+
+    public VerticlePagerAdapter(Context context, ArrayList<QuoteModel> quoteModels,
+                                ClickInterface clickInterface, ArrayList<ModelDatabase> modelDatabases) {
         mContext = context;
         mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.quoteModels = quoteModels;
+        this.quoteModels = new ArrayList<>(quoteModels);
         this.clickInterface = clickInterface;
         this.modelDatabases = modelDatabases;
-        Log.d(TAG, "Adapter instantiated");
+        buildBookmarkSet(modelDatabases);
+        this.mainHandler = new Handler(Looper.getMainLooper());
+        this.progressManager = new ProgressManager(context);
+        this.settingsManager = new SettingsManager(context);
 
-        // Initialize AdMob
-        MobileAds.initialize(mContext, initializationStatus -> {});
-    }
+        Log.d(TAG, "Adapter created - Quotes: " + this.quoteModels.size());
 
-    @Override
-    public int getCount() {
-        int adCount = quoteModels.size() / 5; // Insert an ad every 5 items
-        return quoteModels.size() + adCount;
-    }
-
-    @Override
-    public boolean isViewFromObject(View view, Object object) {
-        return view == object;  // ✅ Fix: Remove explicit casting
-    }
-
-    @Override
-    public Object instantiateItem(ViewGroup container, final int position) {
-        int actualPosition = position - (position / 6); // Adjust position to skip ads
-        View itemView = null;  // ✅ Always declare itemView at start
-
-        if (Utility.ScreenCheck.equals("Vocab")) {
-            // 🔹 Show Ad Every 6th Position (For "Vocab" Section)
-            if (position > 0 && (position + 1) % 6 == 0) {
-                itemView = mLayoutInflater.inflate(R.layout.native_ad_layout, container, false);
-                if (itemView != null) {
-                    loadNativeAd(itemView);
-                } else {
-                    Log.e(TAG, "instantiateItem: Failed to inflate native_ad_layout at position " + position);
-                }
-            }
-            else {
-                itemView = mLayoutInflater.inflate(R.layout.content_main, container, false);
-
-            CardView cardViewVocab = itemView.findViewById(R.id.card_view_vocab);
-            CardView cardViewIdiom = itemView.findViewById(R.id.card_view_idiom);
-         //   TextView titleTxt = itemView.findViewById(R.id.title);
-            TextView hackTxt = itemView.findViewById(R.id.tv_vocab);
-            ImageView hackTxt2 = itemView.findViewById(R.id.iv_vocab);
-
-            LinearLayout copy = itemView.findViewById(R.id.copyLLVocab);
-            final LinearLayout starLL = itemView.findViewById(R.id.starLLVocab);
-            LinearLayout share = itemView.findViewById(R.id.shareLLVocab);
-            LinearLayout otherapp = itemView.findViewById(R.id.ourappLLVocab);
-
-            cardViewVocab.setVisibility(View.VISIBLE);
-            cardViewIdiom.setVisibility(View.GONE);
-
-            final ImageView star = itemView.findViewById(R.id.star);
-
-            QuoteModel currentQuote = quoteModels.get(position);
-            if (currentQuote == null) {
-                Log.e(TAG, "instantiateItem: currentQuote is null at position " + position);
-                return itemView;
-            }
-
-            hackTxt.setText(currentQuote.getQuote());
-            String url = currentQuote.getValue();
-
-            if (url != null && !url.isEmpty()) {
-                hackTxt2.setVisibility(View.VISIBLE);
-                Picasso.get().load(url).into(hackTxt2);
-                Log.d(TAG, "instantiateItem: Image loaded for position " + position);
-            } else {
-                hackTxt2.setVisibility(View.GONE);
-                Log.d(TAG, "instantiateItem: No image for position " + position);
-            }
-
-            int[] colors = {Color.rgb(36, 7, 80), Color.rgb(255, 0, 128), Color.rgb(50, 1, 47), Color.rgb(249, 115, 0), Color.rgb(27, 66, 66), Color.rgb(64, 165, 120), Color.rgb(100, 13, 107), Color.rgb(181, 27, 117), Color.rgb(0, 0, 0)};
-            int randomIndex = (int) (Math.random() * colors.length);
-            int randomColor = colors[randomIndex];
-
-            hackTxt.setTextColor(randomColor);
-
-            if (modelDatabases != null) {
-             /*   for (ModelDatabase modelDatabase : modelDatabases) {
-                    if (modelDatabase != null && currentQuote.getQuote() != null && currentQuote.getQuote().equals(modelDatabase.getNote())) {
-                        currentQuote.setBookmark("1");
-                        currentQuote.setBookmared(true);
-                        Log.d(TAG, "instantiateItem: Quote bookmarked at position " + position);
-                        break;
-                    } else {
-                        currentQuote.setBookmark("0");
-                        currentQuote.setBookmared(false);
-                    }
-                }
-
-                for (ModelDatabase modelDatabase : modelDatabases) {
-                    if (modelDatabase != null && currentQuote.getValue() != null && currentQuote.getValue().equals(modelDatabase.getNote())) {
-                        currentQuote.setBookmark("1");
-                        currentQuote.setBookmared(true);
-                        Log.d(TAG, "instantiateItem: Quote value bookmarked at position " + position);
-                        break;
-                    } else {
-                        currentQuote.setBookmark("0");
-                        currentQuote.setBookmared(false);
-                    }
-                }*/
-
-                ///only check the quote because not required to compare  images and its identifier is "value"
-                for (int i = 0; i < modelDatabases.size(); i++) {
-                    Log.d("BOOKMARK_CHECK", "Checking Quote: " + quoteModels.get(position).getQuote() + " at position: " + position);
-                    Log.d("BOOKMARK_CHECK", "ModelDatabase Note: " + modelDatabases.get(i).getNote() + " at position: " + i);
-
-                    if (quoteModels.get(position).getQuote().equals(modelDatabases.get(i).getNote())) {
-                        Log.d("BOOKMARK_CHECK", "MATCH FOUND at position: " + position);
-                        quoteModels.get(position).setBookmark("1");
-                        quoteModels.get(position).setBookmared(true);
-                        break;
-                    } else {
-                        Log.d("BOOKMARK_CHECK", "No match at position: " + position);
-                        quoteModels.get(position).setBookmark("0");
-                        quoteModels.get(position).setBookmared(false);
-                    }
-                }
-            } else {
-                Log.e(TAG, "instantiateItem: modelDatabases is null");
-            }
-
-            if (currentQuote.isBookmared()) {
-                star.setImageResource(R.drawable.starfilled);
-            } else {
-                star.setImageResource(R.drawable.star);
-            }
-
-            copy.setOnClickListener(view -> {
-                clickInterface.onCopyClick(currentQuote);
+        if (BuildConfig.ENABLE_ADS) {
+            MobileAds.initialize(mContext, status -> {
+                adsInitialized = true;
+                preloadNativeAds();
             });
-
-            starLL.setOnClickListener(view -> {
-                clickInterface.onBoookmarkClick(currentQuote, star);
-            });
-
-            share.setOnClickListener(view -> {
-                clickInterface.onShareClick(currentQuote);
-            });
-
-            otherapp.setOnClickListener(view -> {
-                Log.d(TAG, "onClick: Other apps clicked at position " + position);
-                clickInterface.onMoreAppsClick();
-            });
-            }
-
-        } else if (Utility.ScreenCheck.equals("Idiom")) {
-
-            // 🔹 Show Ad Every 6th Position (For "Vocab" Section)
-            if (position > 0 && (position + 1) % 6 == 0) {
-                itemView = mLayoutInflater.inflate(R.layout.native_ad_layout, container, false);
-                if (itemView != null) {
-                    loadNativeAd(itemView);
-                } else {
-                    Log.e(TAG, "instantiateItem: Failed to inflate native_ad_layout at position " + position);
-                }
-            }
-            else {
-                itemView = mLayoutInflater.inflate(R.layout.content_main, container, false);
-            CardView cardViewVocab = itemView.findViewById(R.id.card_view_vocab);
-            CardView cardViewIdiom = itemView.findViewById(R.id.card_view_idiom);
-            cardViewVocab.setVisibility(View.GONE);
-            cardViewIdiom.setVisibility(View.VISIBLE);
-            Log.d(TAG, "instantiateItem: CardView visibility set - Vocab: GONE, Idiom: VISIBLE");
-
-            TextView hackTxt = itemView.findViewById(R.id.tv_idiom);
-            ImageView hackTxt2 = itemView.findViewById(R.id.iv_idiom);
-            LinearLayout copy = itemView.findViewById(R.id.copyLLIdiom);
-            final LinearLayout starLLIdiom = itemView.findViewById(R.id.starLLIdiom);
-            LinearLayout share = itemView.findViewById(R.id.shareLLIdiom);
-            LinearLayout otherapp = itemView.findViewById(R.id.ourappLLIdiom);
-            final ImageView star_idiom = itemView.findViewById(R.id.star_idiom);
-
-            QuoteModel currentQuote = quoteModels.get(position);
-            if (currentQuote == null) {
-                Log.e(TAG, "instantiateItem: currentQuote is null at position " + position);
-                return itemView;
-            }
-
-            hackTxt.setText(currentQuote.getQuote());
-            Log.d(TAG, "instantiateItem: Quote set at position " + position + " -> " + currentQuote.getQuote());
-
-            String url = currentQuote.getValue();
-            if (url != null && !url.isEmpty()) {
-                hackTxt2.setVisibility(View.VISIBLE);
-                Picasso.get().load(url).into(hackTxt2);
-                Log.d(TAG, "instantiateItem: Image loaded for position " + position + " -> " + url);
-            } else {
-                hackTxt2.setVisibility(View.GONE);
-                Log.d(TAG, "instantiateItem: No image for position " + position);
-            }
-
-            int[] colors = {Color.rgb(36, 7, 80), Color.rgb(255, 0, 128), Color.rgb(50, 1, 47), Color.rgb(249, 115, 0), Color.rgb(27, 66, 66), Color.rgb(64, 165, 120), Color.rgb(100, 13, 107), Color.rgb(181, 27, 117), Color.rgb(0, 0, 0)};
-            int randomIndex = (int) (Math.random() * colors.length);
-            int randomColor = colors[randomIndex];
-
-            hackTxt.setTextColor(randomColor);
-
-            if (modelDatabases != null) {
-             /*   for (ModelDatabase modelDatabase : modelDatabases) {
-                    if (modelDatabase != null && currentQuote.getQuote() != null && currentQuote.getQuote().equals(modelDatabase.getNote())) {
-                        currentQuote.setBookmark("1");
-                        currentQuote.setBookmared(true);
-                        Log.d(TAG, "instantiateItem: Quote bookmarked at position " + position);
-                        break;
-                    } else {
-                        currentQuote.setBookmark("0");
-                        currentQuote.setBookmared(false);
-                    }
-                }
-
-                for (ModelDatabase modelDatabase : modelDatabases) {
-                    if (modelDatabase != null && currentQuote.getValue() != null && currentQuote.getValue().equals(modelDatabase.getNote())) {
-                        currentQuote.setBookmark("1");
-                        currentQuote.setBookmared(true);
-                        Log.d(TAG, "instantiateItem: Quote value bookmarked at position " + position);
-                        break;
-                    } else {
-                        currentQuote.setBookmark("0");
-                        currentQuote.setBookmared(false);
-                    }
-                }*/
-
-                ///only check the quote because not using images and its identifier is "value"
-
-                for (int i = 0; i < modelDatabases.size(); i++) {
-                    Log.d("BOOKMARK_CHECK", "Checking Quote: " + quoteModels.get(position).getQuote() + " at position: " + position);
-                    Log.d("BOOKMARK_CHECK", "ModelDatabase Note: " + modelDatabases.get(i).getNote() + " at position: " + i);
-
-                    if (quoteModels.get(position).getQuote().equals(modelDatabases.get(i).getNote())) {
-                        Log.d("BOOKMARK_CHECK", "MATCH FOUND at position: " + position);
-                        quoteModels.get(position).setBookmark("1");
-                        quoteModels.get(position).setBookmared(true);
-                        break;
-                    } else {
-                        Log.d("BOOKMARK_CHECK", "No match at position: " + position);
-                        quoteModels.get(position).setBookmark("0");
-                        quoteModels.get(position).setBookmared(false);
-                    }
-                }
-
-
-            } else {
-                Log.e(TAG, "instantiateItem: modelDatabases is null at position " + position);
-            }
-
-
-
-            if (currentQuote.isBookmared()) {
-                star_idiom.setImageResource(R.drawable.starfilled);
-                Log.d(TAG, "instantiateItem: Star icon set to filled at position " + position);
-            } else {
-                star_idiom.setImageResource(R.drawable.star);
-                Log.d(TAG, "instantiateItem: Star icon set to unfilled at position " + position);
-            }
-
-            copy.setOnClickListener(view -> {
-                Log.d(TAG, "onClick: Copy clicked at position " + position);
-                clickInterface.onCopyClick(currentQuote);
-            });
-
-            starLLIdiom.setOnClickListener(view -> {
-                Log.d(TAG, "onClick: Bookmark clicked at position " + position);
-                clickInterface.onBoookmarkClick(currentQuote, star_idiom);
-            });
-
-            share.setOnClickListener(view -> {
-                Log.d(TAG, "onClick: Share clicked at position " + position);
-                clickInterface.onShareClick(currentQuote);
-            });
-
-            otherapp.setOnClickListener(view -> {
-                Log.d(TAG, "onClick: Other apps clicked at position " + position);
-                clickInterface.onMoreAppsClick();
-            });
-
-            }
         }
-
-
-            // Load AdMob Banner
-    //    AdView adView = itemView.findViewById(R.id.adView); // This is the correct way to get the AdView
-     //   adView.setAdSize(com.google.android.gms.ads.AdSize.BANNER);
-
-        // Retrieve AdUnitId from strings.xml
-        String adUnitId = mContext.getResources().getString(R.string.banner_ad);
-     //   adView.setAdUnitId(adUnitId); // Set the AdUnitId from string resource
-
- /*       AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
-
-        adView.setAdListener(new AdListener() {
-            @Override
-            public void onAdLoaded() {
-                Log.d("AdMob", "Ad Loaded Successfully");
-            }
-
-            @Override
-            public void onAdFailedToLoad(LoadAdError adError) {
-                // Handle the error and log it
-                Log.e("AdMob", "Ad failed to load: " + adError.getMessage());
-            }
-
-            @Override
-            public void onAdOpened() {
-                Log.d("AdMob", "Ad Opened");
-            }
-
-            @Override
-            public void onAdClosed() {
-                Log.d("AdMob", "Ad Closed");
-            }
-        });*/
-
-
-        container.addView(itemView);
-        Log.d(TAG, "instantiateItem: itemView added for position " + position);
-
-
-
-        return itemView;
     }
 
-    private void loadNativeAd(View adView) {
-        // ✅ Fetch Ad Unit ID from strings.xml
-        String adUnitId = mContext.getResources().getString(R.string.native_ad);
+    public void setCategoryName(String name) {
+        this.categoryName = name != null ? name : "";
+    }
 
-        Log.d("AdMob", "Loading Native Ad with Ad Unit ID: " + adUnitId);  // Debugging Log
+    private boolean isQuizCategory() {
+        return categoryName.toLowerCase().contains("common error");
+    }
 
-        AdLoader adLoader = new AdLoader.Builder(mContext, adUnitId)
+    // ── Native ad helpers ────────────────────────────────────────────────────
+
+    /** Position is an ad slot if it's the 6th page in every group of 6. */
+    private boolean isAdPosition(int position) {
+        if (!BuildConfig.ENABLE_ADS) return false;
+        return position % AD_SLOT_SIZE == AD_INTERVAL;
+    }
+
+    /** Maps a ViewPager position to the real data index (skipping ad slots). */
+    private int getDataPosition(int position) {
+        return position - position / AD_SLOT_SIZE;
+    }
+
+    /** Maps a ViewPager ad-slot position to the sequential ad slot index (0,1,2…). */
+    private int getAdSlotIndex(int position) {
+        return position / AD_SLOT_SIZE;
+    }
+
+    private void preloadNativeAds() {
+        if (nativeAdsLoading || !adsInitialized || mContext == null) return;
+        nativeAdsLoading = true;
+
+        AdLoader adLoader = new AdLoader.Builder(mContext, BuildConfig.ADMOB_NATIVE_ID)
                 .forNativeAd(nativeAd -> {
-                    Log.d("AdMob", "✅ Native Ad Loaded Successfully!");
-                    NativeAdView adLayout = adView.findViewById(R.id.native_ad_view);
-                    populateNativeAdView(nativeAd, adLayout);
+                    nativeAdList.add(nativeAd);
+                    int slotIndex = nativeAdList.size() - 1;
+                    // If the view for this slot is already on screen, populate it now
+                    mainHandler.post(() -> {
+                        NativeAdView view = activeAdViews.get(slotIndex);
+                        if (view != null) populateNativeAdView(view, nativeAd);
+                    });
                 })
                 .withAdListener(new AdListener() {
                     @Override
-                    public void onAdFailedToLoad(LoadAdError adError) {
-                        Log.e("AdMob", "❌ Native Ad Failed to Load: " + adError.getMessage());
+                    public void onAdFailedToLoad(LoadAdError error) {
+                        nativeAdsLoading = false;
+                        Log.e(TAG, "Native ad failed: " + error.getMessage());
                     }
                 })
                 .build();
 
-        adLoader.loadAd(new AdRequest.Builder().build());
+        adLoader.loadAds(new AdRequest.Builder().build(), AD_PRELOAD_COUNT);
     }
 
-    private void populateNativeAdView(NativeAd nativeAd, NativeAdView adView) {
-        adView.setHeadlineView(adView.findViewById(R.id.ad_headline));
-        adView.setBodyView(adView.findViewById(R.id.ad_body));
-        adView.setIconView(adView.findViewById(R.id.ad_icon));
-        adView.setCallToActionView(adView.findViewById(R.id.ad_call_to_action));
+    private void populateNativeAdView(NativeAdView adView, NativeAd nativeAd) {
+        TextView headline = adView.findViewById(R.id.ad_headline);
+        TextView body = adView.findViewById(R.id.ad_body);
+        TextView advertiser = adView.findViewById(R.id.ad_advertiser);
+        ImageView icon = adView.findViewById(R.id.ad_icon);
+        MediaView mediaView = adView.findViewById(R.id.ad_media);
+        Button cta = adView.findViewById(R.id.ad_call_to_action);
 
-        ((TextView) adView.getHeadlineView()).setText(nativeAd.getHeadline());
-        ((TextView) adView.getBodyView()).setText(nativeAd.getBody());
-        ((Button) adView.getCallToActionView()).setText(nativeAd.getCallToAction());
+        adView.setHeadlineView(headline);
+        adView.setBodyView(body);
+        adView.setAdvertiserView(advertiser);
+        adView.setIconView(icon);
+        adView.setMediaView(mediaView);
+        adView.setCallToActionView(cta);
+
+        headline.setText(nativeAd.getHeadline());
+
+        if (nativeAd.getBody() != null) {
+            body.setText(nativeAd.getBody());
+            body.setVisibility(View.VISIBLE);
+        } else {
+            body.setVisibility(View.GONE);
+        }
+
+        if (nativeAd.getAdvertiser() != null) {
+            advertiser.setText(nativeAd.getAdvertiser());
+            advertiser.setVisibility(View.VISIBLE);
+        } else {
+            advertiser.setVisibility(View.GONE);
+        }
 
         if (nativeAd.getIcon() != null) {
-            ((ImageView) adView.getIconView()).setImageDrawable(nativeAd.getIcon().getDrawable());
+            icon.setImageDrawable(nativeAd.getIcon().getDrawable());
+            icon.setVisibility(View.VISIBLE);
         } else {
-            adView.getIconView().setVisibility(View.GONE);
+            icon.setVisibility(View.GONE);
+        }
+
+        if (nativeAd.getCallToAction() != null) {
+            cta.setText(nativeAd.getCallToAction());
+            cta.setVisibility(View.VISIBLE);
+        } else {
+            cta.setVisibility(View.GONE);
+        }
+
+        if (nativeAd.getMediaContent() != null) {
+            mediaView.setMediaContent(nativeAd.getMediaContent());
+            mediaView.setVisibility(View.VISIBLE);
         }
 
         adView.setNativeAd(nativeAd);
     }
-    public interface ClickInterface {
-        void onBoookmarkClick(QuoteModel CategoryModel, ImageView star);
 
-        void onCopyClick(QuoteModel CategoryModel);
+    // ── PagerAdapter overrides ───────────────────────────────────────────────
 
-        void onShareClick(QuoteModel CategoryModel);
+    @Override
+    public int getCount() {
+        if (!BuildConfig.ENABLE_ADS) return quoteModels.size();
+        // Insert one ad slot after every AD_INTERVAL real cards
+        return quoteModels.size() + quoteModels.size() / AD_INTERVAL;
+    }
 
-        void onMoreAppsClick();
+    @Override
+    public boolean isViewFromObject(View view, Object object) {
+        return view == object;
+    }
+
+    @Override
+    public int getItemPosition(Object object) {
+        // Forces ViewPager to rebuild every visible page after updateData() —
+        // otherwise notifyDataSetChanged() leaves stale pages on screen (default PagerAdapter behavior).
+        return POSITION_NONE;
+    }
+
+    @Override
+    public Object instantiateItem(ViewGroup container, final int position) {
+        if (isAdPosition(position)) {
+            return instantiateAdItem(container, position);
+        }
+
+        int dataPos = getDataPosition(position);
+
+        if (dataPos < 0 || dataPos >= quoteModels.size()) {
+            View dummy = new View(mContext);
+            container.addView(dummy);
+            return dummy;
+        }
+
+        QuoteModel currentQuote = quoteModels.get(dataPos);
+        if (currentQuote == null) {
+            View dummy = new View(mContext);
+            container.addView(dummy);
+            return dummy;
+        }
+
+        View itemView = mLayoutInflater.inflate(R.layout.content_main, container, false);
+
+        if (isQuizCategory()) {
+            setupQuizView(itemView, currentQuote, dataPos);
+        } else if (Utility.ScreenCheck.equals("Vocab")) {
+            setupVocabView(itemView, currentQuote, dataPos);
+        } else if (Utility.ScreenCheck.equals("Idiom")) {
+            setupIdiomView(itemView, currentQuote, dataPos);
+        }
+
+        container.addView(itemView);
+        return itemView;
+    }
+
+    private View instantiateAdItem(ViewGroup container, int position) {
+        int slotIndex = getAdSlotIndex(position);
+        View adCardView = mLayoutInflater.inflate(R.layout.native_ad_card, container, false);
+        NativeAdView nativeAdView = adCardView.findViewById(R.id.native_ad_view);
+
+        activeAdViews.put(slotIndex, nativeAdView);
+        adCardView.setTag(slotIndex); // store slotIndex for cleanup in destroyItem
+
+        if (slotIndex < nativeAdList.size()) {
+            populateNativeAdView(nativeAdView, nativeAdList.get(slotIndex));
+        }
+        // else: placeholder shown; will be populated once preloadNativeAds() callback fires
+
+        container.addView(adCardView);
+        return adCardView;
     }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         if (object instanceof View) {
-            container.removeView((View) object);  // ✅ No more casting issues!
-        } else {
-            Log.e(TAG, "destroyItem: Unable to remove view at position " + position + " due to incorrect type.");
+            View view = (View) object;
+            Object tag = view.getTag();
+            if (tag instanceof Integer) {
+                activeAdViews.remove((Integer) tag);
+            }
+            container.removeView(view);
         }
     }
 
+    // ── Card setup methods (unchanged) ──────────────────────────────────────
+
+    private void setupVocabView(View itemView, QuoteModel currentQuote, int position) {
+        CardView cardViewVocab = itemView.findViewById(R.id.card_view_vocab);
+        CardView cardViewIdiom = itemView.findViewById(R.id.card_view_idiom);
+        TextView hackTxt = itemView.findViewById(R.id.tv_vocab);
+        ImageView hackTxt2 = itemView.findViewById(R.id.iv_vocab);
+
+        LinearLayout copy = itemView.findViewById(R.id.copyLLVocab);
+        final LinearLayout starLL = itemView.findViewById(R.id.starLLVocab);
+        LinearLayout share = itemView.findViewById(R.id.shareLLVocab);
+        LinearLayout ttsLL = itemView.findViewById(R.id.ttsLLVocab);
+        LinearLayout learnedLL = itemView.findViewById(R.id.learnedLLVocab);
+        final TextView learnedLabel = itemView.findViewById(R.id.tv_learned_vocab);
+
+        cardViewVocab.setVisibility(View.VISIBLE);
+        cardViewIdiom.setVisibility(View.GONE);
+
+        final ImageView star = itemView.findViewById(R.id.star);
+
+        hackTxt.setText(currentQuote.getQuote());
+        hackTxt.setTextSize(settingsManager.getFontSize());
+        String url = currentQuote.getValue();
+
+        if (url != null && !url.isEmpty()) {
+            hackTxt2.setVisibility(View.VISIBLE);
+            try {
+                Picasso.get().load(url).into(hackTxt2);
+            } catch (Exception e) {
+                Log.e(TAG, "Error loading image", e);
+                hackTxt2.setVisibility(View.GONE);
+            }
+        } else {
+            hackTxt2.setVisibility(View.GONE);
+        }
+
+        int[] colors = {
+                Color.rgb(36, 7, 80), Color.rgb(255, 0, 128), Color.rgb(50, 1, 47),
+                Color.rgb(249, 115, 0), Color.rgb(27, 66, 66), Color.rgb(64, 165, 120),
+                Color.rgb(100, 13, 107), Color.rgb(181, 27, 117), Color.rgb(0, 0, 0)
+        };
+        hackTxt.setTextColor(colors[(int) (Math.random() * colors.length)]);
+
+        updateBookmarkStatus(currentQuote, position);
+
+        if (currentQuote.isBookmared()) {
+            star.setImageResource(R.drawable.starfilled);
+        } else {
+            star.setImageResource(R.drawable.star);
+        }
+
+        updateLearnedStatus(currentQuote);
+        learnedLabel.setText(currentQuote.isLearned()
+                ? mContext.getString(R.string.learned_on_label)
+                : mContext.getString(R.string.learned_off_label));
+
+        copy.setOnClickListener(view -> clickInterface.onCopyClick(currentQuote));
+        starLL.setOnClickListener(view -> clickInterface.onBoookmarkClick(currentQuote, star));
+        share.setOnClickListener(view -> clickInterface.onShareClick(currentQuote));
+        share.setOnLongClickListener(view -> {
+            clickInterface.onShareAsImageClick(itemView.findViewById(R.id.card_view_vocab));
+            return true;
+        });
+        ttsLL.setOnClickListener(view -> clickInterface.onTTSClick(currentQuote));
+        learnedLL.setOnClickListener(view -> clickInterface.onLearnedClick(currentQuote, learnedLabel));
+    }
+
+    private void setupIdiomView(View itemView, QuoteModel currentQuote, int position) {
+        CardView cardViewVocab = itemView.findViewById(R.id.card_view_vocab);
+        CardView cardViewIdiom = itemView.findViewById(R.id.card_view_idiom);
+        cardViewVocab.setVisibility(View.GONE);
+        cardViewIdiom.setVisibility(View.VISIBLE);
+
+        TextView hackTxt = itemView.findViewById(R.id.tv_idiom);
+        ImageView hackTxt2 = itemView.findViewById(R.id.iv_idiom);
+        LinearLayout copy = itemView.findViewById(R.id.copyLLIdiom);
+        final LinearLayout starLLIdiom = itemView.findViewById(R.id.starLLIdiom);
+        LinearLayout share = itemView.findViewById(R.id.shareLLIdiom);
+        LinearLayout ttsLL = itemView.findViewById(R.id.ttsLLIdiom);
+        final ImageView star_idiom = itemView.findViewById(R.id.star_idiom);
+
+        hackTxt.setText(currentQuote.getQuote());
+        hackTxt.setTextSize(settingsManager.getFontSize());
+
+        String url = currentQuote.getValue();
+        if (url != null && !url.isEmpty()) {
+            hackTxt2.setVisibility(View.VISIBLE);
+            try {
+                Picasso.get().load(url).into(hackTxt2);
+            } catch (Exception e) {
+                Log.e(TAG, "Error loading image", e);
+                hackTxt2.setVisibility(View.GONE);
+            }
+        } else {
+            hackTxt2.setVisibility(View.GONE);
+        }
+
+        int[] colors = {
+                Color.rgb(36, 7, 80), Color.rgb(255, 0, 128), Color.rgb(50, 1, 47),
+                Color.rgb(249, 115, 0), Color.rgb(27, 66, 66), Color.rgb(64, 165, 120),
+                Color.rgb(100, 13, 107), Color.rgb(181, 27, 117), Color.rgb(0, 0, 0)
+        };
+        hackTxt.setTextColor(colors[(int) (Math.random() * colors.length)]);
+
+        updateBookmarkStatus(currentQuote, position);
+
+        if (currentQuote.isBookmared()) {
+            star_idiom.setImageResource(R.drawable.starfilled);
+        } else {
+            star_idiom.setImageResource(R.drawable.star);
+        }
+
+        copy.setOnClickListener(view -> clickInterface.onCopyClick(currentQuote));
+        starLLIdiom.setOnClickListener(view -> clickInterface.onBoookmarkClick(currentQuote, star_idiom));
+        share.setOnClickListener(view -> clickInterface.onShareClick(currentQuote));
+        share.setOnLongClickListener(view -> {
+            clickInterface.onShareAsImageClick(itemView.findViewById(R.id.card_view_idiom));
+            return true;
+        });
+        ttsLL.setOnClickListener(view -> clickInterface.onTTSClick(currentQuote));
+    }
+
+    private void setupQuizView(View itemView, QuoteModel currentQuote, int position) {
+        CardView cardViewVocab = itemView.findViewById(R.id.card_view_vocab);
+        CardView cardViewIdiom = itemView.findViewById(R.id.card_view_idiom);
+        CardView cardViewQuiz = itemView.findViewById(R.id.card_view_quiz);
+
+        cardViewVocab.setVisibility(View.GONE);
+        cardViewIdiom.setVisibility(View.GONE);
+        cardViewQuiz.setVisibility(View.VISIBLE);
+
+        TextView tvQuizNum = itemView.findViewById(R.id.tv_quiz_num);
+        TextView tvQuestion = itemView.findViewById(R.id.tv_quiz_question);
+        TextView tvHint = itemView.findViewById(R.id.tv_quiz_hint);
+
+        CardView cvA = itemView.findViewById(R.id.cv_option_a);
+        CardView cvB = itemView.findViewById(R.id.cv_option_b);
+        CardView cvC = itemView.findViewById(R.id.cv_option_c);
+        CardView cvD = itemView.findViewById(R.id.cv_option_d);
+
+        TextView tvA = itemView.findViewById(R.id.tv_option_a);
+        TextView tvB = itemView.findViewById(R.id.tv_option_b);
+        TextView tvC = itemView.findViewById(R.id.tv_option_c);
+        TextView tvD = itemView.findViewById(R.id.tv_option_d);
+
+        LinearLayout llExplanation = itemView.findViewById(R.id.ll_explanation);
+        TextView tvExplanation = itemView.findViewById(R.id.tv_explanation);
+
+        String quoteText = currentQuote.getQuote();
+        String wrongSentence = "";
+        String rightSentence = "";
+        String rule = "";
+
+        String[] lines = quoteText.split("\r\n|\n");
+        for (String line : lines) {
+            String trimmed = line.trim();
+            if (trimmed.toLowerCase().startsWith("wrong:")) {
+                wrongSentence = trimmed.substring(6).trim();
+            } else if (trimmed.toLowerCase().startsWith("right:")) {
+                rightSentence = trimmed.substring(6).trim();
+            } else if (trimmed.toLowerCase().startsWith("rule:")) {
+                rule = trimmed.substring(5).trim();
+            }
+        }
+
+        tvQuizNum.setText("Q." + (position + 1));
+        tvQuestion.setText("Choose the CORRECT sentence:");
+        tvHint.setText(wrongSentence.isEmpty() ? quoteText : wrongSentence);
+
+        ArrayList<String> options = new ArrayList<>();
+        options.add(rightSentence.isEmpty() ? quoteText : rightSentence);
+
+        ArrayList<String> wrongOptions = quizWrongOptionsCache.get(position);
+        if (wrongOptions == null) {
+            wrongOptions = new ArrayList<>();
+            for (int i = 0; i < quoteModels.size(); i++) {
+                if (i == position) continue;
+                String otherText = quoteModels.get(i).getQuote();
+                String[] otherLines = otherText.split("\r\n|\n");
+                for (String ol : otherLines) {
+                    String ot = ol.trim();
+                    if (ot.toLowerCase().startsWith("wrong:")) {
+                        wrongOptions.add(ot.substring(6).trim());
+                        break;
+                    }
+                }
+            }
+            Collections.shuffle(wrongOptions, new Random(position));
+            quizWrongOptionsCache.put(position, wrongOptions);
+        }
+        for (int i = 0; i < Math.min(3, wrongOptions.size()); i++) {
+            options.add(wrongOptions.get(i));
+        }
+        while (options.size() < 4) options.add("Option " + (options.size() + 1));
+
+        String correctAnswer = options.get(0);
+        Collections.shuffle(options, new Random(position * 7));
+
+        tvA.setText("A) " + options.get(0));
+        tvB.setText("B) " + options.get(1));
+        tvC.setText("C) " + options.get(2));
+        tvD.setText("D) " + options.get(3));
+
+        cvA.setCardBackgroundColor(Color.parseColor("#F5F5F5"));
+        cvB.setCardBackgroundColor(Color.parseColor("#F5F5F5"));
+        cvC.setCardBackgroundColor(Color.parseColor("#F5F5F5"));
+        cvD.setCardBackgroundColor(Color.parseColor("#F5F5F5"));
+        tvA.setTextColor(Color.parseColor("#333333"));
+        tvB.setTextColor(Color.parseColor("#333333"));
+        tvC.setTextColor(Color.parseColor("#333333"));
+        tvD.setTextColor(Color.parseColor("#333333"));
+        llExplanation.setVisibility(View.GONE);
+
+        String finalRule = rule;
+        String finalCorrectAnswer = correctAnswer;
+        String finalRightSentence = rightSentence;
+
+        CardView[] cards = {cvA, cvB, cvC, cvD};
+        TextView[] texts = {tvA, tvB, tvC, tvD};
+
+        for (int i = 0; i < 4; i++) {
+            final int idx = i;
+            cards[i].setOnClickListener(view -> {
+                for (CardView c : cards) c.setClickable(false);
+
+                String selected = options.get(idx).trim();
+                boolean isCorrect = selected.equals(finalCorrectAnswer);
+
+                if (isCorrect) {
+                    cards[idx].setCardBackgroundColor(Color.parseColor("#4CAF50"));
+                    texts[idx].setTextColor(Color.WHITE);
+                } else {
+                    cards[idx].setCardBackgroundColor(Color.parseColor("#F44336"));
+                    texts[idx].setTextColor(Color.WHITE);
+                    for (int j = 0; j < 4; j++) {
+                        if (options.get(j).trim().equals(finalCorrectAnswer)) {
+                            cards[j].setCardBackgroundColor(Color.parseColor("#4CAF50"));
+                            texts[j].setTextColor(Color.WHITE);
+                        }
+                    }
+                }
+
+                String explanation = !finalRule.isEmpty()
+                        ? "Rule: " + finalRule + "\n\nCorrect: " + finalRightSentence
+                        : "Correct: " + finalRightSentence;
+                String detailed = currentQuote.getValue();
+                if (detailed != null && !detailed.trim().isEmpty()) {
+                    explanation += "\n\nExplanation:\n" + detailed.trim();
+                }
+                tvExplanation.setText(explanation);
+                llExplanation.setVisibility(View.VISIBLE);
+            });
+        }
+
+        updateBookmarkStatus(currentQuote, position);
+        final ImageView starQuiz = itemView.findViewById(R.id.star_quiz);
+        starQuiz.setImageResource(currentQuote.isBookmared() ? R.drawable.starfilled : R.drawable.star);
+
+        itemView.findViewById(R.id.copyLLQuiz).setOnClickListener(v -> clickInterface.onCopyClick(currentQuote));
+        itemView.findViewById(R.id.starLLQuiz).setOnClickListener(v -> clickInterface.onBoookmarkClick(currentQuote, starQuiz));
+        itemView.findViewById(R.id.shareLLQuiz).setOnClickListener(v -> clickInterface.onShareClick(currentQuote));
+        itemView.findViewById(R.id.ttsLLQuiz).setOnClickListener(v -> clickInterface.onTTSClick(currentQuote));
+    }
+
+    // ── Bookmark helpers ─────────────────────────────────────────────────────
+
+    private void buildBookmarkSet(ArrayList<ModelDatabase> databases) {
+        bookmarkedNotes.clear();
+        if (databases != null) {
+            for (ModelDatabase db : databases) {
+                if (db != null && db.getNote() != null) {
+                    bookmarkedNotes.add(db.getNote());
+                }
+            }
+        }
+    }
+
+    private void updateBookmarkStatus(QuoteModel currentQuote, int position) {
+        if (currentQuote.getQuote() != null && bookmarkedNotes.contains(currentQuote.getQuote())) {
+            currentQuote.setBookmark("1");
+            currentQuote.setBookmared(true);
+        } else {
+            currentQuote.setBookmared(false);
+        }
+    }
+
+    private void updateLearnedStatus(QuoteModel currentQuote) {
+        currentQuote.setLearned(settingsManager.isWordLearned(currentQuote.getQuote()));
+    }
+
+    // ── Public API ───────────────────────────────────────────────────────────
+
+    /** Returns the quote at this pager position, or null if it's an ad slot / out of range. */
+    public QuoteModel getItemAt(int pagerPosition) {
+        if (isAdPosition(pagerPosition)) return null;
+        int dataPos = getDataPosition(pagerPosition);
+        if (dataPos < 0 || dataPos >= quoteModels.size()) return null;
+        return quoteModels.get(dataPos);
+    }
+
+    /** Inverse of getDataPosition(): maps a real data index back to its pager position. */
+    public int getPagerPositionForDataIndex(int dataIndex) {
+        if (!BuildConfig.ENABLE_ADS) return dataIndex;
+        return dataIndex + dataIndex / AD_INTERVAL;
+    }
+
+    public void cleanup() {
+        if (mainHandler != null) mainHandler.removeCallbacksAndMessages(null);
+        for (NativeAd ad : nativeAdList) ad.destroy();
+        nativeAdList.clear();
+        activeAdViews.clear();
+    }
+
+    public void updateData(ArrayList<QuoteModel> newQuoteModels, ArrayList<ModelDatabase> newModelDatabases) {
+        this.quoteModels.clear();
+        this.quoteModels.addAll(newQuoteModels);
+        this.modelDatabases = newModelDatabases;
+        buildBookmarkSet(newModelDatabases);
+        quizWrongOptionsCache.clear();
+        notifyDataSetChanged();
+        Log.d(TAG, "Data updated - size: " + newQuoteModels.size());
+    }
+
+    public interface ClickInterface {
+        void onBoookmarkClick(QuoteModel CategoryModel, ImageView star);
+        void onCopyClick(QuoteModel CategoryModel);
+        void onShareClick(QuoteModel CategoryModel);
+        void onShareAsImageClick(View cardView);
+        void onTTSClick(QuoteModel quoteModel);
+        void onLearnedClick(QuoteModel quoteModel, TextView learnedLabel);
+        void onQuizClick();
+        void onMoreAppsClick();
+    }
 }

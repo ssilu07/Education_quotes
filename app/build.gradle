@@ -1,63 +1,115 @@
 apply plugin: 'com.android.application'
 
+// Read local.properties for API keys
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localProperties.load(new FileInputStream(localPropertiesFile))
+}
+
 android {
-    compileSdkVersion 34
+    namespace 'com.royal.edunotes'
+
+    compileSdkVersion 35
     defaultConfig {
         applicationId "com.royal.edunotes"
         minSdkVersion 21
-        targetSdkVersion 34
-        versionCode 15
-        versionName "1.1.4"
+        targetSdkVersion 35
+        versionCode 21
+        versionName "1.2.5"
         multiDexEnabled true
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         vectorDrawables.useSupportLibrary = true
+
+        // Gemini API Key from local.properties
+        buildConfigField "String", "GEMINI_API_KEY", "\"${localProperties.getProperty('GEMINI_API_KEY', '')}\""
+        buildConfigField "boolean", "ENABLE_ADS", "true"
+    }
+    useLibrary 'org.apache.http.legacy'
+
+    buildFeatures {
+        buildConfig true
+        viewBinding true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
+    }
+    packagingOptions {
+        resources {
+            excludes += 'META-INF/INDEX.LIST'
+            excludes += 'META-INF/DEPENDENCIES'
+        }
     }
     buildTypes {
+        debug {
+            // Test AdMob IDs for development
+            manifestPlaceholders["admobAppId"] = "ca-app-pub-3940256099942544~3347511713"
+            buildConfigField "String", "ADMOB_INTERSTITIAL_ID", "\"ca-app-pub-3940256099942544/1033173712\""
+            buildConfigField "String", "ADMOB_BANNER_ID", "\"ca-app-pub-3940256099942544/6300978111\""
+            buildConfigField "String", "ADMOB_NATIVE_ID", "\"ca-app-pub-3940256099942544/2247696110\""
+            buildConfigField "boolean", "ENABLE_ADS", "true"
+        }
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            // Production AdMob IDs
+            manifestPlaceholders["admobAppId"] = localProperties.getProperty('ADMOB_APP_ID', 'ca-app-pub-3940256099942544~3347511713')
+            buildConfigField "String", "ADMOB_INTERSTITIAL_ID", "\"${localProperties.getProperty('ADMOB_INTERSTITIAL_ID', 'ca-app-pub-3940256099942544/1033173712')}\""
+            buildConfigField "String", "ADMOB_BANNER_ID", "\"${localProperties.getProperty('ADMOB_BANNER_ID', 'ca-app-pub-3940256099942544/6300978111')}\""
+            buildConfigField "String", "ADMOB_NATIVE_ID", "\"${localProperties.getProperty('ADMOB_NATIVE_ID', 'ca-app-pub-3940256099942544/2247696110')}\""
+            buildConfigField "boolean", "ENABLE_ADS", "true"
         }
     }
 }
 
+configurations.all {
+    exclude group: 'com.google.errorprone',    module: 'error_prone_annotations'
+}
+
 dependencies {
-    implementation 'androidx.activity:activity:1.9.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
+
+    // AndroidX dependencies
+    implementation 'androidx.activity:activity:1.9.2'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.recyclerview:recyclerview:1.2.1'
-    implementation 'com.google.android.material:material:1.9.0'
-    def lottieVersion = "3.4.0"
+    implementation 'androidx.recyclerview:recyclerview:1.3.2'
+    implementation 'com.google.android.material:material:1.12.0'
+
+    // Splash Screen API
+    implementation 'androidx.core:core-splashscreen:1.0.1'
+
+    def lottieVersion = "6.5.2"
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation project(':navigationtabbar')
     implementation project(':library')
- //   implementation 'androidx.recyclerview:recyclerview:1.0.0'
-  //  implementation 'com.google.android.material:material:1.0.0'
-    implementation 'androidx.vectordrawable:vectordrawable:1.0.0'
+
+    implementation 'androidx.vectordrawable:vectordrawable:1.2.0'
     implementation "com.airbnb.android:lottie:$lottieVersion"
-//    implementation 'androidx.cardview:cardview:1.0.0'
-  //  implementation 'androidx.appcompat:appcompat:1.0.0'
-  //  implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-   // implementation 'com.baoyz.pullrefreshlayout:library:1.2.0'
     implementation 'com.squareup.picasso:picasso:2.71828'
-    implementation 'androidx.multidex:multidex:2.0.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
-    implementation 'com.google.code.gson:gson:2.6.2'
-    implementation 'com.google.android.gms:play-services-ads:22.4.0'
-    //Gemini
-    implementation 'com.google.ai.client.generativeai:generativeai:0.6.0'
+    implementation 'com.google.code.gson:gson:2.10.1'
 
-/*    // Import the BoM for the Firebase platform
-    implementation(platform("com.google.firebase:firebase-bom:33.9.0"))
+    // Google Play Services Ads
+    implementation 'com.google.android.gms:play-services-ads:23.5.0'
 
-    // Add the dependencies for the Crashlytics and Analytics libraries
-    // When using the BoM, you don't specify versions in Firebase library dependencies
-    implementation("com.google.firebase:firebase-crashlytics")
-    implementation("com.google.firebase:firebase-analytics")*/
-    //implementation 'com.google.android.play:core:1.10.3'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    // Gemini API called via HttpURLConnection (see GeminiApi.java)
+    // No SDK needed - avoids Apache HttpClient conflict on Android
+
+    // Test dependencies
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation "androidx.test:core:1.6.1"
+    androidTestImplementation "androidx.test:runner:1.6.2"
+    androidTestImplementation "androidx.test:rules:1.6.1"
+    androidTestImplementation "androidx.test.ext:junit:1.2.1"
+    androidTestImplementation "androidx.test.espresso:espresso-core:3.6.1"
 }

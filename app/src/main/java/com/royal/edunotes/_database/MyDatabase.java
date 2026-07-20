@@ -61,6 +61,7 @@ public class MyDatabase extends SQLiteAssetHelper {
         // Use only columns that are guaranteed to exist in all DBs
         String[] columns = {ID, QUOTE, TIMESTAMP};
 
+
 /*        String whereClause = QUOTE + " LIKE ?";
         String[] whereArgs = new String[]{"%" + searchKey + "%"};*/
 
@@ -95,6 +96,32 @@ public class MyDatabase extends SQLiteAssetHelper {
 
 
 
+    /** Plain case-insensitive substring search across the whole card text (word + meaning + example). */
+    public ArrayList<QuoteModel> getWordMatches(String query) {
+        ArrayList<QuoteModel> list = new ArrayList<>();
+        if (query == null || query.trim().isEmpty()) return list;
+
+        SQLiteDatabase db = getReadableDatabase();
+        String[] columns = {ID, QUOTE, VALUE, TIMESTAMP};
+        String whereClause = QUOTE + " LIKE ?";
+        String[] whereArgs = {"%" + query.trim() + "%"};
+
+        Cursor cursor = db.query(TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
+        while (cursor.moveToNext()) {
+            QuoteModel model = new QuoteModel();
+            model.id = cursor.getInt(cursor.getColumnIndex(ID));
+            model.quote = cursor.getString(cursor.getColumnIndex(QUOTE));
+            model.value = cursor.getString(cursor.getColumnIndex(VALUE));
+            model.timestamp = cursor.getString(cursor.getColumnIndex(TIMESTAMP));
+            model.categoryName = categoryName;
+            list.add(model);
+        }
+        cursor.close();
+        db.close();
+
+        return list;
+    }
+
     public ArrayList<QuoteModel> getPoses() {
 
 
@@ -117,6 +144,22 @@ public class MyDatabase extends SQLiteAssetHelper {
         return questionsArrayList;
     }
 
+
+    public int getTotalCount() {
+        int count = 0;
+        try {
+            SQLiteDatabase db = getReadableDatabase();
+            Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_NAME, null);
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+            cursor.close();
+            db.close();
+        } catch (Exception e) {
+            // DB might not exist or table missing
+        }
+        return count;
+    }
 
     public ArrayList<QuoteModel> getBookmarkData() {
 

@@ -10,13 +10,12 @@
         app:showAsAction="ifRoom|collapseActionView"
         app:actionViewClass="androidx.appcompat.widget.SearchView" />
 
-    <!--<item-->
-        <!--android:id="@+id/action_todayquote"-->
-        <!--android:title="Quoteoftheday"-->
-        <!--android:icon="@drawable/ic_action_today"-->
-        <!--android:orderInCategory="1"-->
-        <!--app:showAsAction="ifRoom" />-->
-    <!--<item-->
-        <!--android:id="@+id/action_settings"-->
-        <!--android:title="Settings"/>-->
+    <item android:id="@+id/action_quiz"
+        android:title="Daily Quiz"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/action_progress"
+        android:title="My Progress"
+        app:showAsAction="never" />
+
 </menu>

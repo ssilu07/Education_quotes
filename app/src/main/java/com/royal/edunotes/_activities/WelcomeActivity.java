@@ -39,13 +39,7 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Checking forimg first time launch - before calling setContentView()
         prefManager = new PrefManager(this);
-        if (!prefManager.isFirstTimeLaunch()) {
-            Log.i("sumit","launch 45");
-            launchHomeScreen();
-            finish();
-        }
 
         // Making notification bar transparent
         if (Build.VERSION.SDK_INT >= 21) {

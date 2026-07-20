@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.royal.edunotes">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -15,38 +14,43 @@
         android:roundIcon="@drawable/vocab_swap_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <!-- Move uses-library inside application tag -->
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+
         <activity
             android:name="._activities.IdiomPhrasesActivity" />
 
-
         <activity
             android:name="._activities.SelectedActivity" />
-        <!-- This is use for original ids -->
-        <!--
- <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-1811294933992844~4579242630"/>
-        -->
-        <!-- This is use for test ids -->
+
+        <!-- AdMob App ID: auto-switches between test (debug) and production (release) -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713" />
+            android:value="${admobAppId}" />
 
         <activity android:name="._activities.MainActivity" />
+
         <activity
-            android:name="._activities.WelcomeActivity"
+            android:name="._activities.SplashActivity"
+            android:theme="@style/Theme.App.Splash"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name="._activities.WelcomeActivity"
+            android:theme="@style/AppTheme" />
+
         <activity android:name="._activities.Setting" />
         <activity android:name="._activities.HackList" />
         <activity android:name="._activities.BookmarkHackListActivity" />
 
         <receiver android:name=".AlarmReceiver" />
+
         <receiver
             android:name=".AlarmBootReceiver"
             android:enabled="false"
@@ -56,7 +60,47 @@
             </intent-filter>
         </receiver>
 
+        <activity android:name="._activities.SubCategoryActivity" />
         <activity android:name="._activities.SearchActivity" />
+        <activity android:name="._activities.VocabSearchActivity" />
+        <activity android:name="._activities.DailyQuizActivity" />
+        <activity android:name="._activities.TricksActivity" />
+
+        <!-- Home Screen Widget -->
+        <receiver
+            android:name=".VocabWidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.royal.edunotes.WIDGET_REFRESH" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info" />
+        </receiver>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <activity
+            android:name="androidx.test.core.app.InstrumentationActivityInvoker$BootstrapActivity"
+            android:exported="false" />
+
+        <activity
+            android:name="androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity"
+            android:exported="false" />
+
+        <activity
+            android:name="androidx.test.core.app.InstrumentationActivityInvoker$EmptyFloatingActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

@@ -20,12 +20,26 @@ apply plugin: 'maven-publish'
 version = "1.2.5"
 
 android {
-    compileSdkVersion 26
+    namespace 'devlight.io.library'
+
+    compileSdkVersion 35
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 26
+        minSdkVersion 21
+        targetSdkVersion 35
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    packagingOptions {
+        resources {
+            excludes += "META-INF/INDEX.LIST"
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -36,36 +50,30 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    //noinspection GradleDependency
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.android.material:material:1.12.0'
 }
 
 def siteUrl = 'https://github.com/DevLight-Mobile-Agency/NavigationTabBar'
 def gitUrl = 'https://github.com/DevLight-Mobile-Agency/NavigationTabBar.git'
 group = "devlight.io"
 
-
 task sourcesJar(type: Jar) {
-    //noinspection GroovyAssignabilityCheck
     from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
+    archiveClassifier = 'sources'
 }
 
 task javadoc(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
-    //noinspection GroovyAssignabilityCheck
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    options.addBooleanOption('Xdoclint:none', true)
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    //noinspection GrUnresolvedAccess
+    archiveClassifier = 'javadoc'
     from javadoc.destinationDir
 }
+
 artifacts {
     archives javadocJar
     archives sourcesJar
 }
-
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())

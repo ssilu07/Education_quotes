@@ -11,6 +11,7 @@ public class Utility {
     public static final String DBNAME_KEY = "DBNAME";
 
     public static final String SEARCH_KEY ="SEARCHKEY";
+    public static final String JUMP_TO_ID_KEY = "JUMP_TO_ID";
 
     public static final String DEFAULT_TITLE = "Quote App";
 
