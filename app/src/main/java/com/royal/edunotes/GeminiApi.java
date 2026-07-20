@@ -60,35 +60,38 @@ public class GeminiApi {
         conn.setConnectTimeout(20000);
         conn.setReadTimeout(60000);
 
-        try (OutputStream os = conn.getOutputStream()) {
-            os.write(requestBody.toString().getBytes(StandardCharsets.UTF_8));
-        }
-
-        int responseCode = conn.getResponseCode();
-
-        if (responseCode == HttpURLConnection.HTTP_OK) {
-            StringBuilder response = new StringBuilder();
-            try (BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
+        try {
+            try (OutputStream os = conn.getOutputStream()) {
+                os.write(requestBody.toString().getBytes(StandardCharsets.UTF_8));
             }
 
-            return extractText(response.toString());
-        } else {
-            // Read error stream
-            StringBuilder error = new StringBuilder();
-            try (BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(conn.getErrorStream(), StandardCharsets.UTF_8))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    error.append(line);
+            int responseCode = conn.getResponseCode();
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                StringBuilder response = new StringBuilder();
+                try (BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
                 }
+                return extractText(response.toString());
+            } else {
+                // Read error stream
+                StringBuilder error = new StringBuilder();
+                try (BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(conn.getErrorStream(), StandardCharsets.UTF_8))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        error.append(line);
+                    }
+                }
+                Log.e(TAG, "API error " + responseCode + ": " + error);
+                throw new Exception("Gemini API error (" + responseCode + "): " + error);
             }
-            Log.e(TAG, "API error " + responseCode + ": " + error);
-            throw new Exception("Gemini API error (" + responseCode + "): " + error);
+        } finally {
+            conn.disconnect(); // ✅ connection leak fix - hamesha disconnect karo
         }
     }
 

@@ -95,6 +95,12 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void fetchWordDetail(String word) {
+        // ✅ Bug fix: API key empty hai toh seedha error dikhao
+        if (BuildConfig.GEMINI_API_KEY == null || BuildConfig.GEMINI_API_KEY.isEmpty()) {
+            showError("AI API key not configured. Please set GEMINI_API_KEY in local.properties.");
+            return;
+        }
+
         // Check cache first
         String cached = getCached(word);
         if (cached != null) {
@@ -225,23 +231,34 @@ public class SearchActivity extends AppCompatActivity {
 
     private void showLoading() {
         layoutLoading.setVisibility(View.VISIBLE);
-        tvError.setVisibility(View.GONE);
+        layoutError.setVisibility(View.GONE);      // ✅ error layout bhi hide karo
         cardWordDetail.setVisibility(View.GONE);
     }
 
     private void showCard() {
         layoutLoading.setVisibility(View.GONE);
-        tvError.setVisibility(View.GONE);
+        layoutError.setVisibility(View.GONE);       // ✅ error layout bhi hide karo
         cardWordDetail.setVisibility(View.VISIBLE);
     }
 
     private void showError(String msg) {
         layoutLoading.setVisibility(View.GONE);
         cardWordDetail.setVisibility(View.GONE);
-        layoutError.setVisibility(View.VISIBLE);
-        String display = msg != null && msg.contains("Unable to resolve host")
-                ? "No internet connection.\nPlease check your network and retry."
-                : msg;
+        layoutError.setVisibility(View.VISIBLE);    // ✅ yahi missing tha - ab properly VISIBLE hoga
+        String display;
+        if (msg == null || msg.isEmpty()) {
+            display = "Something went wrong. Please try again.";
+        } else if (msg.contains("Unable to resolve host") || msg.contains("Network")) {
+            display = "No internet connection.\nPlease check your network and retry.";
+        } else if (msg.contains("401") || msg.contains("403")) {
+            display = "AI service error: Invalid API key.\nPlease contact support.";
+        } else if (msg.contains("429")) {
+            display = "Too many requests. Please wait a moment and retry.";
+        } else if (msg.contains("API key") && msg.contains("empty")) {
+            display = "AI feature not configured. Please set up the Gemini API key.";
+        } else {
+            display = msg;
+        }
         tvError.setText(display);
         btnRetry.setOnClickListener(v -> {
             layoutError.setVisibility(View.GONE);
