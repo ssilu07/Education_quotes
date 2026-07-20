@@ -40,7 +40,7 @@ public class SearchActivity extends AppCompatActivity {
     private TextView tvError;
     private Button btnRetry;
     private CardView cardWordDetail;
-    private TextView tvWordTitle, tvTrickKey, tvTrickExp, tvSynonyms, tvAntonyms;
+    private TextView tvWordTitle, tvMeaning, tvTrick, tvExample, tvSynonyms, tvAntonyms;
     private ImageView ivBookmark;
     private LinearLayout btnCopy, btnBookmark, btnShare, btnTts;
 
@@ -72,8 +72,9 @@ public class SearchActivity extends AppCompatActivity {
         btnRetry        = findViewById(R.id.btn_retry);
         cardWordDetail  = findViewById(R.id.card_word_detail);
         tvWordTitle     = findViewById(R.id.tv_word_title);
-        tvTrickKey      = findViewById(R.id.tv_trick_key);
-        tvTrickExp      = findViewById(R.id.tv_trick_exp);
+        tvMeaning       = findViewById(R.id.tv_meaning);
+        tvTrick         = findViewById(R.id.tv_trick);
+        tvExample       = findViewById(R.id.tv_example);
         tvSynonyms      = findViewById(R.id.tv_synonyms);
         tvAntonyms      = findViewById(R.id.tv_antonyms);
         ivBookmark      = findViewById(R.id.iv_bookmark);
@@ -131,13 +132,15 @@ public class SearchActivity extends AppCompatActivity {
 
     private String buildPrompt(String word) {
         return "You are an expert in creating desi Hindi memory tricks (mnemonics) for English vocabulary. "
-                + "For the word \"" + word + "\", provide the following strictly in JSON format (no extra text, no markdown):\n"
+                + "Give me a detailed word analysis for the word \""
+                + word + "\" strictly in this JSON format (no extra text, no markdown, just JSON):\n"
                 + "{\n"
-                + "  \"hindi_meaning\": \"Hindi meaning of the word\",\n"
-                + "  \"trick_key\": \"A related Hindi/Hinglish word that sounds like the English word (Key)\",\n"
-                + "  \"trick_exp\": \"A creative Hindi sentence using the trick_key to explain the meaning (Exp)\",\n"
-                + "  \"synonyms\": \"Comma separated 2-3 English synonyms\",\n"
-                + "  \"antonyms\": \"Comma separated 2-3 English antonyms\"\n"
+                + "  \"word\": \"" + word + "\",\n"
+                + "  \"meaning\": \"Hindi meaning of the word\",\n"
+                + "  \"trick\": \"A desi Hindi memory trick or 'Key' word to remember it\",\n"
+                + "  \"example\": \"A Hindi explanation/sentence using the trick to explain the meaning\",\n"
+                + "  \"synonyms\": [\"syn1\", \"syn2\", \"syn3\", \"syn4\", \"syn5\"],\n"
+                + "  \"antonyms\": [\"ant1\", \"ant2\", \"ant3\", \"ant4\", \"ant5\"]\n"
                 + "}";
     }
 
@@ -151,34 +154,41 @@ public class SearchActivity extends AppCompatActivity {
 
             JSONObject obj = new JSONObject(cleaned);
 
-            String hindiMeaning = obj.optString("hindi_meaning", "");
-            String trickKey = obj.optString("trick_key", "");
-            String trickExp = obj.optString("trick_exp", "");
-            
-            // Note: Requested comma separated strings, not JSONArrays.
-            String syns = obj.optString("synonyms", "—");
-            String ants = obj.optString("antonyms", "—");
+            String meaning  = obj.optString("meaning", "—");
+            String trick    = obj.optString("trick", "—");
+            String example  = obj.optString("example", "—");
 
-            // Format word title
-            String capitalizedWord = word.substring(0, 1).toUpperCase(Locale.ENGLISH) + word.substring(1).toLowerCase(Locale.ENGLISH);
-            String titleText = capitalizedWord + "- " + hindiMeaning;
-            
-            String keyText = "Key " + trickKey;
-            String expText = "Exp-" + trickExp;
-            String synText = "Syn-" + syns;
-            String antText = "Ant-" + ants;
+            StringBuilder syns = new StringBuilder();
+            JSONArray synArr = obj.optJSONArray("synonyms");
+            if (synArr != null) {
+                for (int i = 0; i < synArr.length(); i++) {
+                    if (i > 0) syns.append("  •  ");
+                    syns.append(synArr.getString(i));
+                }
+            }
 
-            fullContent = titleText + "\n\n"
-                    + keyText + "\n\n"
-                    + expText + "\n\n"
-                    + synText + "\n\n"
-                    + antText;
+            StringBuilder ants = new StringBuilder();
+            JSONArray antArr = obj.optJSONArray("antonyms");
+            if (antArr != null) {
+                for (int i = 0; i < antArr.length(); i++) {
+                    if (i > 0) ants.append("  •  ");
+                    ants.append(antArr.getString(i));
+                }
+            }
 
-            tvWordTitle.setText(titleText);
-            tvTrickKey.setText(keyText);
-            tvTrickExp.setText(expText);
-            tvSynonyms.setText(synText);
-            tvAntonyms.setText(antText);
+            fullContent = word.toUpperCase(Locale.ENGLISH) + "\n\n"
+                    + "Meaning: " + meaning + "\n\n"
+                    + "Trick: " + trick + "\n\n"
+                    + "Example: " + example + "\n\n"
+                    + "Synonyms: " + syns + "\n\n"
+                    + "Antonyms: " + ants;
+
+            tvWordTitle.setText(word.toUpperCase(Locale.ENGLISH));
+            tvMeaning.setText(meaning);
+            tvTrick.setText(trick);
+            tvExample.setText(example);
+            tvSynonyms.setText(syns.length() > 0 ? syns.toString() : "—");
+            tvAntonyms.setText(ants.length() > 0 ? ants.toString() : "—");
 
             showCard();
             setupBottomActions();
@@ -187,8 +197,9 @@ public class SearchActivity extends AppCompatActivity {
             // JSON parse failed — show raw text nicely
             fullContent = jsonText;
             tvWordTitle.setText(word.toUpperCase(Locale.ENGLISH));
-            tvTrickKey.setText("—");
-            tvTrickExp.setText(jsonText);
+            tvMeaning.setText(jsonText);
+            tvTrick.setText("—");
+            tvExample.setText("—");
             tvSynonyms.setText("—");
             tvAntonyms.setText("—");
             showCard();
