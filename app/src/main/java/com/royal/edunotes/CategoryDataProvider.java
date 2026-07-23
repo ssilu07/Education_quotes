@@ -72,6 +72,9 @@ public class CategoryDataProvider {
                 .addSub("Idiom 20", "gm_quotes_idiom")
                 .addSub("Idiom 21", "rumi_quotes_idiom"));
 
+        cats.add(new Category("SSC Exams", "SSC")
+                .addSub("Error Finding - Noun", "error_noun"));
+
         return cats;
     }
 }
