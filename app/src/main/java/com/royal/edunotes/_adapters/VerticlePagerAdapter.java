@@ -238,7 +238,7 @@ public class VerticlePagerAdapter extends PagerAdapter {
 
         if (isQuizCategory()) {
             setupQuizView(itemView, currentQuote, dataPos);
-        } else if (Utility.ScreenCheck.equals("Vocab")) {
+        } else if (Utility.ScreenCheck.equals("Vocab") || Utility.ScreenCheck.equals("Grammar")) {
             setupVocabView(itemView, currentQuote, dataPos);
         } else if (Utility.ScreenCheck.equals("Idiom")) {
             setupIdiomView(itemView, currentQuote, dataPos);
