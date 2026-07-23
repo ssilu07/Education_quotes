@@ -46,7 +46,8 @@ public class CategoryDataProvider {
                 .addSub("Vocab Chapter 8", "travel_quotes")
                 .addSub("Vocab Chapter 9", "trust_quotes")
                 .addSub("Vocab Chapter 10", "martin_luther_quotes")
-                .addSub("Vocab Chapter 11", "chapter_11"));
+                .addSub("Vocab Chapter 11", "chapter_11")
+                .addSub("Vocab Chapter 12", "chapter_12"));
 
         cats.add(new Category("Idioms & Phrases", "Idiom")
                 .addSub("Idiom 1", "life_quotes_idiom")
