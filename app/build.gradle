@@ -10,11 +10,11 @@ if (localPropertiesFile.exists()) {
 android {
     namespace 'com.royal.edunotes'
 
-    compileSdkVersion 35
+    compileSdkVersion 36
     defaultConfig {
         applicationId "com.royal.edunotes"
         minSdkVersion 21
-        targetSdkVersion 35
+        targetSdkVersion 36
         versionCode 22
         versionName "1.2.6"
         multiDexEnabled true
