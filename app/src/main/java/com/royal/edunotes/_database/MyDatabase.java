@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.royal.edunotes._models.QuoteModel;
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
+import com.royal.edunotes.BuildConfig;
 
 import java.util.ArrayList;
 
@@ -18,7 +19,8 @@ import java.util.ArrayList;
 public class MyDatabase extends SQLiteAssetHelper {
 
     private static final String DATABASE_NAME = "life_quotes";
-    private static final int DATABASE_VERSION = 1;
+    // Automatically updates database whenever you increase App's versionCode in build.gradle
+    private static final int DATABASE_VERSION = BuildConfig.VERSION_CODE;
     private static final String ID = "id";
     private static final String QUOTE = "quote";
     private static final String VALUE = "value";
@@ -43,6 +45,7 @@ public class MyDatabase extends SQLiteAssetHelper {
 
     public MyDatabase(Context context, String dbname, String categoryName) {
         super(context, dbname, null, DATABASE_VERSION);
+        setForcedUpgrade(); // Force overwrite of old database with new assets database on upgrade
         this.categoryName = categoryName;
         this.context = context;
     }
@@ -50,6 +53,7 @@ public class MyDatabase extends SQLiteAssetHelper {
 
     public MyDatabase(Context context, String dbname) {
         super(context, dbname, null, DATABASE_VERSION);
+        setForcedUpgrade(); // Force overwrite of old database with new assets database on upgrade
         this.context = context;
     }
 
