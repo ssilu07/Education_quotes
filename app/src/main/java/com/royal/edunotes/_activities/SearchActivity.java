@@ -161,8 +161,9 @@ public class SearchActivity extends AppCompatActivity {
 
     private String buildPrompt(String word) {
         return "You are an expert in creating desi Hindi memory tricks (mnemonics) for English vocabulary. "
-                + "Give me a detailed word analysis for the word \""
-                + word + "\" strictly in this JSON format (no extra text, no markdown, just JSON):\n"
+                + "First, verify if the word \"" + word + "\" is a genuine, valid English word. "
+                + "If it is NOT a valid English word (e.g., gibberish, random letters, or meaningless), return exactly this JSON: {\"error\": \"invalid_word\"} and nothing else. "
+                + "If it IS a valid English word, give me a detailed word analysis strictly in this JSON format (no extra text, no markdown, just JSON):\n"
                 + "{\n"
                 + "  \"word\": \"" + word + "\",\n"
                 + "  \"meaning\": \"Hindi meaning of the word\",\n"
@@ -182,6 +183,11 @@ public class SearchActivity extends AppCompatActivity {
             }
 
             JSONObject obj = new JSONObject(cleaned);
+
+            if (obj.has("error") && "invalid_word".equals(obj.optString("error"))) {
+                showError("'" + word + "' doesn't seem to be a valid English word. Please check the spelling.");
+                return;
+            }
 
             String meaning  = obj.optString("meaning", "—");
             String trick    = obj.optString("trick", "—");
