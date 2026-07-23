@@ -15,8 +15,8 @@ android {
         applicationId "com.royal.edunotes"
         minSdkVersion 21
         targetSdkVersion 35
-        versionCode 21
-        versionName "1.2.5"
+        versionCode 22
+        versionName "1.2.6"
         multiDexEnabled true
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         vectorDrawables.useSupportLibrary = true
