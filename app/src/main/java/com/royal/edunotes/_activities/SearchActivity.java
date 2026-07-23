@@ -24,6 +24,9 @@ import com.royal.edunotes.R;
 import com.royal.edunotes.TTSHelper;
 import com.royal.edunotes.Utility;
 
+import android.net.Uri;
+import com.squareup.picasso.Picasso;
+
 import androidx.annotation.NonNull;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
@@ -51,7 +54,7 @@ public class SearchActivity extends AppCompatActivity {
     private Button btnRetry;
     private CardView cardWordDetail;
     private TextView tvWordTitle, tvMeaning, tvTrick, tvExample, tvSynonyms, tvAntonyms;
-    private ImageView ivBookmark;
+    private ImageView ivBookmark, ivWordImage;
     private LinearLayout btnCopy, btnBookmark, btnShare, btnTts;
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -91,6 +94,7 @@ public class SearchActivity extends AppCompatActivity {
         tvSynonyms      = findViewById(R.id.tv_synonyms);
         tvAntonyms      = findViewById(R.id.tv_antonyms);
         ivBookmark      = findViewById(R.id.iv_bookmark);
+        ivWordImage     = findViewById(R.id.iv_word_image);
         btnCopy         = findViewById(R.id.btn_copy);
         btnBookmark     = findViewById(R.id.btn_bookmark);
         btnShare        = findViewById(R.id.btn_share);
@@ -169,6 +173,7 @@ public class SearchActivity extends AppCompatActivity {
                 + "  \"meaning\": \"Hindi meaning of the word\",\n"
                 + "  \"trick\": \"A desi Hindi memory trick or 'Key' word to remember it\",\n"
                 + "  \"example\": \"A Hindi explanation/sentence using the trick to explain the meaning\",\n"
+                + "  \"image_prompt\": \"A short descriptive prompt (max 5 words) for an AI image generator to visually represent this word\",\n"
                 + "  \"synonyms\": [\"syn1\", \"syn2\", \"syn3\", \"syn4\", \"syn5\"],\n"
                 + "  \"antonyms\": [\"ant1\", \"ant2\", \"ant3\", \"ant4\", \"ant5\"]\n"
                 + "}";
@@ -192,6 +197,19 @@ public class SearchActivity extends AppCompatActivity {
             String meaning  = obj.optString("meaning", "—");
             String trick    = obj.optString("trick", "—");
             String example  = obj.optString("example", "—");
+            String imagePrompt = obj.optString("image_prompt", "");
+
+            if (!imagePrompt.isEmpty() && !imagePrompt.equals("—")) {
+                String imageUrl = "https://image.pollinations.ai/prompt/" + Uri.encode(imagePrompt) + "?width=800&height=600&nologo=true";
+                ivWordImage.setVisibility(View.VISIBLE);
+                try {
+                    Picasso.get().load(imageUrl).into(ivWordImage);
+                } catch (Exception e) {
+                    ivWordImage.setVisibility(View.GONE);
+                }
+            } else {
+                ivWordImage.setVisibility(View.GONE);
+            }
 
             StringBuilder syns = new StringBuilder();
             JSONArray synArr = obj.optJSONArray("synonyms");
@@ -237,6 +255,7 @@ public class SearchActivity extends AppCompatActivity {
             tvExample.setText("—");
             tvSynonyms.setText("—");
             tvAntonyms.setText("—");
+            if (ivWordImage != null) ivWordImage.setVisibility(View.GONE);
             showCard();
             setupBottomActions();
         }
