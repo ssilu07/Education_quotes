@@ -19,8 +19,8 @@ import java.util.ArrayList;
 public class MyDatabase extends SQLiteAssetHelper {
 
     private static final String DATABASE_NAME = "life_quotes";
-    // Automatically updates database whenever you increase App's versionCode in build.gradle
-    private static final int DATABASE_VERSION = BuildConfig.VERSION_CODE;
+    // Controlled manually from build.gradle
+    private static final int DATABASE_VERSION = BuildConfig.DATABASE_VERSION;
     private static final String ID = "id";
     private static final String QUOTE = "quote";
     private static final String VALUE = "value";

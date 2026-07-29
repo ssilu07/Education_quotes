@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "893956823859",
+    "project_id": "education-quotes-610b5",
+    "storage_bucket": "education-quotes-610b5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:893956823859:android:eb45194d686031e723fc46",
+        "android_client_info": {
+          "package_name": "com.royal.edunotes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYLZliZXbNWG8sOX1ww6q_OBnB2v792sY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

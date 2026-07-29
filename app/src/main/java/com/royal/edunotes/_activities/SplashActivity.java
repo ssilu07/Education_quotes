@@ -26,6 +26,7 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.royal.edunotes.PrefManager;
 import com.royal.edunotes.R;
 import com.royal.edunotes.SettingsManager;
+import com.royal.edunotes.Utility;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -208,11 +209,59 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void navigateNext() {
-        if (prefManager.isFirstTimeLaunch()) {
-            startActivity(new Intent(this, WelcomeActivity.class));
-        } else {
-            startActivity(new Intent(this, SelectedActivity.class));
+        Intent intent;
+        
+        // Check if app was launched from a Firebase Notification tap (Data payload is in Intent extras)
+        String searchQuery = null;
+        String notificationTitle = null;
+        String notificationMessage = null;
+        boolean isNotificationClick = false;
+        
+        if (getIntent() != null && getIntent().getExtras() != null) {
+            android.os.Bundle extras = getIntent().getExtras();
+            
+            // Firebase ALWAYS adds this when a system tray notification is clicked
+            if (extras.containsKey("google.message_id")) {
+                isNotificationClick = true;
+            }
+            
+            // Check for vocab searches (case insensitive keys)
+            for (String key : extras.keySet()) {
+                String val = extras.getString(key);
+                if (val == null) continue;
+                
+                String lowerKey = key.toLowerCase();
+                if (lowerKey.equals("search") || lowerKey.equals("vocab") || lowerKey.equals("idiom")) {
+                    searchQuery = val;
+                } else if (lowerKey.equals("title")) {
+                    notificationTitle = val;
+                } else if (lowerKey.equals("message") || lowerKey.equals("body")) {
+                    notificationMessage = val;
+                } else if (lowerKey.equals("gcm.notification.title") && notificationTitle == null) {
+                    notificationTitle = val;
+                } else if (lowerKey.equals("gcm.notification.body") && notificationMessage == null) {
+                    notificationMessage = val;
+                }
+            }
         }
+        
+        if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+            intent = new Intent(this, VocabSearchActivity.class);
+            intent.putExtra(Utility.SEARCH_KEY, searchQuery);
+        } else if (isNotificationClick || 
+                   (notificationTitle != null && !notificationTitle.trim().isEmpty()) || 
+                   (notificationMessage != null && !notificationMessage.trim().isEmpty())) {
+            // It's a general notification message click
+            intent = new Intent(this, NotificationDetailActivity.class);
+            intent.putExtra("title", notificationTitle != null ? notificationTitle : "New Notification");
+            intent.putExtra("message", notificationMessage != null ? notificationMessage : "No additional details provided. Make sure to send 'title' and 'message' in Custom Data from Firebase.");
+        } else if (prefManager.isFirstTimeLaunch()) {
+            intent = new Intent(this, WelcomeActivity.class);
+        } else {
+            intent = new Intent(this, SelectedActivity.class);
+        }
+        
+        startActivity(intent);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         finish();
     }

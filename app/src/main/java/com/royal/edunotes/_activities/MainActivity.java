@@ -76,6 +76,8 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         initUI();
 
+
+
         if (!isNetworkConnected()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setMessage("Please turn on internet connection");

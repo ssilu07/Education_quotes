@@ -74,7 +74,24 @@ public class CategoryDataProvider {
 
         cats.add(new Category("English Grammar Rules", "Grammar")
                 .addSub("Noun Rules", "grammar_noun")
-                .addSub("Pronoun Rules", "grammar_pronoun"));
+                .addSub("Pronoun Rules", "grammar_pronoun")
+                .addSub("Article Rules", "grammar_article")
+                .addSub("Verb Rules", "grammar_verb")
+                .addSub("Subject-Verb Agreement", "grammar_sva")
+                .addSub("Tense Rules", "grammar_tense")
+                .addSub("Passive Voice", "grammar_voice")
+                .addSub("Narration", "grammar_narration")
+                .addSub("Conditional Sentences", "grammar_conditional")
+                .addSub("Verb (Advance)", "grammar_verb_adv")
+                .addSub("Adjective", "grammar_adjective")
+                .addSub("Conjunction", "grammar_conjunction")
+                .addSub("Preposition", "grammar_preposition")
+                .addSub("Adverb", "grammar_adverb"));
+
+        cats.add(new Category("Words Often Confused", "Vocab")
+                .addSub("Chapter 1", "confused_words_ch1")
+                .addSub("Chapter 2", "confused_words_ch2")
+                .addSub("Chapter 3", "confused_words_ch3"));
 
         return cats;
     }

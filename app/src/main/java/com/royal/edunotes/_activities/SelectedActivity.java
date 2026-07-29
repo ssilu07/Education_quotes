@@ -12,6 +12,14 @@ import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import com.google.firebase.messaging.FirebaseMessaging;
+import android.util.Log;
+
 import com.royal.edunotes.CategoryDataProvider;
 import com.royal.edunotes.R;
 import com.royal.edunotes.SettingsManager;
@@ -46,6 +54,25 @@ public class SelectedActivity extends AppCompatActivity implements CategoryAdapt
         rv.setAdapter(adapter);
 
         loadCategories();
+
+        // Request POST_NOTIFICATIONS permission for Android 13+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
+                    PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
+            }
+        }
+
+        // Fetch FCM token
+        FirebaseMessaging.getInstance().getToken()
+            .addOnCompleteListener(task -> {
+                if (!task.isSuccessful()) {
+                    Log.w("SelectedActivity", "Fetching FCM registration token failed", task.getException());
+                    return;
+                }
+                String token = task.getResult();
+                Log.d("SelectedActivity", "FCM Token: " + token);
+            });
     }
 
     private void loadCategories() {
