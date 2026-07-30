@@ -51,6 +51,9 @@ public class HackList extends AppCompatActivity implements VerticlePagerAdapter.
 
     private static final String[] FILTER_VALUES = {"ALL", "LEARNED", "NOT_LEARNED"};
     private static final String[] FILTER_LABELS = {"All words", "Learned only", "Not learned yet"};
+    private DatabaseHelper databaseHelper;
+    private int swipeCount = 0;
+    private boolean reviewPrompted = false;
     private String currentFilter = "ALL";
 
     @Override
@@ -105,6 +108,12 @@ public class HackList extends AppCompatActivity implements VerticlePagerAdapter.
             @Override
             public void onPageSelected(int position) {
                 if (progressManager != null) progressManager.onWordRead();
+                
+                swipeCount++;
+                if (swipeCount == 20 && !reviewPrompted) {
+                    showInAppReview();
+                    reviewPrompted = true;
+                }
             }
         });
 
@@ -262,9 +271,28 @@ public class HackList extends AppCompatActivity implements VerticlePagerAdapter.
     public void onMoreAppsClick() {
         try {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.royals.englishtrickyvocab")));
-
         } catch (android.content.ActivityNotFoundException anfe) {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.royals.englishtrickyvocab")));
+        }
+    }
+
+    private void showInAppReview() {
+        try {
+            com.google.android.play.core.review.ReviewManager manager = com.google.android.play.core.review.ReviewManagerFactory.create(this);
+            com.google.android.gms.tasks.Task<com.google.android.play.core.review.ReviewInfo> request = manager.requestReviewFlow();
+            request.addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    com.google.android.play.core.review.ReviewInfo reviewInfo = task.getResult();
+                    com.google.android.gms.tasks.Task<Void> flow = manager.launchReviewFlow(this, reviewInfo);
+                    flow.addOnCompleteListener(flowTask -> {
+                        // The flow has finished.
+                    });
+                } else {
+                    // There was some problem, log or handle the error code.
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

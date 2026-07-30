@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Education_quotes.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Education_quotes.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Education_quotes.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Education_quotes.app.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/library/Education_quotes.library.main.iml" filepath="$PROJECT_DIR$/.idea/modules/library/Education_quotes.library.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/library/Education_quotes.library.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/library/Education_quotes.library.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/navigationtabbar/Education_quotes.navigationtabbar.main.iml" filepath="$PROJECT_DIR$/.idea/modules/navigationtabbar/Education_quotes.navigationtabbar.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/navigationtabbar/Education_quotes.navigationtabbar.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/navigationtabbar/Education_quotes.navigationtabbar.unitTest.iml" />
+    </modules>
+  </component>
+</project>

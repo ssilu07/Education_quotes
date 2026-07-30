@@ -117,6 +117,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-messaging'
     implementation 'com.google.firebase:firebase-config'
+    
+    // Google Play In-App Review
+    implementation 'com.google.android.play:review:2.0.1'
 
     androidTestImplementation "androidx.test.espresso:espresso-core:3.6.1"
 }
