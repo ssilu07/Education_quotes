@@ -15,8 +15,8 @@ android {
         applicationId "com.royal.edunotes"
         minSdkVersion 21
         targetSdkVersion 36
-        versionCode 23
-        versionName "1.2.7"
+        versionCode 25
+        versionName "1.2.9"
         multiDexEnabled true
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         vectorDrawables.useSupportLibrary = true
@@ -26,7 +26,7 @@ android {
         buildConfigField "boolean", "ENABLE_ADS", "${localProperties.getProperty('ENABLE_ADS', 'false')}"
         
         // Manual database version for SQLiteAssetHelper
-        buildConfigField "int", "DATABASE_VERSION", "28"
+        buildConfigField "int", "DATABASE_VERSION", "29"
     }
     useLibrary 'org.apache.http.legacy'
 
