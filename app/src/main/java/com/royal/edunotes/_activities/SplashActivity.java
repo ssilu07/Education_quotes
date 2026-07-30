@@ -28,9 +28,16 @@ import com.royal.edunotes.R;
 import com.royal.edunotes.SettingsManager;
 import com.royal.edunotes.Utility;
 
+import android.net.Uri;
+import androidx.appcompat.app.AlertDialog;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
+import com.royal.edunotes.BuildConfig;
+
 public class SplashActivity extends AppCompatActivity {
 
     private static final int SPLASH_DURATION = 3000;
+    private long splashStartTime;
 
     private ImageView splashLogo;
     private TextView appName, tagline, features, versionText;
@@ -62,7 +69,8 @@ public class SplashActivity extends AppCompatActivity {
         initViews();
         startAnimations();
 
-        new Handler(Looper.getMainLooper()).postDelayed(this::navigateNext, SPLASH_DURATION);
+        splashStartTime = System.currentTimeMillis();
+        checkForUpdate();
     }
 
     private void initViews() {
@@ -206,6 +214,56 @@ public class SplashActivity extends AppCompatActivity {
         alpha.setStartDelay(startDelay);
         alpha.setInterpolator(new DecelerateInterpolator());
         alpha.start();
+    }
+
+    private void checkForUpdate() {
+        FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
+                .setMinimumFetchIntervalInSeconds(3600)
+                .build();
+        mFirebaseRemoteConfig.setConfigSettingsAsync(configSettings);
+        mFirebaseRemoteConfig.setDefaultsAsync(R.xml.remote_config_defaults);
+
+        mFirebaseRemoteConfig.fetchAndActivate()
+                .addOnCompleteListener(this, task -> {
+                    long forceUpdateVersionCode = mFirebaseRemoteConfig.getLong("force_update_version_code");
+                    if (BuildConfig.VERSION_CODE < forceUpdateVersionCode) {
+                        showForceUpdateDialog();
+                    } else {
+                        proceedToNextScreen();
+                    }
+                });
+    }
+
+    private void showForceUpdateDialog() {
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Update Required")
+                .setMessage("A new version of the app is available. Please update to continue using the app.")
+                .setCancelable(false)
+                .setPositiveButton("Update Now", (d, which) -> {
+                    try {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
+                    } catch (android.content.ActivityNotFoundException anfe) {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + getPackageName())));
+                    }
+                })
+                .create();
+                
+        dialog.setOnShowListener(d -> {
+            dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setTextColor(android.graphics.Color.parseColor("#1976D2")); // Visible Blue
+        });
+        dialog.show();
+    }
+
+    private void proceedToNextScreen() {
+        long elapsedTime = System.currentTimeMillis() - splashStartTime;
+        long remainingTime = SPLASH_DURATION - elapsedTime;
+
+        if (remainingTime > 0) {
+            new Handler(Looper.getMainLooper()).postDelayed(this::navigateNext, remainingTime);
+        } else {
+            navigateNext();
+        }
     }
 
     private void navigateNext() {
