@@ -25,6 +25,8 @@ import com.royal.edunotes.TTSHelper;
 import com.royal.edunotes.Utility;
 
 import android.net.Uri;
+import android.graphics.Bitmap;
+import com.royal.edunotes.ShareUtils;
 import com.squareup.picasso.Picasso;
 
 import androidx.annotation.NonNull;
@@ -275,10 +277,18 @@ public class SearchActivity extends AppCompatActivity {
         });
 
         btnShare.setOnClickListener(v -> {
-            Intent share = new Intent(Intent.ACTION_SEND);
-            share.setType("text/plain");
-            share.putExtra(Intent.EXTRA_TEXT, fullContent);
-            startActivity(Intent.createChooser(share, "Share via"));
+            Bitmap bitmap = null;
+            if (ivWordImage != null && ivWordImage.getVisibility() == View.VISIBLE && ivWordImage.getWidth() > 0 && ivWordImage.getHeight() > 0) {
+                try {
+                    bitmap = Bitmap.createBitmap(ivWordImage.getWidth(), ivWordImage.getHeight(), Bitmap.Config.ARGB_8888);
+                    android.graphics.Canvas canvas = new android.graphics.Canvas(bitmap);
+                    ivWordImage.draw(canvas);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            String shareText = fullContent + "\n\nDownload the app:\nhttps://play.google.com/store/apps/details?id=com.royal.edunotes";
+            ShareUtils.shareTextAndImage(this, shareText, bitmap);
         });
 
         btnTts.setOnClickListener(v -> ttsHelper.speak(fullContent));

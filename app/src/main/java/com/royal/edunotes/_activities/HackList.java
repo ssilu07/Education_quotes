@@ -231,12 +231,8 @@ public class HackList extends AppCompatActivity implements VerticlePagerAdapter.
     }
 
     @Override
-    public void onShareClick(QuoteModel quoteModel) {
-        Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, quoteModel.getQuote());
-        sendIntent.setType("text/plain");
-        startActivity(sendIntent);
+    public void onShareAsImageClick(View cardView, String text) {
+        ShareUtils.shareViewAsImage(this, cardView, text);
     }
 
     @Override
@@ -254,11 +250,6 @@ public class HackList extends AppCompatActivity implements VerticlePagerAdapter.
         if (!"ALL".equals(currentFilter)) {
             applyFilter();
         }
-    }
-
-    @Override
-    public void onShareAsImageClick(View cardView) {
-        ShareUtils.shareViewAsImage(this, cardView);
     }
 
     @Override

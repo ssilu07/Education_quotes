@@ -300,12 +300,8 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
     }
 
     @Override
-    public void onShareClick(QuoteModel quoteModel) {
-        Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, quoteModel.getQuote());
-        sendIntent.setType("text/plain");
-        startActivity(sendIntent);
+    public void onShareAsImageClick(View cardView, String text) {
+        ShareUtils.shareViewAsImage(getActivity(), cardView, text);
     }
 
     @Override
@@ -320,13 +316,6 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
         settingsManager.setWordLearned(quoteModel.getQuote(), newState);
         quoteModel.setLearned(newState);
         learnedLabel.setText(newState ? getString(R.string.learned_on_label) : getString(R.string.learned_off_label));
-    }
-
-    @Override
-    public void onShareAsImageClick(View cardView) {
-        if (getActivity() != null) {
-            ShareUtils.shareViewAsImage(getActivity(), cardView);
-        }
     }
 
     @Override

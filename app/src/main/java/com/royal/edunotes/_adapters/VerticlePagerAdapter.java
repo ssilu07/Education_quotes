@@ -335,9 +335,9 @@ public class VerticlePagerAdapter extends PagerAdapter {
 
         copy.setOnClickListener(view -> clickInterface.onCopyClick(currentQuote));
         starLL.setOnClickListener(view -> clickInterface.onBoookmarkClick(currentQuote, star));
-        share.setOnClickListener(view -> clickInterface.onShareClick(currentQuote));
+        share.setOnClickListener(view -> clickInterface.onShareAsImageClick(itemView.findViewById(R.id.card_view_vocab), currentQuote.getQuote()));
         share.setOnLongClickListener(view -> {
-            clickInterface.onShareAsImageClick(itemView.findViewById(R.id.card_view_vocab));
+            clickInterface.onShareAsImageClick(itemView.findViewById(R.id.card_view_vocab), currentQuote.getQuote());
             return true;
         });
         ttsLL.setOnClickListener(view -> clickInterface.onTTSClick(currentQuote));
@@ -391,9 +391,9 @@ public class VerticlePagerAdapter extends PagerAdapter {
 
         copy.setOnClickListener(view -> clickInterface.onCopyClick(currentQuote));
         starLLIdiom.setOnClickListener(view -> clickInterface.onBoookmarkClick(currentQuote, star_idiom));
-        share.setOnClickListener(view -> clickInterface.onShareClick(currentQuote));
+        share.setOnClickListener(view -> clickInterface.onShareAsImageClick(itemView.findViewById(R.id.card_view_idiom), currentQuote.getQuote()));
         share.setOnLongClickListener(view -> {
-            clickInterface.onShareAsImageClick(itemView.findViewById(R.id.card_view_idiom));
+            clickInterface.onShareAsImageClick(itemView.findViewById(R.id.card_view_idiom), currentQuote.getQuote());
             return true;
         });
         ttsLL.setOnClickListener(view -> clickInterface.onTTSClick(currentQuote));
@@ -530,14 +530,17 @@ public class VerticlePagerAdapter extends PagerAdapter {
                 llExplanation.setVisibility(View.VISIBLE);
             });
         }
-
         updateBookmarkStatus(currentQuote, position);
         final ImageView starQuiz = itemView.findViewById(R.id.star_quiz);
         starQuiz.setImageResource(currentQuote.isBookmared() ? R.drawable.starfilled : R.drawable.star);
 
-        itemView.findViewById(R.id.copyLLQuiz).setOnClickListener(v -> clickInterface.onCopyClick(currentQuote));
         itemView.findViewById(R.id.starLLQuiz).setOnClickListener(v -> clickInterface.onBoookmarkClick(currentQuote, starQuiz));
-        itemView.findViewById(R.id.shareLLQuiz).setOnClickListener(v -> clickInterface.onShareClick(currentQuote));
+        itemView.findViewById(R.id.shareLLQuiz).setOnClickListener(v -> clickInterface.onShareAsImageClick(itemView.findViewById(R.id.card_view_quiz), currentQuote.getQuote()));
+        itemView.findViewById(R.id.shareLLQuiz).setOnLongClickListener(v -> {
+            clickInterface.onShareAsImageClick(itemView.findViewById(R.id.card_view_quiz), currentQuote.getQuote());
+            return true;
+        });
+        itemView.findViewById(R.id.copyLLQuiz).setOnClickListener(v -> clickInterface.onCopyClick(currentQuote));
         itemView.findViewById(R.id.ttsLLQuiz).setOnClickListener(v -> clickInterface.onTTSClick(currentQuote));
     }
 
@@ -603,8 +606,7 @@ public class VerticlePagerAdapter extends PagerAdapter {
     public interface ClickInterface {
         void onBoookmarkClick(QuoteModel CategoryModel, ImageView star);
         void onCopyClick(QuoteModel CategoryModel);
-        void onShareClick(QuoteModel CategoryModel);
-        void onShareAsImageClick(View cardView);
+        void onShareAsImageClick(View cardView, String text);
         void onTTSClick(QuoteModel quoteModel);
         void onLearnedClick(QuoteModel quoteModel, TextView learnedLabel);
         void onQuizClick();
