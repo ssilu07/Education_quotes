@@ -7,6 +7,17 @@
     android:minHeight="500dp"
     android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/tv_card_counter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="5dp"
+        android:textColor="#808080"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:text="" />
+
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view_vocab"
         android:layout_width="match_parent"

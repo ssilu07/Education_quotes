@@ -236,6 +236,11 @@ public class VerticlePagerAdapter extends PagerAdapter {
 
         View itemView = mLayoutInflater.inflate(R.layout.content_main, container, false);
 
+        TextView tvCardCounter = itemView.findViewById(R.id.tv_card_counter);
+        if (tvCardCounter != null) {
+            tvCardCounter.setText((dataPos + 1) + " / " + quoteModels.size());
+        }
+
         if (isQuizCategory()) {
             setupQuizView(itemView, currentQuote, dataPos);
         } else if (Utility.ScreenCheck.equals("Vocab") || Utility.ScreenCheck.equals("Grammar")) {
