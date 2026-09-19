@@ -26,7 +26,7 @@ android {
         buildConfigField "boolean", "ENABLE_ADS", "${localProperties.getProperty('ENABLE_ADS', 'false')}"
         
         // Manual database version for SQLiteAssetHelper
-        buildConfigField "int", "DATABASE_VERSION", "65"
+        buildConfigField "int", "DATABASE_VERSION", "66"
     }
     useLibrary 'org.apache.http.legacy'
 

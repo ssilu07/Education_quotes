@@ -150,9 +150,10 @@ public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.Questi
         });
 
         holder.btnCopy.setOnClickListener(v -> {
+            String plainExp = com.royal.edunotes.ExplanationSpanFormatter.toPlainText(item.explanation);
             String copyText = formatted.plainText + "\n\nA) " + item.optA + "\nB) " + item.optB
                     + "\nC) " + item.optC + "\nD) " + item.optD + "\n\nAnswer: " + item.correctAnswer
-                    + "\nExplanation: " + item.explanation;
+                    + "\nExplanation:\n" + plainExp;
             ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clip = ClipData.newPlainText("quiz_question", copyText);
             if (clipboard != null) {
@@ -171,8 +172,9 @@ public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.Questi
                 QuoteModel quote = new QuoteModel();
                 quote.setId(item.id);
                 quote.setQuote(noteContent);
-                String exp = (item.explanation != null && !item.explanation.trim().isEmpty())
-                        ? "Explanation:\n" + item.explanation.trim() : "Correct Answer: " + item.correctAnswer;
+                String plainExp = com.royal.edunotes.ExplanationSpanFormatter.toPlainText(item.explanation);
+                String exp = (!plainExp.isEmpty())
+                        ? "Explanation:\n" + plainExp : "Correct Answer: " + item.correctAnswer;
                 quote.setValue(exp);
                 quote.setCategoryName("Quiz: " + (quizTitle != null ? quizTitle : dbname));
                 quote.setBookmark("1");
@@ -271,10 +273,10 @@ public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.Questi
             // Explanation container
             String expText = (item.explanation != null && !item.explanation.trim().isEmpty())
                     ? item.explanation.trim() : "Correct Answer: " + item.correctAnswer;
-            holder.tvExplanationText.setText(expText);
+            holder.tvExplanationText.setText(com.royal.edunotes.ExplanationSpanFormatter.format(context, expText));
             if (isDark) {
-                holder.layoutExplanation.setBackgroundColor(Color.parseColor("#1B2E1E"));
-                holder.tvExplanationText.setTextColor(Color.parseColor("#E0E0E0"));
+                holder.layoutExplanation.setBackgroundColor(Color.parseColor("#1E293B"));
+                holder.tvExplanationText.setTextColor(Color.parseColor("#E2E8F0"));
             } else {
                 holder.layoutExplanation.setBackgroundResource(R.drawable.bg_explanation_box);
                 holder.tvExplanationText.setTextColor(Color.parseColor("#263238"));

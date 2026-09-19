@@ -226,7 +226,8 @@ public class QuizActivity extends AppCompatActivity {
                 QuizItem item = quizList.get(currentQuestionIndex);
                 com.royal.edunotes.QuestionSpanFormatter.FormattedQuestion formatted =
                         com.royal.edunotes.QuestionSpanFormatter.format(this, item.question);
-                String copyText = formatted.plainText + "\n\nA) " + item.optA + "\nB) " + item.optB + "\nC) " + item.optC + "\nD) " + item.optD + "\n\nAnswer: " + item.correctAnswer + "\nExplanation: " + item.explanation;
+                String plainExp = com.royal.edunotes.ExplanationSpanFormatter.toPlainText(item.explanation);
+                String copyText = formatted.plainText + "\n\nA) " + item.optA + "\nB) " + item.optB + "\nC) " + item.optC + "\nD) " + item.optD + "\n\nAnswer: " + item.correctAnswer + "\nExplanation:\n" + plainExp;
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("quiz_question", copyText);
                 clipboard.setPrimaryClip(clip);
@@ -248,8 +249,9 @@ public class QuizActivity extends AppCompatActivity {
                     QuoteModel quote = new QuoteModel();
                     quote.setId(item.id);
                     quote.setQuote(noteContent);
-                    String exp = (item.explanation != null && !item.explanation.trim().isEmpty())
-                            ? "Explanation:\n" + item.explanation.trim() : "Correct Answer: " + item.correctAnswer;
+                    String plainExp = com.royal.edunotes.ExplanationSpanFormatter.toPlainText(item.explanation);
+                    String exp = (!plainExp.isEmpty())
+                            ? "Explanation:\n" + plainExp : "Correct Answer: " + item.correctAnswer;
                     quote.setValue(exp);
                     quote.setCategoryName("Quiz: " + (quizTitle != null ? quizTitle : dbname));
                     quote.setBookmark("1");
@@ -409,6 +411,11 @@ public class QuizActivity extends AppCompatActivity {
         String correct = item.correctAnswer.trim();
         boolean isCorrect = selected.equalsIgnoreCase(correct);
 
+        boolean isDark = false;
+        try {
+            isDark = new com.royal.edunotes.SettingsManager(this).isDarkMode();
+        } catch (Exception ignored) {}
+
         if (isCorrect) {
             score++;
             tvScoreBadge.setText("Score: " + score);
@@ -416,18 +423,18 @@ public class QuizActivity extends AppCompatActivity {
             cards[optionIndex].setBackgroundResource(R.drawable.bg_quiz_option_correct);
             badges[optionIndex].setBackgroundResource(R.drawable.bg_option_badge_correct);
             badges[optionIndex].setTextColor(Color.WHITE);
-            texts[optionIndex].setTextColor(Color.parseColor("#1B5E20"));
+            texts[optionIndex].setTextColor(isDark ? Color.parseColor("#4ADE80") : Color.parseColor("#1B5E20"));
             icons[optionIndex].setImageResource(R.drawable.ic_check_circle);
             icons[optionIndex].setVisibility(View.VISIBLE);
 
             tvExplanationTitle.setText("✅ Correct Answer");
-            tvExplanationTitle.setTextColor(Color.parseColor("#2E7D32"));
-            cardExplanation.setCardBackgroundColor(Color.parseColor("#E8F5E9"));
+            tvExplanationTitle.setTextColor(isDark ? Color.parseColor("#4ADE80") : Color.parseColor("#2E7D32"));
+            cardExplanation.setCardBackgroundColor(isDark ? Color.parseColor("#0F291E") : Color.parseColor("#E8F5E9"));
         } else {
             cards[optionIndex].setBackgroundResource(R.drawable.bg_quiz_option_wrong);
             badges[optionIndex].setBackgroundResource(R.drawable.bg_option_badge_wrong);
             badges[optionIndex].setTextColor(Color.WHITE);
-            texts[optionIndex].setTextColor(Color.parseColor("#B71C1C"));
+            texts[optionIndex].setTextColor(isDark ? Color.parseColor("#F87171") : Color.parseColor("#B71C1C"));
             icons[optionIndex].setImageResource(R.drawable.ic_close_circle);
             icons[optionIndex].setVisibility(View.VISIBLE);
 
@@ -437,18 +444,23 @@ public class QuizActivity extends AppCompatActivity {
                     cards[i].setBackgroundResource(R.drawable.bg_quiz_option_correct);
                     badges[i].setBackgroundResource(R.drawable.bg_option_badge_correct);
                     badges[i].setTextColor(Color.WHITE);
-                    texts[i].setTextColor(Color.parseColor("#1B5E20"));
+                    texts[i].setTextColor(isDark ? Color.parseColor("#4ADE80") : Color.parseColor("#1B5E20"));
                     icons[i].setImageResource(R.drawable.ic_check_circle);
                     icons[i].setVisibility(View.VISIBLE);
                 }
             }
 
             tvExplanationTitle.setText("❌ Incorrect. Correct Answer: " + item.correctAnswer);
-            tvExplanationTitle.setTextColor(Color.parseColor("#C62828"));
-            cardExplanation.setCardBackgroundColor(Color.parseColor("#FFF3E0"));
+            tvExplanationTitle.setTextColor(isDark ? Color.parseColor("#F87171") : Color.parseColor("#C62828"));
+            cardExplanation.setCardBackgroundColor(isDark ? Color.parseColor("#2D1515") : Color.parseColor("#FFF3E0"));
         }
 
-        tvExplanationText.setText(item.explanation);
+        tvExplanationText.setText(com.royal.edunotes.ExplanationSpanFormatter.format(this, item.explanation));
+        if (isDark) {
+            tvExplanationText.setTextColor(Color.parseColor("#E2E8F0"));
+        } else {
+            tvExplanationText.setTextColor(Color.parseColor("#263238"));
+        }
         cardExplanation.setVisibility(View.VISIBLE);
         btnNextQuestion.setVisibility(View.VISIBLE);
         if (scrollQuiz != null) {
