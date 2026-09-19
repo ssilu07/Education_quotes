@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import com.royal.edunotes.R;
 import com.royal.edunotes.SettingsManager;
+import com.royal.edunotes.WindowInsetsHelper;
 
 public class NotificationDetailActivity extends AppCompatActivity {
 
@@ -18,6 +19,7 @@ public class NotificationDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_notification_detail);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
+        WindowInsetsHelper.applyEdgeToEdge(this, toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle("Notification");

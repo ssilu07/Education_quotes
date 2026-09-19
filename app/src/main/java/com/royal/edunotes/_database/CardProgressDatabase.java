@@ -33,22 +33,33 @@ public class CardProgressDatabase extends SQLiteOpenHelper {
     }
 
     public void markViewed(String dbName, int cardId) {
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(COL_DB, dbName);
-        cv.put(COL_CARD, cardId);
-        db.insertWithOnConflict(TABLE, null, cv, SQLiteDatabase.CONFLICT_IGNORE);
-        db.close();
+        SQLiteDatabase db = null;
+        try {
+            db = getWritableDatabase();
+            ContentValues cv = new ContentValues();
+            cv.put(COL_DB, dbName);
+            cv.put(COL_CARD, cardId);
+            db.insertWithOnConflict(TABLE, null, cv, SQLiteDatabase.CONFLICT_IGNORE);
+        } catch (Exception ignored) {
+        } finally {
+            if (db != null) db.close();
+        }
     }
 
     public int getViewedCount(String dbName) {
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor c = db.query(TABLE, new String[]{"COUNT(*)"}, COL_DB + "=?",
-                new String[]{dbName}, null, null, null);
+        SQLiteDatabase db = null;
+        Cursor c = null;
         int count = 0;
-        if (c.moveToFirst()) count = c.getInt(0);
-        c.close();
-        db.close();
+        try {
+            db = getReadableDatabase();
+            c = db.query(TABLE, new String[]{"COUNT(*)"}, COL_DB + "=?",
+                    new String[]{dbName}, null, null, null);
+            if (c != null && c.moveToFirst()) count = c.getInt(0);
+        } catch (Exception ignored) {
+        } finally {
+            if (c != null) c.close();
+            if (db != null) db.close();
+        }
         return count;
     }
 }

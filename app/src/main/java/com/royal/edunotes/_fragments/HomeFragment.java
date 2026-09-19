@@ -128,54 +128,52 @@ public class HomeFragment extends Fragment implements CategoryAdapter.CategoryCl
     }
 
     private void prepareMovieData() {
-        String[] catdata;
-        String[] dbdata;
-
         CardProgressDatabase progressDb = new CardProgressDatabase(getActivity());
+        List<com.royal.edunotes.CategoryDataProvider.Category> allCats = com.royal.edunotes.CategoryDataProvider.getAllCategories();
 
-        if (Utility.ScreenCheck.equals("Vocab")) {
-            catdata = getResources().getStringArray(R.array.mycat);
-            dbdata = getResources().getStringArray(R.array.mydb);
+        for (int i = 0; i < allCats.size(); i++) {
+            com.royal.edunotes.CategoryDataProvider.Category cat = allCats.get(i);
+            int totalCount = 0;
+            int viewedCount = 0;
 
-            Log.e("Tag===", "SIZE : " + catdata.length + "   " + dbdata.length);
-
-            for (int i = 0; i < catdata.length; i++) {
-                int totalCount = 0;
-                int viewedCount = 0;
-                try {
-                    MyDatabase myDb = new MyDatabase(getActivity(), dbdata[i], catdata[i]);
-                    totalCount = myDb.getTotalCount();
-                    viewedCount = progressDb.getViewedCount(dbdata[i]);
-                } catch (Exception e) {
-                    Log.e("Tag===", "Error getting progress: " + e.getMessage());
+            for (com.royal.edunotes.CategoryDataProvider.SubCategory sub : cat.subCategories) {
+                if (sub.hasSets()) {
+                    for (com.royal.edunotes.CategoryDataProvider.SubCategory set : sub.subSets) {
+                        try {
+                            MyDatabase myDb = new MyDatabase(getActivity(), set.dbName, set.title);
+                            totalCount += myDb.getTotalCount();
+                            viewedCount += progressDb.getViewedCount(set.dbName);
+                        } catch (Exception e) {
+                            Log.e("Tag===", "Error getting progress: " + e.getMessage());
+                        }
+                    }
+                } else {
+                    try {
+                        MyDatabase myDb = new MyDatabase(getActivity(), sub.dbName, sub.title);
+                        totalCount += myDb.getTotalCount();
+                        viewedCount += progressDb.getViewedCount(sub.dbName);
+                    } catch (Exception e) {
+                        Log.e("Tag===", "Error getting progress: " + e.getMessage());
+                    }
                 }
-                CategoryModel movie = new CategoryModel(catdata[i], dbdata[i], viewedCount, totalCount);
-                movieList.add(movie);
             }
-        } else {
-            catdata = getResources().getStringArray(R.array.myidiomcat);
-            dbdata = getResources().getStringArray(R.array.myidiomdb);
-
-            Log.e("Tag===", "SIZE : " + catdata.length + "   " + dbdata.length);
-
-            for (int i = 0; i < catdata.length; i++) {
-                int totalCount = 0;
-                int viewedCount = 0;
-                try {
-                    MyDatabase myDb = new MyDatabase(getActivity(), dbdata[i], catdata[i]);
-                    totalCount = myDb.getTotalCount();
-                    viewedCount = progressDb.getViewedCount(dbdata[i]);
-                } catch (Exception e) {
-                    Log.e("Tag===", "Error getting progress: " + e.getMessage());
-                }
-                CategoryModel movie = new CategoryModel(catdata[i], dbdata[i], viewedCount, totalCount);
-                movieList.add(movie);
-            }
+            
+            CategoryModel movie = new CategoryModel(cat.title, String.valueOf(i), viewedCount, totalCount);
+            movieList.add(movie);
         }
 
         recyclerView.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.INVISIBLE);
         mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (movieList != null) {
+            movieList.clear();
+            prepareMovieData();
+        }
     }
 
     public void onButtonPressed(Uri uri) {
@@ -201,40 +199,29 @@ public class HomeFragment extends Fragment implements CategoryAdapter.CategoryCl
         mListener = null;
     }
 
-    @Override
     public void categoryClick(CategoryModel categoryModel) {
-//        Toast.makeText(getActivity(), categoryModel.getTitle(), Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(getActivity(), HackList.class);
-        intent.putExtra(Utility.TITLE_KEY, categoryModel.getTitle());
-        intent.putExtra(Utility.DBNAME_KEY, categoryModel.getDbname());
-        startActivity(intent);
-        if (BuildConfig.ENABLE_ADS) showInterstitial();
+        int categoryIndex = Integer.parseInt(categoryModel.getDbname());
+        List<com.royal.edunotes.CategoryDataProvider.Category> allCats = com.royal.edunotes.CategoryDataProvider.getAllCategories();
+        com.royal.edunotes.CategoryDataProvider.Category selected = allCats.get(categoryIndex);
 
+        if (selected.subCategories.size() == 1) {
+            com.royal.edunotes.CategoryDataProvider.SubCategory sub = selected.subCategories.get(0);
+            Utility.ScreenCheck = selected.screenCheck;
+            Intent intent = new Intent(getActivity(), HackList.class);
+            intent.putExtra(Utility.TITLE_KEY, sub.title);
+            intent.putExtra(Utility.DBNAME_KEY, sub.dbName);
+            startActivity(intent);
+        } else {
+            Intent intent = new Intent(getActivity(), com.royal.edunotes._activities.SubCategoryActivity.class);
+            intent.putExtra("CATEGORY_INDEX", categoryIndex);
+            intent.putExtra(Utility.TITLE_KEY, selected.title);
+            intent.putExtra("SCREEN_CHECK", selected.screenCheck);
+            startActivity(intent);
+        }
 
-/*
-        mInterstitialAd = new InterstitialAd(getActivity());
-
-     //    set the ad unit ID
-        mInterstitialAd.setAdUnitId(getString(R.string.interstitial_full_screen));
-
-        AdRequest adRequest = new AdRequest.Builder()
-                .build();
-*/
-
-        // Load ads into Interstitial Ads
-     //   mInterstitialAd.loadAd(adRequest);
-
-     /*   mInterstitialAd.setAdListener(new AdListener() {
-            public void onAdLoaded() {
-                showInterstitial();
-            }
-
-            @Override
-            public void onAdFailedToLoad(int i) {
-                super.onAdFailedToLoad(i);
-                Log.e("TAG===", "Error ad :" + i);
-            }
-        });*/
+        if (BuildConfig.ENABLE_ADS) {
+            // showInterstitial();
+        }
     }
 
    /* private void showInterstitial() {

@@ -37,6 +37,12 @@ import com.royal.edunotes._models.QuoteModel;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.widget.ProgressBar;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import static android.content.Context.CLIPBOARD_SERVICE;
 
 public class LatestFragment extends Fragment implements VerticlePagerAdapter.ClickInterface {
@@ -47,12 +53,16 @@ public class LatestFragment extends Fragment implements VerticlePagerAdapter.Cli
     DatabaseHelper db;
     private OnFragmentInteractionListener mListener;
     ArrayList<QuoteModel> mainQuoteModels;
-    MyDatabase myDatabase;
     VerticlePagerAdapter verticlePagerAdapter;
     TTSHelper ttsHelper;
     AIExplainHelper aiExplainHelper;
     ProgressManager progressManager;
     SettingsManager settingsManager;
+    private ProgressBar progressBar;
+    private TextView noDataTxt;
+    private VerticalViewPager verticalViewPager;
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     public LatestFragment() {
     }
@@ -78,10 +88,6 @@ public class LatestFragment extends Fragment implements VerticlePagerAdapter.Cli
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        MenuItem item = menu.findItem(R.id.action_search);
-//        MenuItem item1 = menu.findItem(R.id.action_todayquote);
-//        item1.setVisible(false);
-//        item.setVisible(false);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -90,57 +96,77 @@ public class LatestFragment extends Fragment implements VerticlePagerAdapter.Cli
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_latest, container, false);
 
-        mainQuoteModels = new ArrayList<>();
-
-
-        String[] catdata;
-        String[] dbdata;
-
-        if (Utility.ScreenCheck.equals("Vocab")) {
-            catdata = getResources().getStringArray(R.array.mycat);
-            dbdata = getResources().getStringArray(R.array.mydb);
-        } else {
-            catdata = getResources().getStringArray(R.array.myidiomcat);
-            dbdata = getResources().getStringArray(R.array.myidiomdb);
-        }
-
-        for (int i = 0; i < Math.min(dbdata.length, catdata.length); i++) {
-            myDatabase = new MyDatabase(getActivity(), dbdata[i], catdata[i]);
-            ArrayList<QuoteModel> quoteModels = myDatabase.getPoses();
-            mainQuoteModels.addAll(quoteModels);
-        }
-
-        Log.d("TAG", "MainQuoteModels size: " + mainQuoteModels.size());
-
-
-//        for (int i = 0; i < mainQuoteModels.size(); i++) {
-//            db = new DatabaseHelper(getActivity(), mainQuoteModels.get(i));
-//            db.insertNote(mainQuoteModels.get(i));
-//            Log.e("TAG===", "TIME : " + i);
-//
-//        }
-
-
-        Log.e("TAG===", "SIZEEEE==" + mainQuoteModels.size());
-
-        Collections.shuffle(mainQuoteModels);
-        VerticalViewPager verticalViewPager = (VerticalViewPager) v.findViewById(R.id.vPager);
-
-
-        db = new DatabaseHelper(getActivity());
-        ArrayList<ModelDatabase> modelDatabases = (ArrayList<ModelDatabase>) db.getAllNotes();
-        Log.e("TAG1===", "SIZEEEE : " + modelDatabases.size());
-
+        verticalViewPager = (VerticalViewPager) v.findViewById(R.id.vPager);
+        progressBar = (ProgressBar) v.findViewById(R.id.progressBar);
+        noDataTxt = (TextView) v.findViewById(R.id.noDataTxt);
 
         ttsHelper = new TTSHelper(getActivity());
         aiExplainHelper = new AIExplainHelper();
         progressManager = new ProgressManager(getActivity());
         settingsManager = new SettingsManager(getActivity());
-        verticlePagerAdapter = new VerticlePagerAdapter(getActivity(), mainQuoteModels, this, modelDatabases);
-        verticalViewPager.setOffscreenPageLimit(0);
-        verticalViewPager.setAdapter(verticlePagerAdapter);
+
+        loadLatestData();
 
         return v;
+    }
+
+    private void loadLatestData() {
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+        if (noDataTxt != null) noDataTxt.setVisibility(View.GONE);
+        if (verticalViewPager != null) verticalViewPager.setVisibility(View.GONE);
+
+        executor.execute(() -> {
+            ArrayList<QuoteModel> loadedQuotes = new ArrayList<>();
+            java.util.List<com.royal.edunotes.CategoryDataProvider.Category> allCats = com.royal.edunotes.CategoryDataProvider.getAllCategories();
+            for (com.royal.edunotes.CategoryDataProvider.Category cat : allCats) {
+                for (com.royal.edunotes.CategoryDataProvider.SubCategory sub : cat.subCategories) {
+                    // Skip quiz categories (they have questions table, not inspiring_life_quote)
+                    if (sub.hasSets() || (sub.screenCheck != null && "Quiz".equalsIgnoreCase(sub.screenCheck))) {
+                        continue;
+                    }
+                    try {
+                        if (getActivity() == null) return;
+                        MyDatabase myDb = new MyDatabase(getActivity(), sub.dbName, sub.title);
+                        ArrayList<QuoteModel> quoteModels = myDb.getPoses();
+                        if (quoteModels != null && !quoteModels.isEmpty()) {
+                            loadedQuotes.addAll(quoteModels);
+                        }
+                    } catch (Exception e) {
+                        Log.e("LatestFragment", "Error loading DB: " + sub.dbName, e);
+                    }
+                }
+            }
+
+            Collections.shuffle(loadedQuotes);
+
+            ArrayList<ModelDatabase> modelDatabases = new ArrayList<>();
+            try {
+                if (getActivity() != null) {
+                    DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
+                    modelDatabases = (ArrayList<ModelDatabase>) dbHelper.getAllNotes();
+                }
+            } catch (Exception ignored) {}
+
+            final ArrayList<ModelDatabase> finalModelDb = modelDatabases;
+            mainHandler.post(() -> {
+                if (!isAdded() || getActivity() == null) return;
+                mainQuoteModels = loadedQuotes;
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
+
+                if (mainQuoteModels.isEmpty()) {
+                    if (noDataTxt != null) noDataTxt.setVisibility(View.VISIBLE);
+                    if (verticalViewPager != null) verticalViewPager.setVisibility(View.GONE);
+                } else {
+                    if (noDataTxt != null) noDataTxt.setVisibility(View.GONE);
+                    if (verticalViewPager != null) {
+                        verticalViewPager.setVisibility(View.VISIBLE);
+                        verticlePagerAdapter = new VerticlePagerAdapter(getActivity(), mainQuoteModels, LatestFragment.this, finalModelDb);
+                        verticalViewPager.setOffscreenPageLimit(0);
+                        verticalViewPager.setAdapter(verticlePagerAdapter);
+                    }
+                }
+            });
+        });
     }
 
     public void onButtonPressed(Uri uri) {
@@ -199,34 +225,30 @@ public class LatestFragment extends Fragment implements VerticlePagerAdapter.Cli
         });*/
 
 
-        if (quoteModel.isBookmared()) {
-//            Remove from bookmark table
+        if (quoteModel == null || quoteModel.getQuote() == null) return;
 
+        if (db == null) {
+            db = new DatabaseHelper(getActivity());
+        }
 
-            db = new DatabaseHelper(getActivity(), quoteModel);
+        boolean isCurrentlyBookmarked = db.isBookmarked(quoteModel.getQuote());
 
+        if (isCurrentlyBookmarked) {
             db.deleteNote(quoteModel);
-
-
-            star.setImageDrawable(getResources().getDrawable(R.drawable.star));
+            star.setImageResource(R.drawable.star);
             quoteModel.setBookmared(false);
-            verticlePagerAdapter.notifyDataSetChanged();
-
-
+            quoteModel.setBookmark("0");
+            if (verticlePagerAdapter != null) {
+                verticlePagerAdapter.setBookmarked(quoteModel.getQuote(), false);
+            }
         } else {
-
-//           Add in to bookmark table
-
-            db = new DatabaseHelper(getActivity(), quoteModel);
-
             quoteModel.setBookmark("1");
-
-            db.insertNote(quoteModel);
-
-
-            star.setImageDrawable(getResources().getDrawable(R.drawable.starfilled));
             quoteModel.setBookmared(true);
-            verticlePagerAdapter.notifyDataSetChanged();
+            db.insertNote(quoteModel);
+            star.setImageResource(R.drawable.starfilled);
+            if (verticlePagerAdapter != null) {
+                verticlePagerAdapter.setBookmarked(quoteModel.getQuote(), true);
+            }
             if (progressManager != null) progressManager.onWordBookmarked();
         }
     }
@@ -284,6 +306,7 @@ public class LatestFragment extends Fragment implements VerticlePagerAdapter.Cli
 
     @Override
     public void onDestroy() {
+        if (executor != null) executor.shutdown();
         if (verticlePagerAdapter != null) verticlePagerAdapter.cleanup();
         if (ttsHelper != null) ttsHelper.shutdown();
         if (aiExplainHelper != null) aiExplainHelper.shutdown();

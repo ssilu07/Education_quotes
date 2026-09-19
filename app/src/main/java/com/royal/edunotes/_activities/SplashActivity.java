@@ -236,6 +236,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void showForceUpdateDialog() {
+        if (isFinishing() || isDestroyed()) return;
         androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle("Update Required")
                 .setMessage("A new version of the app is available. Please update to continue using the app.")
@@ -267,6 +268,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void navigateNext() {
+        if (isFinishing() || isDestroyed()) return;
         Intent intent;
         
         // Check if app was launched from a Firebase Notification tap (Data payload is in Intent extras)
@@ -285,8 +287,9 @@ public class SplashActivity extends AppCompatActivity {
             
             // Check for vocab searches (case insensitive keys)
             for (String key : extras.keySet()) {
-                String val = extras.getString(key);
-                if (val == null) continue;
+                Object rawVal = extras.get(key);
+                if (rawVal == null) continue;
+                String val = String.valueOf(rawVal);
                 
                 String lowerKey = key.toLowerCase();
                 if (lowerKey.equals("search") || lowerKey.equals("vocab") || lowerKey.equals("idiom")) {
@@ -316,7 +319,7 @@ public class SplashActivity extends AppCompatActivity {
         } else if (prefManager.isFirstTimeLaunch()) {
             intent = new Intent(this, WelcomeActivity.class);
         } else {
-            intent = new Intent(this, SelectedActivity.class);
+            intent = new Intent(this, MainActivity.class);
         }
         
         startActivity(intent);

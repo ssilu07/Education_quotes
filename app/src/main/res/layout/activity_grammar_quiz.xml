@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/surfaceBackground">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+    <!-- Progress & Score Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="12dp"
+        android:gravity="center_vertical">
+        
+        <TextView
+            android:id="@+id/tv_streak"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Question 1/50"
+            android:textColor="@color/textSecondary"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Score: 0"
+            android:textColor="@color/colorPrimary"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/quiz_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:layout_marginHorizontal="20dp"
+        android:max="50"
+        android:progress="0"
+        android:progressDrawable="@drawable/custom_progress_bar"
+        android:progressTint="@color/colorPrimary" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- Question Card -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/quiz_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/cardBackground">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <TextView
+                        android:id="@+id/tv_question"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Loading quiz..."
+                        android:textColor="@color/textPrimary"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="16dp"
+                        android:lineSpacingExtra="6dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="end">
+
+                        <ImageView
+                            android:id="@+id/btn_share"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="16dp"
+                            android:src="@drawable/share"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:clickable="true"
+                            app:tint="@android:color/darker_gray" />
+
+                        <ImageView
+                            android:id="@+id/btn_copy"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="16dp"
+                            android:src="@drawable/copy"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:clickable="true"
+                            app:tint="@android:color/darker_gray" />
+
+                        <ImageView
+                            android:id="@+id/btn_bookmark"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/star"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:clickable="true"
+                            app:tint="@android:color/darker_gray" />
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Options -->
+            <LinearLayout
+                android:id="@+id/options_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/btn_option1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:background="@drawable/bg_quiz_option"
+                    android:textColor="@color/textPrimary"
+                    android:textSize="16sp"
+                    android:padding="16dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground" />
+
+                <TextView
+                    android:id="@+id/btn_option2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:background="@drawable/bg_quiz_option"
+                    android:textColor="@color/textPrimary"
+                    android:textSize="16sp"
+                    android:padding="16dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground" />
+
+                <TextView
+                    android:id="@+id/btn_option3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:background="@drawable/bg_quiz_option"
+                    android:textColor="@color/textPrimary"
+                    android:textSize="16sp"
+                    android:padding="16dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground" />
+
+                <TextView
+                    android:id="@+id/btn_option4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_quiz_option"
+                    android:textColor="@color/textPrimary"
+                    android:textSize="16sp"
+                    android:padding="16dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground" />
+            </LinearLayout>
+
+            <!-- Explanation Card (Hidden initially) -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_explanation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone"
+                app:cardBackgroundColor="#F5F5F5"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tv_exam_tag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="#E0E0E0"
+                        android:paddingHorizontal="8dp"
+                        android:paddingVertical="4dp"
+                        android:text="[SSC CGL]"
+                        android:textColor="#424242"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="8dp"/>
+
+                    <TextView
+                        android:id="@+id/tv_explanation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Explanation goes here"
+                        android:textColor="#333333"
+                        android:textSize="15sp"
+                        android:lineSpacingExtra="4dp"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Next Button (Hidden initially) -->
+            <Button
+                android:id="@+id/btn_next"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="@color/colorPrimary"
+                android:text="Next Question"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:paddingVertical="12dp"
+                android:visibility="gone"
+                android:layout_marginBottom="24dp"
+                app:cornerRadius="12dp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Result Layout -->
+    <LinearLayout
+        android:id="@+id/result_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="24dp"
+        android:visibility="gone"
+        android:background="@color/surfaceBackground">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_star_border"
+            app:tint="@color/colorPrimary"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:id="@+id/tv_result_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quiz Complete!"
+            android:textColor="@color/textPrimary"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/tv_result_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="You scored 40/50"
+            android:textColor="@color/textSecondary"
+            android:textSize="18sp"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:id="@+id/tv_result_xp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+100 XP"
+            android:textColor="#4CAF50"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/tv_result_badges"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Grammar Master Badge Unlocked!"
+            android:textColor="#FF9800"
+            android:textSize="16sp"
+            android:layout_marginBottom="32dp"/>
+
+        <Button
+            android:id="@+id/btn_play_again"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Play Again"
+            android:backgroundTint="@color/colorPrimary"
+            android:textColor="@android:color/white"
+            android:paddingVertical="12dp"
+            app:cornerRadius="12dp"
+            android:layout_marginBottom="12dp"/>
+
+        <Button
+            android:id="@+id/btn_go_home"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Back to Topics"
+            android:backgroundTint="#E0E0E0"
+            android:textColor="#333333"
+            android:paddingVertical="12dp"
+            app:cornerRadius="12dp"/>
+    </LinearLayout>
+</LinearLayout>

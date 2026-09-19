@@ -71,6 +71,19 @@
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
+                    <TextView
+                        android:id="@+id/tv_vocab_detail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:background="#E8F5E9"
+                        android:padding="12dp"
+                        android:lineSpacingExtra="4dp"
+                        android:textColor="#2E7D32"
+                        android:textSize="15sp"
+                        android:visibility="gone" />
+
+
                 </LinearLayout>
             </ScrollView>
 
@@ -81,7 +94,7 @@
                 android:background="@color/cardBackground"
                 android:baselineAligned="false"
                 android:orientation="horizontal"
-                android:weightSum="1">
+                android:weightSum="1.2">
 
                 <LinearLayout
                     android:id="@+id/copyLLVocab"
@@ -130,6 +143,23 @@
                         android:layout_gravity="center"
                         android:contentDescription="Share"
                         android:src="@drawable/newshareee" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/quizLLVocab"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.2"
+                    android:visibility="gone"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="Quiz"
+                        android:src="@drawable/ic_quiz" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -225,6 +255,19 @@
                         android:textColor="@android:color/black"
                         android:textSize="18sp"
                         android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_idiom_detail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:background="#E8F5E9"
+                        android:padding="12dp"
+                        android:lineSpacingExtra="4dp"
+                        android:textColor="#2E7D32"
+                        android:textSize="15sp"
+                        android:visibility="gone" />
+
 
                 </LinearLayout>
             </ScrollView>

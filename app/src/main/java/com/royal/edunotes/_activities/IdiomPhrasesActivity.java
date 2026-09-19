@@ -21,6 +21,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.royal.edunotes.CustomViewPager;
 import com.royal.edunotes.NotificationHelper;
 import com.royal.edunotes.R;
+import com.royal.edunotes.WindowInsetsHelper;
 import com.royal.edunotes._database.DatabaseHelper;
 import com.royal.edunotes._fragments.BookmarkFragment;
 import com.royal.edunotes._fragments.HomeFragment;
@@ -58,6 +59,7 @@ public class IdiomPhrasesActivity extends AppCompatActivity implements HomeFragm
         NotificationHelper.enableBootReceiver(getApplicationContext());
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        WindowInsetsHelper.applyEdgeToEdge(this, mToolbar);
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);

@@ -46,21 +46,41 @@ public class AIExplainHelper {
                     prefs.edit().putString(cacheKey, explanation).apply();
                 }
 
-                ((android.app.Activity) context).runOnUiThread(() -> {
-                    loadingDialog.dismiss();
-                    if (explanation != null && !explanation.isEmpty()) {
-                        showExplanationDialog(context, vocabText, explanation);
-                    } else {
-                        showExplanationDialog(context, vocabText, "No explanation available.");
-                    }
-                });
+                if (context instanceof android.app.Activity) {
+                    android.app.Activity act = (android.app.Activity) context;
+                    act.runOnUiThread(() -> {
+                        try {
+                            if (loadingDialog.isShowing()) {
+                                loadingDialog.dismiss();
+                            }
+                        } catch (Exception ignored) {}
+
+                        if (!act.isFinishing() && !act.isDestroyed()) {
+                            if (explanation != null && !explanation.isEmpty()) {
+                                showExplanationDialog(act, vocabText, explanation);
+                            } else {
+                                showExplanationDialog(act, vocabText, "No explanation available.");
+                            }
+                        }
+                    });
+                }
 
             } catch (Exception e) {
                 Log.e("AIExplain", "Error", e);
-                ((android.app.Activity) context).runOnUiThread(() -> {
-                    loadingDialog.dismiss();
-                    showExplanationDialog(context, vocabText, "Error: " + e.getMessage());
-                });
+                if (context instanceof android.app.Activity) {
+                    android.app.Activity act = (android.app.Activity) context;
+                    act.runOnUiThread(() -> {
+                        try {
+                            if (loadingDialog.isShowing()) {
+                                loadingDialog.dismiss();
+                            }
+                        } catch (Exception ignored) {}
+
+                        if (!act.isFinishing() && !act.isDestroyed()) {
+                            showExplanationDialog(act, vocabText, "Error: " + e.getMessage());
+                        }
+                    });
+                }
             }
         });
     }

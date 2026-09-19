@@ -20,9 +20,12 @@ import androidx.cardview.widget.CardView;
 
 import com.royal.edunotes.BuildConfig;
 import com.royal.edunotes.GeminiApi;
+import com.royal.edunotes.ProgressManager;
 import com.royal.edunotes.R;
 import com.royal.edunotes.TTSHelper;
 import com.royal.edunotes.Utility;
+import com.royal.edunotes._database.DatabaseHelper;
+import com.royal.edunotes._models.QuoteModel;
 
 import android.net.Uri;
 import android.graphics.Bitmap;
@@ -65,6 +68,8 @@ public class SearchActivity extends AppCompatActivity {
     private String fullContent = "";
     private boolean isBookmarked = false;
     
+    private DatabaseHelper dbHelper;
+    private ProgressManager progressManager;
     private AdView mAdView;
     private InterstitialAd mInterstitialAd;
 
@@ -73,7 +78,11 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+        dbHelper = new DatabaseHelper(this);
+        progressManager = new ProgressManager(this);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
+        com.royal.edunotes.WindowInsetsHelper.applyEdgeToEdge(this, toolbar);
         setSupportActionBar(toolbar);
 
         String query = getIntent().getStringExtra(Utility.SEARCH_KEY);
@@ -264,6 +273,14 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void setupBottomActions() {
+        if (progressManager != null) {
+            progressManager.onWordRead();
+        }
+        if (dbHelper != null) {
+            isBookmarked = dbHelper.isBookmarked(currentWord);
+            ivBookmark.setImageResource(isBookmarked ? R.drawable.starfilled : R.drawable.star);
+        }
+
         btnCopy.setOnClickListener(v -> {
             ClipboardManager cm = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
             cm.setPrimaryClip(ClipData.newPlainText("word", fullContent));
@@ -273,7 +290,25 @@ public class SearchActivity extends AppCompatActivity {
         btnBookmark.setOnClickListener(v -> {
             isBookmarked = !isBookmarked;
             ivBookmark.setImageResource(isBookmarked ? R.drawable.starfilled : R.drawable.star);
-            Toast.makeText(this, isBookmarked ? "Bookmarked!" : "Removed bookmark", Toast.LENGTH_SHORT).show();
+            if (isBookmarked) {
+                if (dbHelper != null) {
+                    QuoteModel model = new QuoteModel();
+                    model.setQuote(currentWord);
+                    model.setValue(fullContent);
+                    model.setCategoryName("Search");
+                    model.setBookmared(true);
+                    dbHelper.insertNote(model);
+                }
+                if (progressManager != null) {
+                    progressManager.onWordBookmarked();
+                }
+                Toast.makeText(this, "Bookmarked!", Toast.LENGTH_SHORT).show();
+            } else {
+                if (dbHelper != null) {
+                    dbHelper.deleteNoteByText(currentWord);
+                }
+                Toast.makeText(this, "Removed bookmark", Toast.LENGTH_SHORT).show();
+            }
         });
 
         btnShare.setOnClickListener(v -> {
@@ -413,6 +448,7 @@ public class SearchActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         if (ttsHelper != null) ttsHelper.shutdown();
+        if (dbHelper != null) dbHelper.close();
         executor.shutdown();
         super.onDestroy();
     }

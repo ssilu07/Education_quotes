@@ -1,17 +1,29 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#f2f2f2"
-    android:gravity="center"
-    android:orientation="vertical"
     tools:context="com.royal.edunotes._fragments.TrendingFragment">
 
     <com.royal.edunotes.VerticalViewPager
         android:id="@+id/vPager"
-
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></com.royal.edunotes.VerticalViewPager>
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="visible" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/noDataTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="No trending content"
+        android:visibility="gone" />
+
+</FrameLayout>

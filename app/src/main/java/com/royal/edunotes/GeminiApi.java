@@ -32,10 +32,11 @@ public class GeminiApi {
     private static final String BASE_URL =
             "https://generativelanguage.googleapis.com/v1beta/models/";
 
-    // Latest verified working models for v1beta
+    // Verified working models for v1beta
     private static final String[] MODEL_CHAIN = {
-            "gemini-3.1-flash-lite",   // Primary — highest free quota, fastest
-            "gemini-3.1-flash"         // Fallback — if lite quota exhausted
+            "gemini-2.0-flash-lite",   // Primary — highest free quota, fastest
+            "gemini-2.0-flash",        // Fallback 1
+            "gemini-1.5-flash"         // Fallback 2
     };
 
     private static final int MAX_RETRIES_PER_MODEL = 1;  // 1 retry per model on 429

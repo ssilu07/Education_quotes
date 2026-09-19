@@ -26,7 +26,7 @@ android {
         buildConfigField "boolean", "ENABLE_ADS", "${localProperties.getProperty('ENABLE_ADS', 'false')}"
         
         // Manual database version for SQLiteAssetHelper
-        buildConfigField "int", "DATABASE_VERSION", "29"
+        buildConfigField "int", "DATABASE_VERSION", "65"
     }
     useLibrary 'org.apache.http.legacy'
 
@@ -76,7 +76,7 @@ dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
 
     // AndroidX dependencies
-    implementation 'androidx.activity:activity:1.9.2'
+    implementation 'androidx.activity:activity:1.9.3'
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -119,7 +119,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-config'
     
     // Google Play In-App Review
-    implementation 'com.google.android.play:review:2.0.1'
+    implementation 'com.google.android.play:review:2.0.2'
 
     androidTestImplementation "androidx.test.espresso:espresso-core:3.6.1"
 }

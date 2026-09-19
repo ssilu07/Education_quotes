@@ -70,7 +70,12 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         NotificationHelper.scheduleRepeatingRTCNotification(getApplicationContext(), "", "");
         NotificationHelper.enableBootReceiver(getApplicationContext());
 
+        if (Utility.ScreenCheck == null || Utility.ScreenCheck.isEmpty()) {
+            Utility.ScreenCheck = "Vocab";
+        }
+
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        com.royal.edunotes.WindowInsetsHelper.applyEdgeToEdge(this, mToolbar);
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -80,46 +85,22 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
 
         if (!isNetworkConnected()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setMessage("Please turn on internet connection");
-            builder.setCancelable(false);
-            builder.setPositiveButton("RETRY",
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            //Do nothing here because we override this button later to change the close behaviour.
-                            //However, we still need this because on older versions of Android unless we
-                            //pass a handler the button doesn't get instantiated
-
-
-                        }
-                    });
+            builder.setMessage("Internet connection is recommended for online features, but you can continue offline.");
+            builder.setCancelable(true);
+            builder.setPositiveButton("RETRY", (dialog, which) -> {});
+            builder.setNegativeButton("Continue Offline", (dialog, which) -> dialog.dismiss());
             final AlertDialog dialog = builder.create();
-            dialog.show();
-//Overriding the handler immediately after show is probably a better approach than OnShowListener as described below
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Boolean wantToCloseDialog = false;
-
+            if (!isFinishing() && !isDestroyed()) {
+                dialog.show();
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
                     if (isNetworkConnected()) {
-                        wantToCloseDialog = true;
-                    } else {
-                        Toast.makeText(MainActivity.this, "Still internet is not available ...", Toast.LENGTH_SHORT).show();
-                        wantToCloseDialog = false;
-                    }
-
-
-                    //Do stuff, possibly set wantToCloseDialog to true then...
-                    if (wantToCloseDialog) {
                         dialog.dismiss();
-//                        Show ads here...............
+                    } else {
+                        Toast.makeText(MainActivity.this, "Continuing offline...", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
                     }
-
-                    //else dialog stays open. Make sure you have an obvious way to close the dialog especially if you set cancellable to false.
-                }
-            });
-
-
+                });
+            }
         }
 
 

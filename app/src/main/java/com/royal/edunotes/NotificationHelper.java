@@ -36,10 +36,22 @@ public class NotificationHelper {
         //get calendar instance to be able to select what time notification should be scheduled
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        //Setting time of the day (8am here) when notification will be sent every day (default)
-        calendar.set(Calendar.HOUR_OF_DAY,
-                Integer.getInteger(hour, 9),
-                Integer.getInteger(min, 30));
+
+        int h = 9;
+        int m = 30;
+        try {
+            if (hour != null && !hour.trim().isEmpty()) h = Integer.parseInt(hour.trim());
+            if (min != null && !min.trim().isEmpty()) m = Integer.parseInt(min.trim());
+        } catch (NumberFormatException ignored) {}
+
+        calendar.set(Calendar.HOUR_OF_DAY, h);
+        calendar.set(Calendar.MINUTE, m);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        if (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+        }
 
         //Setting intent to class where Alarm broadcast message will be handled
         Intent intent = new Intent(context, AlarmReceiver.class);
@@ -50,12 +62,8 @@ public class NotificationHelper {
         alarmManagerRTC = (AlarmManager)context.getSystemService(ALARM_SERVICE);
 
         //Setting alarm to wake up device every day for clock time.
-        //AlarmManager.RTC_WAKEUP is responsible to wake up device for sure, which may not be good practice all the time.
-        // Use this when you know what you're doing.
-        //Use RTC when you don't need to wake up device, but want to deliver the notification whenever device is woke-up
-        //We'll be using RTC.WAKEUP for demo purpose only
         alarmManagerRTC.setInexactRepeating(AlarmManager.RTC_WAKEUP,
-                calendar.getTimeInMillis(),AlarmManager.INTERVAL_HALF_DAY, alarmIntentRTC);
+                calendar.getTimeInMillis(), AlarmManager.INTERVAL_HALF_DAY, alarmIntentRTC);
     }
 
     /***
@@ -68,7 +76,8 @@ public class NotificationHelper {
         Intent intent = new Intent(context, AlarmReceiver.class);
 
         //Setting pending intent to respond to broadcast sent by AlarmManager everyday at 8am
-        alarmIntentElapsed = PendingIntent.getBroadcast(context, ALARM_TYPE_ELAPSED, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmIntentElapsed = PendingIntent.getBroadcast(context, ALARM_TYPE_ELAPSED, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         //getting instance of AlarmManager service
         alarmManagerElapsed = (AlarmManager)context.getSystemService(ALARM_SERVICE);

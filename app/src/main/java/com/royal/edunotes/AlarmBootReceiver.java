@@ -7,9 +7,8 @@ import android.content.Intent;
 public class AlarmBootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
-            //only enabling one type of notifications for demo purposes
-            NotificationHelper.scheduleRepeatingElapsedNotification(context);
+        if (intent != null && "android.intent.action.BOOT_COMPLETED".equals(intent.getAction())) {
+            NotificationHelper.scheduleRepeatingRTCNotification(context, "9", "30");
         }
     }
 }

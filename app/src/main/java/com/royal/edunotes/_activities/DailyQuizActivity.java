@@ -8,9 +8,11 @@ import android.os.Looper;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -19,6 +21,7 @@ import androidx.cardview.widget.CardView;
 import com.royal.edunotes.ProgressManager;
 import com.royal.edunotes.R;
 import com.royal.edunotes.Utility;
+import com.royal.edunotes._database.DatabaseHelper;
 import com.royal.edunotes._database.MyDatabase;
 import com.royal.edunotes._models.QuoteModel;
 
@@ -33,6 +36,7 @@ public class DailyQuizActivity extends AppCompatActivity {
     private TextView tvQuestion, tvQuestionNum, tvScore, tvStreak;
     private Button btnOption1, btnOption2, btnOption3, btnOption4;
     private Button btnNext;
+    private ImageView btnBookmark;
     private ProgressBar progressBar;
     private LinearLayout optionsLayout, resultLayout;
     private TextView tvResultTitle, tvResultScore, tvResultXP, tvResultBadges;
@@ -53,6 +57,7 @@ public class DailyQuizActivity extends AppCompatActivity {
         setContentView(R.layout.activity_daily_quiz);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
+        com.royal.edunotes.WindowInsetsHelper.applyEdgeToEdge(this, toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -106,6 +111,11 @@ public class DailyQuizActivity extends AppCompatActivity {
         btnOption2.setOnClickListener(optionClick);
         btnOption3.setOnClickListener(optionClick);
         btnOption4.setOnClickListener(optionClick);
+
+        btnBookmark = findViewById(R.id.btn_bookmark);
+        if (btnBookmark != null) {
+            btnBookmark.setOnClickListener(v -> toggleBookmarkCurrentQuestion());
+        }
     }
 
     private void loadQuiz() {
@@ -115,40 +125,85 @@ public class DailyQuizActivity extends AppCompatActivity {
         executor.execute(() -> {
             ArrayList<QuoteModel> allQuotes = new ArrayList<>();
 
+            boolean isIdiom = "Idiom".equalsIgnoreCase(Utility.ScreenCheck);
             String[] dbdata;
-            if (Utility.ScreenCheck.equals("Idiom")) {
-                dbdata = getResources().getStringArray(R.array.myidiomdb);
+            if (isIdiom) {
+                dbdata = new String[]{
+                        "life_quotes_idiom", "inspirational_quote_idiom", "happiness_quotes_idiom",
+                        "beautiful_quotes_idiom", "change_quote_idiom", "introvert_quotes_idiom",
+                        "hope_quotes_idiom", "travel_quotes_idiom", "trust_quotes_idiom",
+                        "martin_luther_quotes_idiom", "freedom_quotes_idiom"
+                };
             } else {
-                dbdata = getResources().getStringArray(R.array.mydb);
+                dbdata = new String[]{
+                        "life_quotes", "inspirational_quote", "happiness_quotes",
+                        "beautiful_quotes", "change_quote", "introvert_quotes",
+                        "hope_quotes", "travel_quotes", "trust_quotes",
+                        "chapter_11", "chapter_12", "chapter_13"
+                };
             }
 
             for (String db : dbdata) {
                 try {
                     MyDatabase myDb = new MyDatabase(DailyQuizActivity.this, db, db);
-                    allQuotes.addAll(myDb.getPoses());
+                    ArrayList<QuoteModel> poses = myDb.getPoses();
+                    if (poses != null) {
+                        allQuotes.addAll(poses);
+                    }
                 } catch (Exception ignored) {}
+            }
+
+            if (allQuotes.size() < 4) {
+                handler.post(() -> tvQuestion.setText("Not enough words for quiz. Read more vocab first!"));
+                return;
             }
 
             Collections.shuffle(allQuotes);
 
-            // Generate quiz items
+            // Separate items that have "word - meaning"
+            ArrayList<String[]> parsedItems = new ArrayList<>();
+            for (QuoteModel q : allQuotes) {
+                if (q != null && q.getQuote() != null && !q.getQuote().trim().isEmpty()) {
+                    String[] parsed = parseWordAndMeaning(q.getQuote());
+                    if (!parsed[0].isEmpty()) {
+                        parsedItems.add(parsed);
+                    }
+                }
+            }
+
             quizItems.clear();
             Random random = new Random();
+            int count = Math.min(TOTAL_QUESTIONS, parsedItems.size());
 
-            int count = Math.min(TOTAL_QUESTIONS, allQuotes.size() / 4);
             for (int i = 0; i < count; i++) {
-                QuoteModel correct = allQuotes.get(i);
-                String question = correct.getQuote();
+                String[] current = parsedItems.get(i);
+                boolean hasMeaning = !current[1].isEmpty();
+
+                String questionText;
+                String correctAnswer;
+
+                if (hasMeaning) {
+                    questionText = "What is the meaning of \"" + current[0] + "\"?";
+                    correctAnswer = getShortAnswer(current[1]);
+                } else {
+                    questionText = "Identify the correct vocabulary word:";
+                    correctAnswer = getShortAnswer(current[0]);
+                }
 
                 // Get 3 wrong answers
                 ArrayList<String> options = new ArrayList<>();
-                options.add(getShortAnswer(question));
+                options.add(correctAnswer);
 
                 int attempts = 0;
-                while (options.size() < 4 && attempts < 50) {
-                    int randIdx = random.nextInt(allQuotes.size());
-                    String wrongAnswer = getShortAnswer(allQuotes.get(randIdx).getQuote());
-                    if (!options.contains(wrongAnswer)) {
+                while (options.size() < 4 && attempts < 100) {
+                    int randIdx = random.nextInt(parsedItems.size());
+                    if (randIdx == i) {
+                        attempts++;
+                        continue;
+                    }
+                    String[] wrongCandidate = parsedItems.get(randIdx);
+                    String wrongAnswer = getShortAnswer(hasMeaning && !wrongCandidate[1].isEmpty() ? wrongCandidate[1] : wrongCandidate[0]);
+                    if (!options.contains(wrongAnswer) && !wrongAnswer.equalsIgnoreCase(correctAnswer)) {
                         options.add(wrongAnswer);
                     }
                     attempts++;
@@ -156,15 +211,14 @@ public class DailyQuizActivity extends AppCompatActivity {
 
                 // Pad if needed
                 while (options.size() < 4) {
-                    options.add("Option " + options.size());
+                    options.add("Option " + (options.size() + 1));
                 }
 
-                String correctAnswer = options.get(0);
                 Collections.shuffle(options);
 
                 quizItems.add(new QuizItem(
-                        "Which is the correct vocab?",
-                        question,
+                        "Daily Vocab Quiz",
+                        questionText,
                         options,
                         correctAnswer
                 ));
@@ -178,6 +232,16 @@ public class DailyQuizActivity extends AppCompatActivity {
                 }
             });
         });
+    }
+
+    private static String[] parseWordAndMeaning(String quoteText) {
+        if (quoteText == null) return new String[]{"", ""};
+        String firstLine = quoteText.split("\r\n|\n", 2)[0].trim();
+        int dashIdx = firstLine.indexOf('-');
+        if (dashIdx > 0) {
+            return new String[]{firstLine.substring(0, dashIdx).trim(), firstLine.substring(dashIdx + 1).trim()};
+        }
+        return new String[]{firstLine, ""};
     }
 
     private String getShortAnswer(String text) {
@@ -211,6 +275,47 @@ public class DailyQuizActivity extends AppCompatActivity {
         resetButtonColors();
         setOptionsEnabled(true);
         btnNext.setVisibility(View.GONE);
+
+        updateBookmarkState();
+    }
+
+    private String getCurrentQuestionNote() {
+        if (currentQuestion >= quizItems.size()) return null;
+        QuizItem item = quizItems.get(currentQuestion);
+        return "Daily Quiz: " + item.hint + "\n\n✅ Correct Answer: " + item.correctAnswer;
+    }
+
+    private void updateBookmarkState() {
+        String note = getCurrentQuestionNote();
+        if (note == null || btnBookmark == null) return;
+        DatabaseHelper db = new DatabaseHelper(this);
+        boolean bookmarked = db.isBookmarked(note);
+        btnBookmark.setImageResource(bookmarked ? R.drawable.starfilled : R.drawable.star);
+    }
+
+    private void toggleBookmarkCurrentQuestion() {
+        String note = getCurrentQuestionNote();
+        if (note == null || currentQuestion >= quizItems.size()) return;
+        QuizItem item = quizItems.get(currentQuestion);
+        DatabaseHelper db = new DatabaseHelper(this);
+        boolean bookmarked = db.isBookmarked(note);
+        if (bookmarked) {
+            db.deleteNoteByText(note);
+            btnBookmark.setImageResource(R.drawable.star);
+            Toast.makeText(this, "Removed from Bookmarks", Toast.LENGTH_SHORT).show();
+        } else {
+            QuoteModel qm = new QuoteModel();
+            qm.setQuote(note);
+            qm.setValue("Options:\n• " + android.text.TextUtils.join("\n• ", item.options));
+            qm.setCategoryName("Quiz: Daily Vocab Quiz");
+            qm.setBookmark("1");
+            qm.setBookmared(true);
+            qm.setTimestamp(String.valueOf(System.currentTimeMillis()));
+            db.insertNote(qm);
+            btnBookmark.setImageResource(R.drawable.starfilled);
+            Toast.makeText(this, "Added to Bookmarks", Toast.LENGTH_SHORT).show();
+            if (progressManager != null) progressManager.onWordBookmarked();
+        }
     }
 
     private void checkAnswer(Button selected) {

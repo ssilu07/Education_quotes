@@ -1,26 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_feed_polls"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ececec">
+    android:orientation="vertical"
+    android:background="@color/surfaceBackground">
 
+    <!-- Filter Dropdown Bar -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_filter_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="2dp"
+        app:cardBackgroundColor="@color/cardBackground">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="6dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_filter_list"
+                app:tint="@color/colorPrimary"
+                android:contentDescription="Filter" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="Category:"
+                android:textStyle="bold"
+                android:textSize="13sp"
+                android:textColor="@color/textPrimary" />
+
+            <!-- Filter Dropdown Spinner -->
+            <Spinner
+                android:id="@+id/spinner_bookmark_filter"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/bg_spinner"
+                android:spinnerMode="dropdown" />
+
+            <!-- Count Badge -->
+            <TextView
+                android:id="@+id/tv_bookmark_count_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/bg_badge_counter"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="3dp"
+                android:text="0"
+                android:textColor="@color/colorPrimary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Content Area -->
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <com.royal.edunotes.VerticalViewPager
             android:id="@+id/vPager"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"></com.royal.edunotes.VerticalViewPager>
-        <TextView
-            android:id="@+id/nobookmarkTxt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="No bookmark"
+            android:layout_height="match_parent" />
+
+        <!-- Friendly Empty State View -->
+        <LinearLayout
+            android:id="@+id/layout_empty_bookmarks"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:gravity="center"
-            android:layout_gravity="center"
-            />
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/star"
+                app:tint="#BDBDBD"
+                android:contentDescription="No bookmarks" />
+
+            <TextView
+                android:id="@+id/nobookmarkTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="No bookmarks yet"
+                android:textColor="@color/textPrimary"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/nobookmarkSubTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:text="Tap the star icon on any card or quiz question to bookmark it here."
+                android:textColor="@color/textSecondary"
+                android:textSize="13sp" />
+
+        </LinearLayout>
 
     </FrameLayout>
-</RelativeLayout>
+</LinearLayout>

@@ -16,6 +16,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.royal.edunotes.NotificationHelper;
 import com.royal.edunotes.R;
 import com.royal.edunotes.SettingsManager;
+import com.royal.edunotes.WindowInsetsHelper;
 
 public class Setting extends AppCompatActivity {
 
@@ -31,6 +32,7 @@ public class Setting extends AppCompatActivity {
         settingsManager = new SettingsManager(this);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
+        WindowInsetsHelper.applyEdgeToEdge(this, toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

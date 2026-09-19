@@ -59,129 +59,163 @@ public class MyDatabase extends SQLiteAssetHelper {
 
     public ArrayList<QuoteModel> getSearchedData(String searchKey) {
         ArrayList<QuoteModel> list = new ArrayList<>();
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+        try {
+            db = getReadableDatabase();
+            // Simulate word-boundary match using LIKE this is use for exact search
+            String whereClause = QUOTE + " LIKE ? OR " + QUOTE + " LIKE ? OR " + QUOTE + " LIKE ? OR " + QUOTE + " LIKE ?";
+            String[] whereArgs = new String[]{
+                    searchKey,                      // exact match
+                    searchKey + " %",               // start of sentence
+                    "% " + searchKey,               // end of sentence
+                    "% " + searchKey + " %"         // word in middle
+            };
 
-        SQLiteDatabase db = getReadableDatabase();
+            cursor = db.query(TABLE_NAME, null, whereClause, whereArgs, null, null, null);
+            if (cursor != null) {
+                int idIdx = cursor.getColumnIndex(ID);
+                int quoteIdx = cursor.getColumnIndex(QUOTE);
+                int timeIdx = cursor.getColumnIndex(TIMESTAMP);
 
-        // Use only columns that are guaranteed to exist in all DBs
-        String[] columns = {ID, QUOTE, TIMESTAMP};
-
-
-/*        String whereClause = QUOTE + " LIKE ?";
-        String[] whereArgs = new String[]{"%" + searchKey + "%"};*/
-
-        // Simulate word-boundary match using LIKE this is use for exact search
-        String whereClause = QUOTE + " LIKE ? OR " + QUOTE + " LIKE ? OR " + QUOTE + " LIKE ? OR " + QUOTE + " LIKE ?";
-        String[] whereArgs = new String[]{
-                searchKey,                      // exact match
-                searchKey + " %",               // start of sentence
-                "% " + searchKey,               // end of sentence
-                "% " + searchKey + " %"         // word in middle
-        };
-
-        Cursor cursor = db.query(TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-
-        while (cursor.moveToNext()) {
-            QuoteModel model = new QuoteModel();
-            model.id = cursor.getInt(cursor.getColumnIndex(ID));
-            model.quote = cursor.getString(cursor.getColumnIndex(QUOTE));
-            model.timestamp = cursor.getString(cursor.getColumnIndex(TIMESTAMP));
-
-            // set the category name from current DB name passed in constructor
-            model.categoryName = categoryName;
-
-            list.add(model);
+                while (cursor.moveToNext()) {
+                    QuoteModel model = new QuoteModel();
+                    if (idIdx != -1) model.id = cursor.getInt(idIdx);
+                    if (quoteIdx != -1) model.quote = cursor.getString(quoteIdx);
+                    if (timeIdx != -1) model.timestamp = cursor.getString(timeIdx);
+                    model.categoryName = categoryName;
+                    list.add(model);
+                }
+            }
+        } catch (Exception e) {
+            android.util.Log.e("MyDatabase", "getSearchedData error: " + e.getMessage());
+        } finally {
+            if (cursor != null) cursor.close();
+            if (db != null) db.close();
         }
-
-        cursor.close();
-        db.close();
-
         return list;
     }
-
-
 
     /** Plain case-insensitive substring search across the whole card text (word + meaning + example). */
     public ArrayList<QuoteModel> getWordMatches(String query) {
         ArrayList<QuoteModel> list = new ArrayList<>();
         if (query == null || query.trim().isEmpty()) return list;
 
-        SQLiteDatabase db = getReadableDatabase();
-        String[] columns = {ID, QUOTE, VALUE, TIMESTAMP};
-        String whereClause = QUOTE + " LIKE ?";
-        String[] whereArgs = {"%" + query.trim() + "%"};
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+        try {
+            db = getReadableDatabase();
+            String whereClause = QUOTE + " LIKE ?";
+            String[] whereArgs = {"%" + query.trim() + "%"};
 
-        Cursor cursor = db.query(TABLE_NAME, columns, whereClause, whereArgs, null, null, null);
-        while (cursor.moveToNext()) {
-            QuoteModel model = new QuoteModel();
-            model.id = cursor.getInt(cursor.getColumnIndex(ID));
-            model.quote = cursor.getString(cursor.getColumnIndex(QUOTE));
-            model.value = cursor.getString(cursor.getColumnIndex(VALUE));
-            model.timestamp = cursor.getString(cursor.getColumnIndex(TIMESTAMP));
-            model.categoryName = categoryName;
-            list.add(model);
+            cursor = db.query(TABLE_NAME, null, whereClause, whereArgs, null, null, null);
+            if (cursor != null) {
+                int idIdx = cursor.getColumnIndex(ID);
+                int quoteIdx = cursor.getColumnIndex(QUOTE);
+                int valIdx = cursor.getColumnIndex(VALUE);
+                int timeIdx = cursor.getColumnIndex(TIMESTAMP);
+
+                while (cursor.moveToNext()) {
+                    QuoteModel model = new QuoteModel();
+                    if (idIdx != -1) model.id = cursor.getInt(idIdx);
+                    if (quoteIdx != -1) model.quote = cursor.getString(quoteIdx);
+                    if (valIdx != -1) model.value = cursor.getString(valIdx);
+                    if (timeIdx != -1) model.timestamp = cursor.getString(timeIdx);
+                    model.categoryName = categoryName;
+                    list.add(model);
+                }
+            }
+        } catch (Exception e) {
+            android.util.Log.e("MyDatabase", "getWordMatches error: " + e.getMessage());
+        } finally {
+            if (cursor != null) cursor.close();
+            if (db != null) db.close();
         }
-        cursor.close();
-        db.close();
-
         return list;
     }
 
     public ArrayList<QuoteModel> getPoses() {
-
-
-        SQLiteDatabase db = getWritableDatabase();
-        String[] columns = {MyDatabase.ID, MyDatabase.QUOTE,MyDatabase.VALUE, MyDatabase.TIMESTAMP};
-//        String[] selectionArgs={categoryId+"",subjectId+"",yearId+""};
-        Cursor cursor = db.query(MyDatabase.TABLE_NAME, columns, null, null, null, null, null);
-//        Cursor cursor=db.query(MyDatabase.TABLE_NAME, columns, null,null, null, null, null);
         ArrayList<QuoteModel> questionsArrayList = new ArrayList<>();
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+        try {
+            db = getReadableDatabase();
+            cursor = db.query(TABLE_NAME, null, null, null, null, null, null);
+            if (cursor != null) {
+                int idIdx = cursor.getColumnIndex(ID);
+                int quoteIdx = cursor.getColumnIndex(QUOTE);
+                int valIdx = cursor.getColumnIndex(VALUE);
+                int timeIdx = cursor.getColumnIndex(TIMESTAMP);
 
-        while (cursor.moveToNext()) {
-            QuoteModel questions = new QuoteModel();
-            questions.id = cursor.getInt(cursor.getColumnIndex(MyDatabase.ID));
-            questions.quote = cursor.getString(cursor.getColumnIndex(MyDatabase.QUOTE));
-            questions.value = cursor.getString(cursor.getColumnIndex(MyDatabase.VALUE));
-            questions.timestamp = cursor.getString(cursor.getColumnIndex(MyDatabase.TIMESTAMP));
-            questions.categoryName = categoryName;
-            questionsArrayList.add(questions);
+                while (cursor.moveToNext()) {
+                    QuoteModel questions = new QuoteModel();
+                    if (idIdx != -1) questions.id = cursor.getInt(idIdx);
+                    if (quoteIdx != -1) questions.quote = cursor.getString(quoteIdx);
+                    if (valIdx != -1) questions.value = cursor.getString(valIdx);
+                    if (timeIdx != -1) questions.timestamp = cursor.getString(timeIdx);
+                    questions.categoryName = categoryName;
+                    questionsArrayList.add(questions);
+                }
+            }
+        } catch (Exception e) {
+            android.util.Log.e("MyDatabase", "getPoses error: " + e.getMessage());
+        } finally {
+            if (cursor != null) cursor.close();
+            if (db != null) db.close();
         }
         return questionsArrayList;
     }
 
-
     public int getTotalCount() {
         int count = 0;
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
         try {
-            SQLiteDatabase db = getReadableDatabase();
-            Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_NAME, null);
-            if (cursor.moveToFirst()) {
+            db = getReadableDatabase();
+            cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_NAME, null);
+            if (cursor != null && cursor.moveToFirst()) {
                 count = cursor.getInt(0);
             }
-            cursor.close();
-            db.close();
         } catch (Exception e) {
             // DB might not exist or table missing
+        } finally {
+            if (cursor != null) cursor.close();
+            if (db != null) db.close();
         }
         return count;
     }
 
     public ArrayList<QuoteModel> getBookmarkData() {
-
-
-        SQLiteDatabase db = getWritableDatabase();
-        String[] columns = {MyDatabase.ID, MyDatabase.NOTE,MyDatabase.NOTEVALUE, MyDatabase.TIMESTAMP, MyDatabase.BOOKMARK, MyDatabase.CATEGORY};
-        Cursor cursor = db.query(MyDatabase.BOOKMARK_TABLE, columns, null, null, null, null, null);
         ArrayList<QuoteModel> questionsArrayList = new ArrayList<>();
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+        try {
+            db = getReadableDatabase();
+            cursor = db.query(BOOKMARK_TABLE, null, null, null, null, null, null);
+            if (cursor != null) {
+                int idIdx = cursor.getColumnIndex(ID);
+                int noteIdx = cursor.getColumnIndex(NOTE);
+                int valIdx = cursor.getColumnIndex(NOTEVALUE);
+                int timeIdx = cursor.getColumnIndex(TIMESTAMP);
+                int bmIdx = cursor.getColumnIndex(BOOKMARK);
+                int catIdx = cursor.getColumnIndex(CATEGORY);
 
-        while (cursor.moveToNext()) {
-            QuoteModel questions = new QuoteModel();
-            questions.id = cursor.getInt(cursor.getColumnIndex(MyDatabase.ID));
-            questions.quote = cursor.getString(cursor.getColumnIndex(MyDatabase.NOTE));
-            questions.value = cursor.getString(cursor.getColumnIndex(MyDatabase.NOTEVALUE));
-            questions.timestamp = cursor.getString(cursor.getColumnIndex(MyDatabase.TIMESTAMP));
-            questions.categoryName = cursor.getString(cursor.getColumnIndex(MyDatabase.CATEGORY));
-            questions.bookmark = cursor.getString(cursor.getColumnIndex(MyDatabase.BOOKMARK));
-            questionsArrayList.add(questions);
+                while (cursor.moveToNext()) {
+                    QuoteModel questions = new QuoteModel();
+                    if (idIdx != -1) questions.id = cursor.getInt(idIdx);
+                    if (noteIdx != -1) questions.quote = cursor.getString(noteIdx);
+                    if (valIdx != -1) questions.value = cursor.getString(valIdx);
+                    if (timeIdx != -1) questions.timestamp = cursor.getString(timeIdx);
+                    if (catIdx != -1) questions.categoryName = cursor.getString(catIdx);
+                    if (bmIdx != -1) questions.bookmark = cursor.getString(bmIdx);
+                    questionsArrayList.add(questions);
+                }
+            }
+        } catch (Exception e) {
+            android.util.Log.e("MyDatabase", "getBookmarkData error: " + e.getMessage());
+        } finally {
+            if (cursor != null) cursor.close();
+            if (db != null) db.close();
         }
         return questionsArrayList;
     }

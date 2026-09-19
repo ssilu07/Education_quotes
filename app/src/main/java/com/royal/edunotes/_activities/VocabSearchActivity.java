@@ -79,6 +79,7 @@ public class VocabSearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_vocab_search);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
+        com.royal.edunotes.WindowInsetsHelper.applyEdgeToEdge(this, toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle("Search Vocab");
@@ -188,12 +189,22 @@ public class VocabSearchActivity extends AppCompatActivity {
         outer:
         for (CategoryDataProvider.Category cat : CategoryDataProvider.getAllCategories()) {
             for (CategoryDataProvider.SubCategory sub : cat.subCategories) {
-                MyDatabase db = new MyDatabase(this, sub.dbName, sub.title);
-                ArrayList<QuoteModel> matches = db.getWordMatches(query);
-                for (QuoteModel q : matches) {
-                    String[] parsed = parseWordAndMeaning(q.getQuote());
-                    found.add(new SearchResult(q.getId(), parsed[0], parsed[1], sub.title, sub.dbName, cat.screenCheck));
-                    if (found.size() >= COLLECT_LIMIT) break outer;
+                List<CategoryDataProvider.SubCategory> targets = new ArrayList<>();
+                if (sub.hasSets()) {
+                    targets.addAll(sub.subSets);
+                } else {
+                    targets.add(sub);
+                }
+
+                for (CategoryDataProvider.SubCategory target : targets) {
+                    MyDatabase db = new MyDatabase(this, target.dbName, target.title);
+                    ArrayList<QuoteModel> matches = db.getWordMatches(query);
+                    for (QuoteModel q : matches) {
+                        String[] parsed = parseWordAndMeaning(q.getQuote());
+                        String sc = (target.screenCheck != null) ? target.screenCheck : cat.screenCheck;
+                        found.add(new SearchResult(q.getId(), parsed[0], parsed[1], target.title, target.dbName, sc));
+                        if (found.size() >= COLLECT_LIMIT) break outer;
+                    }
                 }
             }
         }

@@ -104,7 +104,8 @@ public class VerticlePagerAdapter extends PagerAdapter {
     }
 
     /** Maps a ViewPager position to the real data index (skipping ad slots). */
-    private int getDataPosition(int position) {
+    public int getDataPosition(int position) {
+        if (!BuildConfig.ENABLE_ADS) return position;
         return position - position / AD_SLOT_SIZE;
     }
 
@@ -241,12 +242,15 @@ public class VerticlePagerAdapter extends PagerAdapter {
             tvCardCounter.setText((dataPos + 1) + " / " + quoteModels.size());
         }
 
+        String itemType = com.royal.edunotes.BookmarkHelper.getItemType(currentQuote);
         if (isQuizCategory()) {
             setupQuizView(itemView, currentQuote, dataPos);
-        } else if (Utility.ScreenCheck.equals("Vocab") || Utility.ScreenCheck.equals("Grammar")) {
-            setupVocabView(itemView, currentQuote, dataPos);
-        } else if (Utility.ScreenCheck.equals("Idiom")) {
+        } else if (com.royal.edunotes.BookmarkHelper.FILTER_IDIOM.equals(itemType)
+                || "Idiom".equalsIgnoreCase(Utility.ScreenCheck)
+                || (currentQuote.getCategoryName() != null && currentQuote.getCategoryName().toLowerCase().contains("idiom"))) {
             setupIdiomView(itemView, currentQuote, dataPos);
+        } else {
+            setupVocabView(itemView, currentQuote, dataPos);
         }
 
         container.addView(itemView);
@@ -305,25 +309,38 @@ public class VerticlePagerAdapter extends PagerAdapter {
         hackTxt.setText(currentQuote.getQuote());
         hackTxt.setTextSize(settingsManager.getFontSize());
         String url = currentQuote.getValue();
+        TextView tvDetail = itemView.findViewById(R.id.tv_vocab_detail);
 
-        if (url != null && !url.isEmpty()) {
+        if (url != null && (url.startsWith("http://") || url.startsWith("https://"))) {
             hackTxt2.setVisibility(View.VISIBLE);
+            if (tvDetail != null) tvDetail.setVisibility(View.GONE);
             try {
                 Picasso.get().load(url).into(hackTxt2);
             } catch (Exception e) {
                 Log.e(TAG, "Error loading image", e);
                 hackTxt2.setVisibility(View.GONE);
             }
+        } else if (url != null && !url.trim().isEmpty()) {
+            hackTxt2.setVisibility(View.GONE);
+            if (tvDetail != null) {
+                tvDetail.setVisibility(View.VISIBLE);
+                tvDetail.setText(url.trim());
+            }
         } else {
             hackTxt2.setVisibility(View.GONE);
+            if (tvDetail != null) tvDetail.setVisibility(View.GONE);
         }
 
-        int[] colors = {
-                Color.rgb(36, 7, 80), Color.rgb(255, 0, 128), Color.rgb(50, 1, 47),
-                Color.rgb(249, 115, 0), Color.rgb(27, 66, 66), Color.rgb(64, 165, 120),
-                Color.rgb(100, 13, 107), Color.rgb(181, 27, 117), Color.rgb(0, 0, 0)
-        };
-        hackTxt.setTextColor(colors[(int) (Math.random() * colors.length)]);
+        if (com.royal.edunotes.BookmarkHelper.FILTER_QUIZ.equals(com.royal.edunotes.BookmarkHelper.getItemType(currentQuote))) {
+            hackTxt.setTextColor(Color.parseColor("#1A237E"));
+        } else {
+            int[] colors = {
+                    Color.rgb(36, 7, 80), Color.rgb(255, 0, 128), Color.rgb(50, 1, 47),
+                    Color.rgb(249, 115, 0), Color.rgb(27, 66, 66), Color.rgb(64, 165, 120),
+                    Color.rgb(100, 13, 107), Color.rgb(181, 27, 117), Color.rgb(0, 0, 0)
+            };
+            hackTxt.setTextColor(colors[(int) (Math.random() * colors.length)]);
+        }
 
         updateBookmarkStatus(currentQuote, position);
 
@@ -347,6 +364,17 @@ public class VerticlePagerAdapter extends PagerAdapter {
         });
         ttsLL.setOnClickListener(view -> clickInterface.onTTSClick(currentQuote));
         learnedLL.setOnClickListener(view -> clickInterface.onLearnedClick(currentQuote, learnedLabel));
+        
+        LinearLayout quizLL = itemView.findViewById(R.id.quizLLVocab);
+        Log.e("QUIZ_DEBUG", "Category Name is: " + categoryName);
+        if (categoryName != null && categoryName.startsWith("grammar_")) {
+            Log.e("QUIZ_DEBUG", "Making Quiz icon VISIBLE");
+            quizLL.setVisibility(View.VISIBLE);
+            quizLL.setOnClickListener(view -> clickInterface.onQuizClick());
+        } else {
+            Log.e("QUIZ_DEBUG", "Making Quiz icon GONE");
+            quizLL.setVisibility(View.GONE);
+        }
     }
 
     private void setupIdiomView(View itemView, QuoteModel currentQuote, int position) {
@@ -367,16 +395,25 @@ public class VerticlePagerAdapter extends PagerAdapter {
         hackTxt.setTextSize(settingsManager.getFontSize());
 
         String url = currentQuote.getValue();
-        if (url != null && !url.isEmpty()) {
+        TextView tvDetailIdiom = itemView.findViewById(R.id.tv_idiom_detail);
+        if (url != null && (url.startsWith("http://") || url.startsWith("https://"))) {
             hackTxt2.setVisibility(View.VISIBLE);
+            if (tvDetailIdiom != null) tvDetailIdiom.setVisibility(View.GONE);
             try {
                 Picasso.get().load(url).into(hackTxt2);
             } catch (Exception e) {
                 Log.e(TAG, "Error loading image", e);
                 hackTxt2.setVisibility(View.GONE);
             }
+        } else if (url != null && !url.trim().isEmpty()) {
+            hackTxt2.setVisibility(View.GONE);
+            if (tvDetailIdiom != null) {
+                tvDetailIdiom.setVisibility(View.VISIBLE);
+                tvDetailIdiom.setText(url.trim());
+            }
         } else {
             hackTxt2.setVisibility(View.GONE);
+            if (tvDetailIdiom != null) tvDetailIdiom.setVisibility(View.GONE);
         }
 
         int[] colors = {
@@ -556,18 +593,35 @@ public class VerticlePagerAdapter extends PagerAdapter {
         if (databases != null) {
             for (ModelDatabase db : databases) {
                 if (db != null && db.getNote() != null) {
+                    bookmarkedNotes.add(db.getNote().trim());
                     bookmarkedNotes.add(db.getNote());
                 }
             }
         }
     }
 
-    private void updateBookmarkStatus(QuoteModel currentQuote, int position) {
-        if (currentQuote.getQuote() != null && bookmarkedNotes.contains(currentQuote.getQuote())) {
-            currentQuote.setBookmark("1");
-            currentQuote.setBookmared(true);
+    public void setBookmarked(String quote, boolean isBookmarked) {
+        if (quote == null) return;
+        String trimmed = quote.trim();
+        if (isBookmarked) {
+            bookmarkedNotes.add(trimmed);
+            bookmarkedNotes.add(quote);
         } else {
-            currentQuote.setBookmared(false);
+            bookmarkedNotes.remove(trimmed);
+            bookmarkedNotes.remove(quote);
+        }
+    }
+
+    private void updateBookmarkStatus(QuoteModel currentQuote, int position) {
+        if (currentQuote == null || currentQuote.getQuote() == null) return;
+        boolean bookmarked = currentQuote.isBookmared()
+                || bookmarkedNotes.contains(currentQuote.getQuote().trim())
+                || bookmarkedNotes.contains(currentQuote.getQuote());
+        currentQuote.setBookmark(bookmarked ? "1" : "0");
+        currentQuote.setBookmared(bookmarked);
+        if (bookmarked) {
+            bookmarkedNotes.add(currentQuote.getQuote().trim());
+            bookmarkedNotes.add(currentQuote.getQuote());
         }
     }
 

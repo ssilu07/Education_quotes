@@ -42,6 +42,7 @@ public class SelectedActivity extends AppCompatActivity implements CategoryAdapt
         setContentView(R.layout.activity_selection);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
+        com.royal.edunotes.WindowInsetsHelper.applyEdgeToEdge(this, toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle("Choose Category");

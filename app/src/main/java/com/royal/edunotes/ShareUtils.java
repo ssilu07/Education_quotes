@@ -16,6 +16,11 @@ import java.io.FileOutputStream;
 public class ShareUtils {
 
     public static void shareViewAsImage(Context context, View view, String text) {
+        if (context == null) return;
+        if (view == null || view.getWidth() <= 0 || view.getHeight() <= 0) {
+            shareText(context, text);
+            return;
+        }
         try {
             // Create bitmap from view
             Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
@@ -70,6 +75,17 @@ public class ShareUtils {
                 shareIntent.setType("text/plain");
             }
             context.startActivity(Intent.createChooser(shareIntent, "Share via"));
+        } catch (Exception e) {
+            Toast.makeText(context, "Failed to share", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public static void shareText(Context context, String text) {
+        try {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, text + "\n\nDownload the app:\nhttps://play.google.com/store/apps/details?id=com.royal.edunotes");
+            context.startActivity(Intent.createChooser(shareIntent, "Share Note"));
         } catch (Exception e) {
             Toast.makeText(context, "Failed to share", Toast.LENGTH_SHORT).show();
         }

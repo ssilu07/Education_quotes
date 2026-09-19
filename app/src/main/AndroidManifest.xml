@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
 
     <application
@@ -51,9 +52,6 @@
             android:label="Notification" />
 
         <activity
-            android:name="._activities.CategoryDataActivity" />
-
-        <activity
             android:name="._activities.SelectedActivity" />
 
         <!-- AdMob App ID: auto-switches between test (debug) and production (release) -->
@@ -77,6 +75,16 @@
             android:name="._activities.WelcomeActivity"
             android:theme="@style/AppTheme" />
 
+
+            
+        <activity
+            android:name="._activities.GrammarQuizActivity"
+            android:exported="false" />
+
+        <activity
+            android:name="._activities.QuizActivity"
+            android:exported="false" />
+
         <activity android:name="._activities.Setting" />
         <activity android:name="._activities.HackList" />
         <activity android:name="._activities.BookmarkHackListActivity" />
@@ -96,7 +104,6 @@
         <activity android:name="._activities.SearchActivity" />
         <activity android:name="._activities.VocabSearchActivity" />
         <activity android:name="._activities.DailyQuizActivity" />
-        <activity android:name="._activities.TricksActivity" />
 
         <!-- Home Screen Widget -->
         <receiver
@@ -120,18 +127,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
-        <activity
-            android:name="androidx.test.core.app.InstrumentationActivityInvoker$BootstrapActivity"
-            android:exported="false" />
-
-        <activity
-            android:name="androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity"
-            android:exported="false" />
-
-        <activity
-            android:name="androidx.test.core.app.InstrumentationActivityInvoker$EmptyFloatingActivity"
-            android:exported="false" />
 
     </application>
 

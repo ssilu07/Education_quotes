@@ -7,6 +7,7 @@ import android.view.MenuItem;
 
 import com.royal.edunotes.R;
 import com.royal.edunotes.VerticalViewPager;
+import com.royal.edunotes.WindowInsetsHelper;
 import com.royal.edunotes._adapters.BookmarkPagerAdapter;
 
 public class BookmarkHackListActivity extends AppCompatActivity {
@@ -17,6 +18,7 @@ public class BookmarkHackListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_bookmark_hack_list);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        WindowInsetsHelper.applyEdgeToEdge(this, toolbar);
         setSupportActionBar(toolbar);
 
         if (getSupportActionBar() != null) {
