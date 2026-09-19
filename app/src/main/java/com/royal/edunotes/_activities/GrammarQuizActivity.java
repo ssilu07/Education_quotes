@@ -458,10 +458,10 @@ public class GrammarQuizActivity extends AppCompatActivity {
     }
 
     private void showRestartConfirmation() {
-        new androidx.appcompat.app.AlertDialog.Builder(this)
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle("Restart Quiz")
                 .setMessage("Are you sure you want to restart this quiz from Question 1?")
-                .setPositiveButton("Restart", (dialog, which) -> {
+                .setPositiveButton("Restart", (d, which) -> {
                     if (quizProgressManager != null) {
                         quizProgressManager.clearProgress(grammarTopic);
                     }
@@ -477,7 +477,19 @@ public class GrammarQuizActivity extends AppCompatActivity {
                     }
                 })
                 .setNegativeButton("Cancel", null)
-                .show();
+                .create();
+
+        dialog.setOnShowListener(d -> {
+            Button posBtn = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE);
+            if (posBtn != null) {
+                posBtn.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.dialog_button_color));
+            }
+            Button negBtn = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE);
+            if (negBtn != null) {
+                negBtn.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.dialog_negative_button_color));
+            }
+        });
+        dialog.show();
     }
 
     @Override

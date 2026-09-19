@@ -113,4 +113,8 @@
 
     <!-- Search match highlight -->
     <color name="searchHighlight">#FFF3B0</color>
+
+    <!-- Dialog button colors -->
+    <color name="dialog_button_color">#11adb9</color>
+    <color name="dialog_negative_button_color">#666666</color>
 </resources>

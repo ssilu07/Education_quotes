@@ -47,4 +47,8 @@
 
     <!-- Search match highlight -->
     <color name="searchHighlight">#5a4a1a</color>
+
+    <!-- Dialog button colors -->
+    <color name="dialog_button_color">#4acfda</color>
+    <color name="dialog_negative_button_color">#aaaaaa</color>
 </resources>

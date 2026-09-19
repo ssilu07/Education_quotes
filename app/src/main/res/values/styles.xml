@@ -6,6 +6,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="alertDialogTheme">@style/AppTheme.AlertDialogTheme</item>
+        <item name="android:alertDialogTheme">@style/AppTheme.AlertDialogTheme</item>
         <item name="windowActionBar">false</item>
         <item name="mttp_backgroundColour">@color/colorAccent</item>
         <item name="mttp_focalColour">@color/colorPrimary</item>
@@ -25,6 +27,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="alertDialogTheme">@style/AppTheme.AlertDialogTheme</item>
+        <item name="android:alertDialogTheme">@style/AppTheme.AlertDialogTheme</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowNoTitle">true</item>
     </style>
@@ -36,6 +40,28 @@
         <item name="tabBackground">@drawable/tab_background</item>
         <item name="tabIndicatorColor">#ffffff</item>
         <item name="tabIndicatorHeight">2dp</item>
+    </style>
+
+    <!-- Dialog theme to ensure buttons and texts are clearly visible in both light and dark modes -->
+    <style name="AppTheme.AlertDialogTheme" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+        <item name="colorAccent">@color/dialog_button_color</item>
+        <item name="android:textColorPrimary">@color/textPrimary</item>
+        <item name="buttonBarPositiveButtonStyle">@style/AppTheme.AlertDialog.PositiveButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/AppTheme.AlertDialog.NegativeButton</item>
+        <item name="buttonBarNeutralButtonStyle">@style/AppTheme.AlertDialog.Button</item>
+    </style>
+
+    <style name="AppTheme.AlertDialog.PositiveButton" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/dialog_button_color</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="AppTheme.AlertDialog.NegativeButton" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/dialog_negative_button_color</item>
+    </style>
+
+    <style name="AppTheme.AlertDialog.Button" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/dialog_button_color</item>
     </style>
 
 </resources>
