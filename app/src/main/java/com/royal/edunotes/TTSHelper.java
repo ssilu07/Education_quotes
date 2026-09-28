@@ -26,7 +26,8 @@ public class TTSHelper {
 
     public void speak(String text) {
         if (isReady && tts != null && text != null && !text.isEmpty()) {
-            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "vocab_tts");
+            String cleanText = text.replace("**", "").replace("❌", "").replace("✅", "");
+            tts.speak(cleanText, TextToSpeech.QUEUE_FLUSH, null, "vocab_tts");
         }
     }
 

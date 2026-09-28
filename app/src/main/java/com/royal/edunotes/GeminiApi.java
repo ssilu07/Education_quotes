@@ -32,7 +32,7 @@ public class GeminiApi {
     private static final String BASE_URL =
             "https://generativelanguage.googleapis.com/v1beta/models/";
 
-    // Verified working models for v1beta
+    // Verified working models for beta
     private static final String[] MODEL_CHAIN = {
             "gemini-2.0-flash-lite",   // Primary — highest free quota, fastest
             "gemini-2.0-flash",        // Fallback 1
@@ -188,7 +188,7 @@ public class GeminiApi {
         } catch (Exception e) {
             Log.w(TAG, "Could not parse retryDelay: " + e.getMessage());
         }
-        return 5000L; // Default: wait 5 seconds if can't parse
+        return 5000L; // Default: wait 5 seconds if you can't parse
     }
 
     /**

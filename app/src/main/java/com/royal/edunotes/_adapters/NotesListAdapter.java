@@ -37,14 +37,26 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.Note
     private final NoteItemClickListener listener;
     private final SettingsManager settingsManager;
     private final HashSet<String> bookmarkedNotes = new HashSet<>();
+    private String categoryName;
 
     public NotesListAdapter(Context context, ArrayList<QuoteModel> quoteModels,
                             NoteItemClickListener listener, ArrayList<ModelDatabase> modelDatabases) {
+        this(context, quoteModels, listener, modelDatabases, null);
+    }
+
+    public NotesListAdapter(Context context, ArrayList<QuoteModel> quoteModels,
+                            NoteItemClickListener listener, ArrayList<ModelDatabase> modelDatabases,
+                            String categoryName) {
         this.context = context;
         this.quoteModels = new ArrayList<>(quoteModels);
         this.listener = listener;
         this.settingsManager = new SettingsManager(context);
+        this.categoryName = categoryName;
         buildBookmarkSet(modelDatabases);
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public void updateData(ArrayList<QuoteModel> newList, ArrayList<ModelDatabase> newBookmarks) {
@@ -96,40 +108,73 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.Note
         QuoteModel item = quoteModels.get(position);
         if (item == null) return;
 
-        holder.tvNoteNumber.setText("Note #" + (position + 1));
-        if (item.getQuote() != null && (item.getQuote().contains("<highlight>") || item.getQuote().contains("<instruction>"))) {
-            com.royal.edunotes.QuestionSpanFormatter.FormattedQuestion formatted =
-                    com.royal.edunotes.QuestionSpanFormatter.format(context, item.getQuote());
-            if (formatted.instruction != null && !formatted.instruction.isEmpty()) {
-                android.text.SpannableStringBuilder combined = new android.text.SpannableStringBuilder();
-                combined.append(formatted.instruction).append("\n\n").append(formatted.bodySpan);
-                holder.tvNoteQuote.setText(combined);
-            } else {
-                holder.tvNoteQuote.setText(formatted.bodySpan);
-            }
+        boolean isDark = settingsManager != null && settingsManager.isDarkMode();
+        boolean isGrammar = com.royal.edunotes.GrammarRuleFormatter.isGrammarRule(item.getQuote(), categoryName)
+                || com.royal.edunotes.BookmarkHelper.FILTER_GRAMMAR.equals(com.royal.edunotes.BookmarkHelper.getItemType(item))
+                || (item.getCategoryName() != null && item.getCategoryName().toLowerCase().startsWith("grammar_"));
+
+        holder.cardViewNote.setCardBackgroundColor(isDark ? Color.parseColor("#1E293B") : Color.parseColor("#FFFFFF"));
+
+        if (isGrammar) {
+            holder.tvNoteNumber.setText("Rule #" + (position + 1));
+            holder.tvNoteNumber.setBackgroundResource(isDark ? R.drawable.bg_rule_badge_dark : R.drawable.bg_rule_badge);
+            holder.tvNoteNumber.setTextColor(isDark ? Color.parseColor("#93C5FD") : Color.parseColor("#1565C0"));
+
+            holder.tvNoteQuote.setGravity(android.view.Gravity.START);
+            holder.tvNoteQuote.setTypeface(null, android.graphics.Typeface.NORMAL);
+            holder.tvNoteQuote.setText(com.royal.edunotes.GrammarRuleFormatter.formatGrammarRule(item.getQuote(), isDark));
+
+            holder.ivNoteImage.setVisibility(View.GONE);
+            holder.tvNoteExplanation.setVisibility(View.GONE);
         } else {
-            holder.tvNoteQuote.setText(item.getQuote());
+            holder.tvNoteNumber.setText("Note #" + (position + 1));
+            holder.tvNoteNumber.setBackgroundResource(R.drawable.bg_note_badge);
+            holder.tvNoteNumber.setTextColor(Color.parseColor("#00796B"));
+
+            holder.tvNoteQuote.setGravity(android.view.Gravity.START);
+            holder.tvNoteQuote.setTypeface(null, android.graphics.Typeface.BOLD);
+            if (item.getQuote() != null && (item.getQuote().contains("<highlight>") || item.getQuote().contains("<instruction>"))) {
+                com.royal.edunotes.QuestionSpanFormatter.FormattedQuestion formatted =
+                        com.royal.edunotes.QuestionSpanFormatter.format(context, item.getQuote());
+                if (formatted.instruction != null && !formatted.instruction.isEmpty()) {
+                    android.text.SpannableStringBuilder combined = new android.text.SpannableStringBuilder();
+                    combined.append(formatted.instruction).append("\n\n").append(formatted.bodySpan);
+                    holder.tvNoteQuote.setText(combined);
+                } else {
+                    holder.tvNoteQuote.setText(formatted.bodySpan);
+                }
+            } else {
+                holder.tvNoteQuote.setText(item.getQuote());
+            }
+            holder.tvNoteQuote.setTextColor(isDark ? Color.parseColor("#F1F5F9") : Color.parseColor("#1E293B"));
+
+            // Handle Image or detailed explanation in 'value' field
+            String val = item.getValue();
+            if (val != null && (val.startsWith("http://") || val.startsWith("https://"))) {
+                holder.ivNoteImage.setVisibility(View.VISIBLE);
+                holder.tvNoteExplanation.setVisibility(View.GONE);
+                try {
+                    Picasso.get().load(val).into(holder.ivNoteImage);
+                } catch (Exception e) {
+                    holder.ivNoteImage.setVisibility(View.GONE);
+                }
+            } else if (val != null && !val.trim().isEmpty()) {
+                holder.ivNoteImage.setVisibility(View.GONE);
+                holder.tvNoteExplanation.setVisibility(View.VISIBLE);
+                holder.tvNoteExplanation.setText(val.trim());
+                if (isDark) {
+                    holder.tvNoteExplanation.setBackgroundColor(Color.parseColor("#334155"));
+                    holder.tvNoteExplanation.setTextColor(Color.parseColor("#CBD5E1"));
+                } else {
+                    holder.tvNoteExplanation.setBackgroundColor(Color.parseColor("#F8FAFC"));
+                    holder.tvNoteExplanation.setTextColor(Color.parseColor("#475569"));
+                }
+            } else {
+                holder.ivNoteImage.setVisibility(View.GONE);
+                holder.tvNoteExplanation.setVisibility(View.GONE);
+            }
         }
         holder.tvNoteQuote.setTextSize(settingsManager.getFontSize());
-
-        // Handle Image or detailed explanation in 'value' field
-        String val = item.getValue();
-        if (val != null && (val.startsWith("http://") || val.startsWith("https://"))) {
-            holder.ivNoteImage.setVisibility(View.VISIBLE);
-            holder.tvNoteExplanation.setVisibility(View.GONE);
-            try {
-                Picasso.get().load(val).into(holder.ivNoteImage);
-            } catch (Exception e) {
-                holder.ivNoteImage.setVisibility(View.GONE);
-            }
-        } else if (val != null && !val.trim().isEmpty()) {
-            holder.ivNoteImage.setVisibility(View.GONE);
-            holder.tvNoteExplanation.setVisibility(View.VISIBLE);
-            holder.tvNoteExplanation.setText(val.trim());
-        } else {
-            holder.ivNoteImage.setVisibility(View.GONE);
-            holder.tvNoteExplanation.setVisibility(View.GONE);
-        }
 
         // Bookmark status
         boolean isBookmarked = (item.getQuote() != null &&
@@ -148,7 +193,7 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.Note
         } else {
             holder.tvNoteLearned.setText("Mark Learned");
             holder.tvNoteLearned.setBackgroundResource(R.drawable.bg_unlearned_badge);
-            holder.tvNoteLearned.setTextColor(Color.parseColor("#666666"));
+            holder.tvNoteLearned.setTextColor(isDark ? Color.parseColor("#94A3B8") : Color.parseColor("#666666"));
         }
 
         // Listeners

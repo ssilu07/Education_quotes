@@ -3,6 +3,7 @@ package com.royal.edunotes._activities;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -201,7 +202,7 @@ public class HackList extends AppCompatActivity implements VerticlePagerAdapter.
                     notesListAdapter.notifyItemChanged(position);
                 }
             }
-        }, modelDatabases);
+        }, modelDatabases, dbname);
         rvNotes.setAdapter(notesListAdapter);
 
         fabCardsView = findViewById(R.id.fab_cards_view);
@@ -226,8 +227,12 @@ public class HackList extends AppCompatActivity implements VerticlePagerAdapter.
             fabCardsView.setVisibility(View.VISIBLE);
         }
 
+        boolean isDark = settingsManager != null && settingsManager.isDarkMode();
+        rvNotes.setBackgroundColor(isDark ? Color.parseColor("#0F172A") : Color.parseColor("#F4F6F8"));
+
         ArrayList<ModelDatabase> modelDatabases = (ArrayList<ModelDatabase>) db.getAllNotes();
         if (notesListAdapter != null) {
+            notesListAdapter.setCategoryName(dbname);
             notesListAdapter.updateData(quoteModels, modelDatabases);
         }
 
@@ -241,11 +246,13 @@ public class HackList extends AppCompatActivity implements VerticlePagerAdapter.
         }
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setSubtitle(quoteModels.size() + " Notes");
+            boolean isGrammar = (dbname != null && dbname.startsWith("grammar_"));
+            getSupportActionBar().setSubtitle(quoteModels.size() + (isGrammar ? " Grammar Rules" : " Notes"));
         }
 
         updateToggleMenuUI();
-        Toast.makeText(this, "Notes View: All content in scrollable list", Toast.LENGTH_SHORT).show();
+        boolean isGrammar = (dbname != null && dbname.startsWith("grammar_"));
+        Toast.makeText(this, isGrammar ? "Rules View: All rules in scrollable list" : "Notes View: All content in scrollable list", Toast.LENGTH_SHORT).show();
     }
 
     private void switchToCardsView(int targetDataIndex) {
@@ -405,12 +412,14 @@ public class HackList extends AppCompatActivity implements VerticlePagerAdapter.
         verticalViewPager.setCurrentItem(0, false);
 
         if (notesListAdapter != null) {
+            notesListAdapter.setCategoryName(dbname);
             notesListAdapter.updateData(quoteModels, modelDatabases);
             rvNotes.scrollToPosition(0);
         }
 
         if (isNotesView && getSupportActionBar() != null) {
-            getSupportActionBar().setSubtitle(quoteModels.size() + " Notes");
+            boolean isGrammar = (dbname != null && dbname.startsWith("grammar_"));
+            getSupportActionBar().setSubtitle(quoteModels.size() + (isGrammar ? " Grammar Rules" : " Notes"));
         }
 
         if (quoteModels.isEmpty()) {

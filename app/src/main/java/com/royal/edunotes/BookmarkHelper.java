@@ -50,7 +50,8 @@ public class BookmarkHelper {
         }
 
         // 3. Grammar rule detection
-        if (cat.startsWith("grammar_") || cat.contains("grammar") || cat.contains("rules")) {
+        if (cat.startsWith("grammar_") || cat.contains("grammar") || cat.contains("rules")
+                || quote.startsWith("**rule") || quote.startsWith("rule ")) {
             return FILTER_GRAMMAR;
         }
 

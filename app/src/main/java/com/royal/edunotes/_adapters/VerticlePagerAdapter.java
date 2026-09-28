@@ -5,6 +5,8 @@ import android.content.Context;
 import androidx.cardview.widget.CardView;
 import androidx.viewpager.widget.PagerAdapter;
 import android.graphics.Color;
+import android.graphics.Typeface;
+import androidx.core.text.HtmlCompat;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -306,12 +308,36 @@ public class VerticlePagerAdapter extends PagerAdapter {
 
         final ImageView star = itemView.findViewById(R.id.star);
 
-        hackTxt.setText(currentQuote.getQuote());
+        boolean isGrammar = com.royal.edunotes.GrammarRuleFormatter.isGrammarRule(currentQuote.getQuote(), categoryName)
+                || com.royal.edunotes.BookmarkHelper.FILTER_GRAMMAR.equals(com.royal.edunotes.BookmarkHelper.getItemType(currentQuote));
+
+        if (isGrammar) {
+            hackTxt.setGravity(android.view.Gravity.START);
+            hackTxt.setTypeface(null, Typeface.NORMAL);
+            hackTxt.setText(formatGrammarRule(currentQuote.getQuote()));
+            boolean isDark = settingsManager != null && settingsManager.isDarkMode();
+            hackTxt.setTextColor(isDark ? Color.parseColor("#E0E0E0") : Color.parseColor("#212121"));
+        } else {
+            hackTxt.setGravity(android.view.Gravity.CENTER_HORIZONTAL);
+            hackTxt.setTypeface(null, Typeface.BOLD);
+            hackTxt.setText(currentQuote.getQuote());
+            if (com.royal.edunotes.BookmarkHelper.FILTER_QUIZ.equals(com.royal.edunotes.BookmarkHelper.getItemType(currentQuote))) {
+                hackTxt.setTextColor(Color.parseColor("#1A237E"));
+            } else {
+                int[] colors = {
+                        Color.rgb(36, 7, 80), Color.rgb(255, 0, 128), Color.rgb(50, 1, 47),
+                        Color.rgb(249, 115, 0), Color.rgb(27, 66, 66), Color.rgb(64, 165, 120),
+                        Color.rgb(100, 13, 107), Color.rgb(181, 27, 117), Color.rgb(0, 0, 0)
+                };
+                hackTxt.setTextColor(colors[(int) (Math.random() * colors.length)]);
+            }
+        }
         hackTxt.setTextSize(settingsManager.getFontSize());
+
         String url = currentQuote.getValue();
         TextView tvDetail = itemView.findViewById(R.id.tv_vocab_detail);
 
-        if (url != null && (url.startsWith("http://") || url.startsWith("https://"))) {
+        if (!isGrammar && url != null && (url.startsWith("http://") || url.startsWith("https://"))) {
             hackTxt2.setVisibility(View.VISIBLE);
             if (tvDetail != null) tvDetail.setVisibility(View.GONE);
             try {
@@ -320,7 +346,7 @@ public class VerticlePagerAdapter extends PagerAdapter {
                 Log.e(TAG, "Error loading image", e);
                 hackTxt2.setVisibility(View.GONE);
             }
-        } else if (url != null && !url.trim().isEmpty()) {
+        } else if (url != null && !url.trim().isEmpty() && !url.startsWith("http://") && !url.startsWith("https://")) {
             hackTxt2.setVisibility(View.GONE);
             if (tvDetail != null) {
                 tvDetail.setVisibility(View.VISIBLE);
@@ -329,17 +355,6 @@ public class VerticlePagerAdapter extends PagerAdapter {
         } else {
             hackTxt2.setVisibility(View.GONE);
             if (tvDetail != null) tvDetail.setVisibility(View.GONE);
-        }
-
-        if (com.royal.edunotes.BookmarkHelper.FILTER_QUIZ.equals(com.royal.edunotes.BookmarkHelper.getItemType(currentQuote))) {
-            hackTxt.setTextColor(Color.parseColor("#1A237E"));
-        } else {
-            int[] colors = {
-                    Color.rgb(36, 7, 80), Color.rgb(255, 0, 128), Color.rgb(50, 1, 47),
-                    Color.rgb(249, 115, 0), Color.rgb(27, 66, 66), Color.rgb(64, 165, 120),
-                    Color.rgb(100, 13, 107), Color.rgb(181, 27, 117), Color.rgb(0, 0, 0)
-            };
-            hackTxt.setTextColor(colors[(int) (Math.random() * colors.length)]);
         }
 
         updateBookmarkStatus(currentQuote, position);
@@ -627,6 +642,11 @@ public class VerticlePagerAdapter extends PagerAdapter {
 
     private void updateLearnedStatus(QuoteModel currentQuote) {
         currentQuote.setLearned(settingsManager.isWordLearned(currentQuote.getQuote()));
+    }
+
+    private CharSequence formatGrammarRule(String text) {
+        boolean isDarkMode = settingsManager != null && settingsManager.isDarkMode();
+        return com.royal.edunotes.GrammarRuleFormatter.formatGrammarRule(text, isDarkMode);
     }
 
     // ── Public API ───────────────────────────────────────────────────────────
