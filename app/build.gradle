@@ -15,8 +15,8 @@ android {
         applicationId "com.royal.edunotes"
         minSdkVersion 21
         targetSdkVersion 36
-        versionCode 26
-        versionName "1.3.0"
+        versionCode 28
+        versionName "1.3.2"
         multiDexEnabled true
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         vectorDrawables.useSupportLibrary = true
@@ -26,7 +26,7 @@ android {
         buildConfigField "boolean", "ENABLE_ADS", "${localProperties.getProperty('ENABLE_ADS', 'false')}"
         
         // Manual database version for SQLiteAssetHelper
-        buildConfigField "int", "DATABASE_VERSION", "69"
+        buildConfigField "int", "DATABASE_VERSION", "70"
     }
     useLibrary 'org.apache.http.legacy'
 
@@ -120,6 +120,9 @@ dependencies {
     
     // Google Play In-App Review
     implementation 'com.google.android.play:review:2.0.2'
+
+    // Google Play Billing (Updated to 8.0.0+)
+    implementation 'com.android.billingclient:billing:8.0.0'
 
     androidTestImplementation "androidx.test.espresso:espresso-core:3.6.1"
 }

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@drawable/bg_dialog_rounded">
+
+    <!-- Crown Icon -->
+    <ImageView
+        android:id="@+id/iv_premium_icon"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/ic_crown_premium"
+        android:contentDescription="Premium" />
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/tv_premium_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:text="Go Ad-Free"
+        android:textColor="@color/textPrimary"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <!-- Subtitle -->
+    <TextView
+        android:id="@+id/tv_premium_subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="6dp"
+        android:text="Enjoy uninterrupted learning with zero ads"
+        android:textColor="@color/textSecondary"
+        android:textSize="14sp"
+        android:textAlignment="center" />
+
+    <!-- Features Card -->
+    <LinearLayout
+        android:id="@+id/layout_features"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="20dp"
+        android:background="#F4F8FA"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="✨ 100% Ad-Free Experience"
+            android:textColor="@color/textPrimary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🚫 No Fullscreen Popups / Interstitials"
+            android:textColor="@color/textSecondary"
+            android:textSize="13sp"
+            android:layout_marginBottom="6dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🚫 No Native Card or Banner Ads"
+            android:textColor="@color/textSecondary"
+            android:textSize="13sp"
+            android:layout_marginBottom="6dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="⚡ Faster &amp; smoother app navigation"
+            android:textColor="@color/textSecondary"
+            android:textSize="13sp"
+            android:layout_marginBottom="6dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🔄 Valid on all devices with your Google ID"
+            android:textColor="@color/textSecondary"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <!-- Price Section -->
+    <LinearLayout
+        android:id="@+id/layout_price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:id="@+id/tv_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="₹200 / Year"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_price_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="(Just ~₹16 / month • 1 Year Access)"
+            android:textColor="@color/textSecondary"
+            android:textSize="12sp"
+            android:layout_marginTop="2dp" />
+    </LinearLayout>
+
+    <!-- Already Premium Status Text (Hidden by default) -->
+    <TextView
+        android:id="@+id/tv_already_premium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="🎉 You have active Premium! All ads are completely removed."
+        android:textColor="#2E7D32"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        android:visibility="gone" />
+
+    <!-- Action Buttons -->
+    <Button
+        android:id="@+id/btn_subscribe"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_primary_button"
+        android:text="Upgrade Now"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:id="@+id/tv_restore_purchase"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Restore Purchases"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="13sp"
+            android:padding="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" • "
+            android:textColor="@color/textSecondary"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/tv_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Maybe Later"
+            android:textColor="@color/textSecondary"
+            android:textSize="13sp"
+            android:padding="8dp" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -107,7 +107,9 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "🔧 onCreate - ScreenCheck: " + Utility.ScreenCheck);
-        if (BuildConfig.ENABLE_ADS) loadInterstitialAd();
+        if (BuildConfig.ENABLE_ADS && !com.royal.edunotes.BillingManager.isAdsRemoved(getContext())) {
+            loadInterstitialAd();
+        }
     }
 
     @Override
@@ -320,7 +322,7 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
     }
 
     private void loadInterstitialAd() {
-        if (getActivity() == null) return;
+        if (!BuildConfig.ENABLE_ADS || com.royal.edunotes.BillingManager.isAdsRemoved(getContext()) || getActivity() == null) return;
 
         AdRequest adRequest = new AdRequest.Builder().build();
         InterstitialAd.load(getActivity(), BuildConfig.ADMOB_INTERSTITIAL_ID, adRequest,
@@ -350,7 +352,9 @@ public class BookmarkFragment extends Fragment implements VerticlePagerAdapter.C
     public void onBoookmarkClick(QuoteModel quoteModel, ImageView star) {
         if (quoteModel == null) return;
         Log.d(TAG, "🔧 Bookmark clicked: " + quoteModel.isBookmared());
-        if (BuildConfig.ENABLE_ADS) showInterstitial();
+        if (BuildConfig.ENABLE_ADS && !com.royal.edunotes.BillingManager.isAdsRemoved(getContext())) {
+            showInterstitial();
+        }
 
         if (db == null) db = new DatabaseHelper(getActivity());
 

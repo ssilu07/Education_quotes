@@ -81,12 +81,16 @@ public class VerticlePagerAdapter extends PagerAdapter {
 
         Log.d(TAG, "Adapter created - Quotes: " + this.quoteModels.size());
 
-        if (BuildConfig.ENABLE_ADS) {
+        if (areAdsEnabled()) {
             MobileAds.initialize(mContext, status -> {
                 adsInitialized = true;
                 preloadNativeAds();
             });
         }
+    }
+
+    private boolean areAdsEnabled() {
+        return BuildConfig.ENABLE_ADS && !com.royal.edunotes.BillingManager.isAdsRemoved(mContext);
     }
 
     public void setCategoryName(String name) {
@@ -101,13 +105,13 @@ public class VerticlePagerAdapter extends PagerAdapter {
 
     /** Position is an ad slot if it's the 6th page in every group of 6. */
     private boolean isAdPosition(int position) {
-        if (!BuildConfig.ENABLE_ADS) return false;
+        if (!areAdsEnabled()) return false;
         return position % AD_SLOT_SIZE == AD_INTERVAL;
     }
 
     /** Maps a ViewPager position to the real data index (skipping ad slots). */
     public int getDataPosition(int position) {
-        if (!BuildConfig.ENABLE_ADS) return position;
+        if (!areAdsEnabled()) return position;
         return position - position / AD_SLOT_SIZE;
     }
 
@@ -117,7 +121,7 @@ public class VerticlePagerAdapter extends PagerAdapter {
     }
 
     private void preloadNativeAds() {
-        if (nativeAdsLoading || !adsInitialized || mContext == null) return;
+        if (!areAdsEnabled() || nativeAdsLoading || !adsInitialized || mContext == null) return;
         nativeAdsLoading = true;
 
         AdLoader adLoader = new AdLoader.Builder(mContext, BuildConfig.ADMOB_NATIVE_ID)
@@ -199,7 +203,7 @@ public class VerticlePagerAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        if (!BuildConfig.ENABLE_ADS) return quoteModels.size();
+        if (!areAdsEnabled()) return quoteModels.size();
         // Insert one ad slot after every AD_INTERVAL real cards
         return quoteModels.size() + quoteModels.size() / AD_INTERVAL;
     }
@@ -266,6 +270,20 @@ public class VerticlePagerAdapter extends PagerAdapter {
 
         activeAdViews.put(slotIndex, nativeAdView);
         adCardView.setTag(slotIndex); // store slotIndex for cleanup in destroyItem
+
+        View btnRemoveAd = adCardView.findViewById(R.id.btn_remove_native_ad);
+        if (btnRemoveAd != null) {
+            btnRemoveAd.setOnClickListener(v -> {
+                if (mContext instanceof android.app.Activity) {
+                    com.royal.edunotes.RemoveAdsDialog.show((android.app.Activity) mContext, isPurchased -> {
+                        if (isPurchased) {
+                            cleanup();
+                            notifyDataSetChanged();
+                        }
+                    });
+                }
+            });
+        }
 
         if (slotIndex < nativeAdList.size()) {
             populateNativeAdView(nativeAdView, nativeAdList.get(slotIndex));
@@ -661,7 +679,7 @@ public class VerticlePagerAdapter extends PagerAdapter {
 
     /** Inverse of getDataPosition(): maps a real data index back to its pager position. */
     public int getPagerPositionForDataIndex(int dataIndex) {
-        if (!BuildConfig.ENABLE_ADS) return dataIndex;
+        if (!areAdsEnabled()) return dataIndex;
         return dataIndex + dataIndex / AD_INTERVAL;
     }
 

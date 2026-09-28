@@ -74,7 +74,9 @@ public class HomeFragment extends Fragment implements CategoryAdapter.CategoryCl
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        if (BuildConfig.ENABLE_ADS) loadInterstitialAd();
+        if (BuildConfig.ENABLE_ADS && !com.royal.edunotes.BillingManager.isAdsRemoved(getContext())) {
+            loadInterstitialAd();
+        }
     }
 
     @Override
@@ -231,6 +233,9 @@ public class HomeFragment extends Fragment implements CategoryAdapter.CategoryCl
     }*/
 
     private void loadInterstitialAd() {
+        if (!BuildConfig.ENABLE_ADS || com.royal.edunotes.BillingManager.isAdsRemoved(getContext()) || getActivity() == null) {
+            return;
+        }
         // Use test ad unit ID during development: "ca-app-pub-3940256099942544/1033173712"
         AdRequest adRequestNew = new AdRequest.Builder().build();
 

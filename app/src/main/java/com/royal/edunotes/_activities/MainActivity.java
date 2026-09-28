@@ -70,6 +70,9 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         NotificationHelper.scheduleRepeatingRTCNotification(getApplicationContext(), "", "");
         NotificationHelper.enableBootReceiver(getApplicationContext());
 
+        // Initialize Google Play Billing and sync subscription status
+        com.royal.edunotes.BillingManager.getInstance(this);
+
         if (Utility.ScreenCheck == null || Utility.ScreenCheck.isEmpty()) {
             Utility.ScreenCheck = "Vocab";
         }
@@ -316,6 +319,18 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
                 showSearchPrompt();
                 first = false;
             }
+            return true;
+        }
+
+        if (id == R.id.action_remove_ads) {
+            com.royal.edunotes.RemoveAdsDialog.show(this, isPurchased -> {
+                if (isPurchased) {
+                    Toast.makeText(this, "Ads removed! Enjoy ad-free experience.", Toast.LENGTH_SHORT).show();
+                    if (adapter != null) {
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+            });
             return true;
         }
 

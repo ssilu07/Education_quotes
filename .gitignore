@@ -18,5 +18,7 @@ test_api*.py
 /*.json
 /*.txt
 /*.py
-  
- 
+*.apk
+*.aab
+/release/
+app/release/

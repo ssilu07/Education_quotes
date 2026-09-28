@@ -121,8 +121,23 @@ public class SearchActivity extends AppCompatActivity {
         saveSearchHistory(currentWord);
         fetchWordDetail(currentWord);
 
-        // Initialize AdMob and load ads if enabled
-        if (BuildConfig.ENABLE_ADS) {
+        // Initialize AdMob and load ads if enabled and not premium
+        View bannerContainer = findViewById(R.id.banner_ad_container);
+        View btnRemoveBannerAd = findViewById(R.id.btn_remove_banner_ad);
+
+        if (btnRemoveBannerAd != null) {
+            btnRemoveBannerAd.setOnClickListener(v -> {
+                com.royal.edunotes.RemoveAdsDialog.show(SearchActivity.this, isPurchased -> {
+                    if (isPurchased) {
+                        if (bannerContainer != null) bannerContainer.setVisibility(View.GONE);
+                        if (mAdView != null) mAdView.destroy();
+                        mInterstitialAd = null;
+                    }
+                });
+            });
+        }
+
+        if (BuildConfig.ENABLE_ADS && !com.royal.edunotes.BillingManager.isAdsRemoved(this)) {
             MobileAds.initialize(this, initializationStatus -> {});
             
             // Load Banner Ad
@@ -133,6 +148,7 @@ public class SearchActivity extends AppCompatActivity {
             // Load Interstitial Ad
             loadInterstitialAd();
         } else {
+            if (bannerContainer != null) bannerContainer.setVisibility(View.GONE);
             View adView = findViewById(R.id.adView);
             if (adView != null) adView.setVisibility(View.GONE);
         }
@@ -395,6 +411,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void loadInterstitialAd() {
+        if (!BuildConfig.ENABLE_ADS || com.royal.edunotes.BillingManager.isAdsRemoved(this)) return;
         AdRequest adRequest = new AdRequest.Builder().build();
         InterstitialAd.load(this, BuildConfig.ADMOB_INTERSTITIAL_ID, adRequest,
             new InterstitialAdLoadCallback() {
@@ -411,7 +428,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void handleBackPress() {
-        if (mInterstitialAd != null) {
+        if (mInterstitialAd != null && !com.royal.edunotes.BillingManager.isAdsRemoved(this)) {
             mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
                 @Override
                 public void onAdDismissedFullScreenContent() {

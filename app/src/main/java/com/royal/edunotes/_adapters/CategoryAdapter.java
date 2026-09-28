@@ -9,10 +9,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.royal.edunotes.CategoryCompletionManager;
 import com.royal.edunotes.R;
 import com.royal.edunotes._models.CategoryModel;
 
@@ -31,6 +34,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
         public TextView title, tvProgress;
         public LinearLayout mainLL;
         public ProgressBar progressBar;
+        public ImageView btnCompleteRadio;
         CategoryModel categoryModel;
 
         public MyViewHolder(View view) {
@@ -39,7 +43,28 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
             mainLL = view.findViewById(R.id.mainLL);
             progressBar = view.findViewById(R.id.progressBar);
             tvProgress = view.findViewById(R.id.tvProgress);
+            btnCompleteRadio = view.findViewById(R.id.btnCompleteRadio);
             mainLL.setOnClickListener(this);
+
+            if (btnCompleteRadio != null) {
+                btnCompleteRadio.setOnClickListener(v -> {
+                    if (categoryModel == null) return;
+                    CategoryCompletionManager manager = CategoryCompletionManager.getInstance(context);
+                    boolean completed = manager.toggleCompleted(categoryModel);
+                    btnCompleteRadio.setImageResource(completed ? R.drawable.ic_category_radio_completed : R.drawable.ic_category_radio_empty);
+
+                    btnCompleteRadio.setScaleX(0.8f);
+                    btnCompleteRadio.setScaleY(0.8f);
+                    btnCompleteRadio.animate()
+                            .scaleX(1.0f)
+                            .scaleY(1.0f)
+                            .setDuration(200)
+                            .start();
+
+                    String titleText = categoryModel.getTitle() != null ? categoryModel.getTitle() : "Category";
+                    Toast.makeText(context, completed ? (titleText + " marked as completed") : (titleText + " marked as incomplete"), Toast.LENGTH_SHORT).show();
+                });
+            }
         }
 
         public void setData(CategoryModel categoryModel) {
@@ -73,6 +98,12 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
 
         CategoryModel model = categoryList.get(position);
         holder.title.setText(model.getTitle());
+
+        // Completed radio status
+        if (holder.btnCompleteRadio != null) {
+            boolean isCompleted = CategoryCompletionManager.getInstance(context).isCompleted(model);
+            holder.btnCompleteRadio.setImageResource(isCompleted ? R.drawable.ic_category_radio_completed : R.drawable.ic_category_radio_empty);
+        }
 
         // Progress display
         int total = model.getTotalCount();

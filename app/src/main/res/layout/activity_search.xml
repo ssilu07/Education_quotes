@@ -340,12 +340,54 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/adView"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/banner_ad_container"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        app:adSize="BANNER"
-        app:adUnitId="@string/banner_ad" />
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="4dp">
+
+        <LinearLayout
+            android:id="@+id/btn_remove_banner_ad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="3dp"
+            android:background="@drawable/bg_ad_remove_chip"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp">
+
+            <ImageView
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:src="@drawable/ic_crown_premium"
+                android:layout_marginEnd="4dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Remove Ads ✕"
+                android:textColor="#B78103"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/adView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            app:adSize="BANNER"
+            app:adUnitId="@string/banner_ad" />
+    </LinearLayout>
 
 </LinearLayout>

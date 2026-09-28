@@ -22,7 +22,7 @@ public class Setting extends AppCompatActivity {
 
     private SettingsManager settingsManager;
     private SwitchCompat switchDarkMode, switchLanguage, switchNotifications;
-    private TextView tvFontSizeValue, tvLanguageValue;
+    private TextView tvFontSizeValue, tvLanguageValue, tvPremiumStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,15 +45,37 @@ public class Setting extends AppCompatActivity {
         setupListeners();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updatePremiumStatus();
+    }
+
     private void initViews() {
         switchDarkMode = findViewById(R.id.switch_dark_mode);
         switchLanguage = findViewById(R.id.switch_language);
         switchNotifications = findViewById(R.id.switch_notifications);
         tvFontSizeValue = findViewById(R.id.tv_font_size_value);
         tvLanguageValue = findViewById(R.id.tv_language_value);
+        tvPremiumStatus = findViewById(R.id.tv_premium_status);
+    }
+
+    private void updatePremiumStatus() {
+        if (tvPremiumStatus != null) {
+            if (com.royal.edunotes.BillingManager.isAdsRemoved(this)) {
+                tvPremiumStatus.setText("Active (All Ads Removed) 👑");
+                tvPremiumStatus.setTextColor(android.graphics.Color.parseColor("#2E7D32"));
+            } else {
+                String price = com.royal.edunotes.BillingManager.getInstance(this)
+                        .getFormattedPrice(com.royal.edunotes.BillingManager.PRODUCT_REMOVE_ADS_YEARLY, "₹200 / Year");
+                tvPremiumStatus.setText(price + " • No interruptions");
+                tvPremiumStatus.setTextColor(getResources().getColor(R.color.textSecondary));
+            }
+        }
     }
 
     private void loadSettings() {
+        updatePremiumStatus();
         switchDarkMode.setChecked(settingsManager.isDarkMode());
         switchNotifications.setChecked(settingsManager.isNotificationsEnabled());
         switchLanguage.setChecked(settingsManager.isHindi());
@@ -67,6 +89,11 @@ public class Setting extends AppCompatActivity {
     }
 
     private void setupListeners() {
+        // Remove Ads / Premium
+        findViewById(R.id.ll_remove_ads).setOnClickListener(v -> {
+            com.royal.edunotes.RemoveAdsDialog.show(this, isPurchased -> updatePremiumStatus());
+        });
+
         // Dark Mode
         switchDarkMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
             settingsManager.setDarkMode(isChecked);

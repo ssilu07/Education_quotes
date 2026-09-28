@@ -10,6 +10,11 @@
         app:showAsAction="ifRoom|collapseActionView"
         app:actionViewClass="androidx.appcompat.widget.SearchView" />
 
+    <item android:id="@+id/action_remove_ads"
+        android:title="Remove Ads"
+        android:icon="@drawable/ic_crown_premium"
+        app:showAsAction="ifRoom" />
+
     <item android:id="@+id/action_quiz"
         android:title="Daily Quiz"
         app:showAsAction="never" />
